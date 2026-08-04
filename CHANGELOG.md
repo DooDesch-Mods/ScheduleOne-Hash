@@ -13,9 +13,10 @@ All notable changes to hash are documented here. This project adheres to
 - Tab completes the command and its arguments: items, NPCs, properties, vehicles, quests, weather, keys. The line
   above the prompt draws the shape of the command you are typing and marks the argument you are on, so
   `setrelationship` stops being guesswork.
-- `#` is whatever you are looking at. Aim at someone and `teleport #` goes to them, `sethealth # 100` heals them.
-  `#car`, `#home`, `#hand`, `#near` and `#last` cover the rest, and a `#` pointing at nothing refuses the line
-  instead of guessing.
+- `#` is whatever you are looking at, so you never look an id up. Face someone and `setrelationship # 5` maxes
+  them out without knowing they are `benji_coleman`. `give #hand 5` is five more of whatever you are holding,
+  `setowned #home` buys the property you are standing in, and `teleport #it` goes to the id that just printed.
+  A `#` pointing at nothing refuses the line instead of guessing.
 - Every command in one list, filed under the mod that supplied it, with the description the game keeps to itself.
   `help` shows the common six plus a map of the topics, `help <topic>` opens one, `help <command>` explains one.
 - History that survives a restart, aliases you name yourself, `;` between two commands, `repeat 5 <command>`,

@@ -25,9 +25,11 @@ visibly happens, because the reason is in a log file behind the game.
   six mods reads as six lists.
 - **`help`.** The game registers every command with a description and an example each, and shows them to nobody.
   `help` lists the common ones plus a map of the topics, `help give` explains one, `help weather` searches.
-- **`#` is whatever you are looking at.** Aim at someone and `teleport #` goes to them, `sethealth # 100` heals
-  them. `#car`, `#home`, `#hand`, `#near` and `#last` cover the rest. A `#` that points at nothing refuses the
-  line instead of guessing.
+- **`#` is whatever you are looking at**, so you never look an id up. Face someone and `setrelationship # 5`
+  maxes them out without knowing they are `benji_coleman`; `setunlocked #` unlocks them. `give #hand 5` is five
+  more of whatever you are holding, `setowned #home` buys the property you are standing in, and `teleport #it`
+  goes to the id in the line that just printed. A `#` that points at nothing refuses the line instead of
+  guessing.
 - **Up walks what you ran before**, across sessions. `Ctrl+R` searches backwards through it.
 - **Aliases.** `alias gk "give ogkush 5"`.
 - **`;` and `repeat`.** `settime 1200 ; setweather clear`, or `repeat 5 give ogkush 1`.

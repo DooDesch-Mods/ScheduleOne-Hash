@@ -21,8 +21,9 @@
   and highlights the argument you are on, so `setrelationship` stops being guesswork.
 - **You can see what happened.** Vanilla runs `give bananas 1` and shows you nothing, with the reason sitting in
   a log file behind the game. hash prints the answer.
-- **`#` is whatever you are looking at.** Aim at an NPC, type `teleport #`. Also `#car`, `#home`, `#hand`,
-  `#near`, `#last`.
+- **`#` is whatever you are looking at**, so you never look an id up. `setrelationship # 5` maxes out the
+  person in front of you, `give #hand 5` is five more of what you are holding, `setowned #home` buys the place
+  you are standing in. Also `#car`, `#near`, `#it` and `#last`.
 - **It remembers.** History across sessions, aliases you name yourself, and `logs` to watch the game talk.
 
 Everything is a command: `help` lists them, `help <topic>` narrows, `help <command>` explains one.
