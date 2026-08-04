@@ -145,6 +145,25 @@ body {
   padding-right: 7px;
 }
 
+/* The other face, chosen with `font pixel`.
+ *
+ * The game's own pixel font, which is what every other app on the phone is drawn in - smaller, denser, and the
+ * one that belongs on this screen if you care about that more than about reading a long session. Monospaced the
+ * same way: -s1-mono-advance gives it the fixed cell it does not have by itself. */
+.term.pixel,
+.term.pixel .input {
+  font-family: game-pixel;
+  font-size: 12px;
+}
+
+.term.pixel {
+  -s1-mono-advance: 7px;
+}
+
+.term.pixel .input {
+  -s1-caret-width: 7px;
+}
+
 /* The prompt field.
  *
  * -s1-mono-advance cannot reach in here: it works through a rich-text tag on a text leaf, and a form control writes

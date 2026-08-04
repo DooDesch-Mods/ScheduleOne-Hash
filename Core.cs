@@ -103,6 +103,7 @@ namespace Hash
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks);
 
             _runner.LogViewOpen = () => _session.Builtins.LogsOpen;
+            _session.Builtins.UseFace(_store.Read(StoreScope.Global, "font"));
         }
 
         private void RegisterApp()
@@ -120,7 +121,12 @@ namespace Hash
         private void Patch()
         {
             ItemSourcePatch.Providers = _providers;
-            ConsoleAwakePatch.OnAwake = () => _index.MarkDirty();
+            // Declarations first, then the rebuild - the index is built from the list they were just added to.
+            ConsoleAwakePatch.OnAwake = () =>
+            {
+                DeclaredCommands.Apply();
+                _index.MarkDirty();
+            };
             ConsoleKeyPatch.OnOpen = Toggle;
             ConsoleKeyPatch.Enabled = _hijack.Value;
 
@@ -252,6 +258,10 @@ namespace Hash
             _history.Save(_store);
             _aliases.Save(_store);
             _usage.Save(_store);
+
+            // Per machine, not per save: which face is easier to read is a fact about the screen and the eyes in
+            // front of it, not about the game being played.
+            _store.Write(StoreScope.Global, "font", _session.Builtins.Face);
         }
 
         // --------------------------------------------------------------------------------- what the page asks --
@@ -278,6 +288,7 @@ namespace Hash
             json.Str("mark", Mark());
             json.Bool("locked", _session.Locked);
             json.Bool("live", _session.Builtins.LogsOpen);
+            json.Str("font", _session.Builtins.Face);
             json.Raw("banner", Lines(_session.Transcript.Window()));
             return json.Done();
         }
@@ -336,6 +347,7 @@ namespace Hash
             var json = new Json();
             json.Raw("lines", Lines(wanted ? Fresh() : Array.Empty<OutputLine>()));
             json.Bool("live", _session.Builtins.LogsOpen);
+            json.Str("font", _session.Builtins.Face);
             return json.Done();
         }
 
@@ -366,6 +378,7 @@ namespace Hash
             json.Bool("cleared", result.Cleared);
             json.Str("mark", Mark());
             json.Bool("live", _session.Builtins.LogsOpen);
+            json.Str("font", _session.Builtins.Face);
             return json.Done();
         }
 

@@ -73,6 +73,7 @@ class Terminal {
     // a pipe and a number - which is what it was mistaken for.
     if (boot.version) this.#ver.textContent = 'v' + boot.version;
     this.#showMark(boot);
+    this.#face(boot);
     this.#live = boot.live === true;
 
     // Locked marks the header and is enforced by the host per command - the field stays usable, because looking
@@ -208,9 +209,22 @@ class Terminal {
     // `logs` may have just been switched on or off, and the host says so with every answer rather than the page
     // parsing the line to find out.
     this.#live = reply.live === true;
+    this.#face(reply);
     this.#showMark(reply);
 
     this.#renderScroll();
+  }
+
+  /** The typeface the host says to draw in. A class on the root, so one CSS rule carries the whole change. */
+  #face(reply) {
+    if (!reply || !reply.font) return;
+
+    const term = document.querySelector('.term');
+    if (!term) return;
+
+    const pixel = reply.font === 'pixel';
+    if (pixel) term.classList.add('pixel');
+    else term.classList.remove('pixel');
   }
 
   // ------------------------------------------------------------------------------------------------ render --

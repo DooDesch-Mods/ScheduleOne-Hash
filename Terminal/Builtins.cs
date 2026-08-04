@@ -41,7 +41,8 @@ namespace Hash.Terminal
         /// </summary>
         public static readonly IReadOnlyList<CommandInfo> Catalogue = new[]
         {
-            Own("help", "help [word|text]", "explain one command, or search for one", "help give"),
+            Own("help", "help [word|topic|all] [page]", "explain one command, list a topic, or search",
+                "help all 2"),
             Own("clear", "clear", "empty the screen", "clear"),
             Own("history", "history [text]", "what you have run before, oldest first", "history give"),
             Own("alias", "alias [name] [command]", "make a short name for a command, or list them",
@@ -54,6 +55,7 @@ namespace Hash.Terminal
             Own("raw", "raw <command>", "run the rest of the line as one command, semicolons and all",
                 "raw bind t 'settime 1200'"),
             Own("repeat", "repeat <count> <command>", "run a command several times", "repeat 5 give ogkush 1"),
+            Own("font", "font [mono|pixel]", "switch the typeface, or say which one is on", "font pixel"),
         };
 
         /// <summary>Words this terminal answers, for the `help` grid and the shadowing check.</summary>
@@ -78,6 +80,21 @@ namespace Hash.Terminal
             string value = PendingClipboard;
             PendingClipboard = null;
             return value;
+        }
+
+        /// <summary>
+        /// The typeface the page draws in: "mono" for the machine's own monospaced font, "pixel" for the game's.
+        ///
+        /// Both are drawn at a fixed advance, so a column lines up either way - this is a matter of taste, not of
+        /// alignment. The host hands it back with every answer, so the page never has to guess.
+        /// </summary>
+        public string Face { get; private set; } = "mono";
+
+        /// <summary>Restore the choice from an earlier session. Anything unknown leaves the default alone.</summary>
+        public void UseFace(string face)
+        {
+            if (string.Equals(face, "pixel", StringComparison.OrdinalIgnoreCase)) Face = "pixel";
+            else if (string.Equals(face, "mono", StringComparison.OrdinalIgnoreCase)) Face = "mono";
         }
 
         /// <summary>Whether the log view is showing, and what it is filtered to.</summary>
@@ -114,6 +131,7 @@ namespace Hash.Terminal
                 case "grep": Grep(rest, lines); break;
                 case "copy": Copy(rest, lines); break;
                 case "logs": Logs(rest, lines); break;
+                case "font": Typeface(rest, lines); break;
 
                 // Both are handled by the parser before anything gets here. Reaching this point means the parser let
                 // a bare word through, so say what it needs rather than "command not found".
@@ -564,6 +582,36 @@ namespace Hash.Terminal
         }
 
         // --------------------------------------------------------------------------------------------- logs --
+
+        /// <summary>
+        /// Switch the typeface, or say which one is on.
+        ///
+        /// Two faces, both monospaced: the machine's own (Consolas where it exists) and the game's pixel font, which
+        /// is what every other app on the phone is drawn in. The pixel one is smaller and fits more on screen; the
+        /// other one is easier to read for a long session.
+        /// </summary>
+        private void Typeface(string rest, List<OutputLine> lines)
+        {
+            string wanted = (rest ?? "").Trim().ToLowerInvariant();
+
+            if (wanted.Length == 0)
+            {
+                lines.Add(OutputLine.Out($"font: {Face}"));
+                lines.Add(OutputLine.Dim("mono   the machine's own monospaced font, easier to read"));
+                lines.Add(OutputLine.Dim("pixel  the game's own face, smaller and denser"));
+                return;
+            }
+
+            if (wanted != "mono" && wanted != "pixel")
+            {
+                lines.Add(OutputLine.Error($"font: '{rest.Trim()}' is not a face"));
+                lines.Add(OutputLine.Dim("try 'mono' or 'pixel'"));
+                return;
+            }
+
+            Face = wanted;
+            lines.Add(OutputLine.Dim($"font: {Face}"));
+        }
 
         private void Logs(string rest, List<OutputLine> lines)
         {
