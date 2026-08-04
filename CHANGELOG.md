@@ -7,15 +7,18 @@ All notable changes to hash are documented here. This project adheres to
 
 ### Added
 
-- The console key takes the phone out with a terminal on it. Type as before: `give ogkushseed 5` reaches the game
-  exactly as it always did.
-- You see what a command said. Output, warnings and errors land in the terminal instead of in a log file behind the
-  game, so `give bananas 1` finally says why nothing happened.
-- Tab completes commands and their arguments - items, properties, NPCs, vehicles, weather - and every row says
-  which mod supplied it. `give fert` finds `long_life_fertilizer`, `give fzr` still finds it.
-- `help` lists all 63 commands with the description the game keeps to itself, `help give` explains one, and
-  `help weather` searches. Up walks what you ran before, across sessions; `Ctrl+R` searches back through it.
-- `alias gk "give ogkush 5"`, `;` between two commands, `repeat 5 give ogkush 1`, `grep`, `copy` to the system
-  clipboard, and `logs` for everything the game and other mods are logging. `raw <line>` turns all of that off for
-  a command whose arguments contain a `;` or a quote.
+- The console key takes the phone out with a terminal on it. Type as before - `give ogkushseed 5` reaches the game
+  exactly as it always did - and now you see what it answered. Vanilla writes that into a log file behind the game
+  and shows you nothing, which is why `give bananas 1` looked like it worked.
+- Tab completes the command and its arguments: items, NPCs, properties, vehicles, quests, weather, keys. The line
+  above the prompt draws the shape of the command you are typing and marks the argument you are on, so
+  `setrelationship` stops being guesswork.
+- `#` is whatever you are looking at. Aim at someone and `teleport #` goes to them, `sethealth # 100` heals them.
+  `#car`, `#home`, `#hand`, `#near` and `#last` cover the rest, and a `#` pointing at nothing refuses the line
+  instead of guessing.
+- Every command in one list, filed under the mod that supplied it, with the description the game keeps to itself.
+  `help` shows the common six plus a map of the topics, `help <topic>` opens one, `help <command>` explains one.
+- History that survives a restart, aliases you name yourself, `;` between two commands, `repeat 5 <command>`,
+  `grep`, `copy` to the system clipboard, and `logs` for what the game is saying as it happens.
+  - `font` switches between the machine's own monospaced face and the game's pixel one.
   - `HijackConsoleKey` in `MelonPreferences.cfg` brings the vanilla console bar back.

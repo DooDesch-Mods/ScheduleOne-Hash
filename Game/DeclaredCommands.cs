@@ -29,11 +29,12 @@ namespace Hash.Game
         /// <summary>What a mod asked for, whether or not it is in the game's list yet.</summary>
         private sealed class Declaration
         {
-            internal Declaration(string word, string description, string example)
+            internal Declaration(string word, string description, string example, string owner)
             {
                 Word = word;
                 Description = description;
                 Example = example;
+                Owner = owner;
             }
 
             internal string Word { get; }
@@ -41,10 +42,14 @@ namespace Hash.Game
             internal string Description { get; }
 
             internal string Example { get; }
+
+            /// <summary>The assembly that declared it, so the terminal files the word under that mod and not
+            /// under hash - the entry's own type lives here, which is what attribution would otherwise find.</summary>
+            internal string Owner { get; }
         }
 
         /// <summary>Called by a mod through <c>Hash.Api.HashCommands</c>. Safe before the console exists.</summary>
-        internal static void Declare(string word, string description, string example)
+        internal static void Declare(string word, string description, string example, string owner)
         {
             if (string.IsNullOrWhiteSpace(word)) return;
 
@@ -55,8 +60,9 @@ namespace Hash.Game
                 if (string.Equals(known.Word, word, StringComparison.OrdinalIgnoreCase)) return;
             }
 
-            _declared.Add(new Declaration(word, Clean(description), Clean(example)));
-            Core.Log?.Msg($"[hash] '{word}' declared by a mod - it will be listed with the game's own.");
+            _declared.Add(new Declaration(word, Clean(description), Clean(example), Clean(owner)));
+            Core.Log?.Msg($"[hash] '{word}' declared by {(string.IsNullOrEmpty(owner) ? "a mod" : owner)}"
+                          + " - it will be listed with the game's own.");
 
             Apply();
         }
@@ -89,6 +95,16 @@ namespace Hash.Game
             {
                 Core.Log?.Warning("[hash] a declared command could not be listed: " + e.Message);
             }
+        }
+
+        /// <summary>Which mod declared this word, or "" when nobody did.</summary>
+        internal static string OwnerOf(string word)
+        {
+            foreach (Declaration declaration in _declared)
+            {
+                if (string.Equals(declaration.Word, word, StringComparison.OrdinalIgnoreCase)) return declaration.Owner;
+            }
+            return "";
         }
 
         private static bool Has(Il2CppSystem.Collections.Generic.List<GameConsole.ConsoleCommand> list, string word)

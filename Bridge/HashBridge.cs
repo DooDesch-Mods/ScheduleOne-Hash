@@ -11,9 +11,9 @@ namespace Hash.Bridge
     /// </summary>
     public static class HashBridge
     {
-        /// <summary>word, description, example. Puts a mod's own command word into the game's command list, so
-        /// every tool that reads it can show the word beside the vanilla ones. Listing only: the declaring mod's
-        /// prefix keeps running the line.</summary>
-        public static readonly Action<string, string, string> Declare = DeclaredCommands.Declare;
+        /// <summary>word, description, example, the declaring assembly's name. Puts a mod's own command word
+        /// into the game's command list, so every tool that reads it can show the word beside the vanilla ones.
+        /// Listing only: the declaring mod's prefix keeps running the line.</summary>
+        public static readonly Action<string, string, string, string> Declare = DeclaredCommands.Declare;
     }
 }

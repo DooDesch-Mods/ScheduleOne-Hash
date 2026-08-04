@@ -34,7 +34,7 @@ namespace Hash.Api
 
         private static readonly List<string[]> _pending = new List<string[]>();
 
-        private static Action<string, string, string> _declare;
+        private static Action<string, string, string, string> _declare;
         private static bool _bound;
 
         /// <summary>True once hash is installed and listening. You rarely need this - <see cref="Add"/> is safe
@@ -69,8 +69,21 @@ namespace Hash.Api
         private static void Safely(string word, string description, string example)
         {
             // A shim never takes the caller down. Anything wrong on the host side costs this one word.
-            try { _declare(word, description ?? "", example ?? ""); }
+            try { _declare(word, description ?? "", example ?? "", Owner); }
             catch { }
+        }
+
+        /// <summary>
+        /// Who is declaring. This file is compiled into the mod that calls it, so the executing assembly IS the
+        /// caller - which is what lets a terminal file the word under the right mod instead of under hash.
+        /// </summary>
+        private static string Owner
+        {
+            get
+            {
+                try { return Assembly.GetExecutingAssembly().GetName().Name ?? ""; }
+                catch { return ""; }
+            }
         }
 
         private static void Bind()
@@ -85,7 +98,7 @@ namespace Hash.Api
                 if (bridge == null) return;
 
                 FieldInfo field = bridge.GetField("Declare", BindingFlags.Public | BindingFlags.Static);
-                _declare = field?.GetValue(null) as Action<string, string, string>;
+                _declare = field?.GetValue(null) as Action<string, string, string, string>;
                 if (_declare == null) return;
 
                 _bound = true;

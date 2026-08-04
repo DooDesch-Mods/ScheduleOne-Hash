@@ -114,10 +114,16 @@ namespace Hash.Game
                 Type type = command.GetType();
                 bool vanilla = IsVanilla(type);
 
+                // A declared entry's own type lives in hash, so attribution by assembly would file every mod's
+                // word under hash. The declaration carries who asked for it.
+                string source = vanilla ? ModAttribution.Vanilla
+                              : type == typeof(DeclaredCommand) ? ModAttribution.ForName(DeclaredCommands.OwnerOf(word))
+                              : ModAttribution.For(type);
+
                 return new CommandInfo(
                     word, description, usage,
                     UsageExample.Signature(word, usage),
-                    vanilla ? ModAttribution.Vanilla : ModAttribution.For(type),
+                    source,
                     vanilla);
             }
             catch (Exception e)

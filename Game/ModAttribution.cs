@@ -61,6 +61,32 @@ namespace Hash.Game
             return For(type.Assembly);
         }
 
+        /// <summary>
+        /// The label for a mod named by its assembly, which is all a declaration carries across the bridge.
+        ///
+        /// Resolved through the loaded assembly where one matches, so the answer reads the same as every other
+        /// source in the list - name and version. An assembly that is not loaded, or a name nobody claims, is
+        /// returned as it came: better a bare name than "unknown".
+        /// </summary>
+        internal static string ForName(string assemblyName)
+        {
+            if (string.IsNullOrWhiteSpace(assemblyName)) return Unknown;
+
+            try
+            {
+                foreach (Assembly loaded in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    if (!string.Equals(loaded.GetName().Name, assemblyName, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    return For(loaded);
+                }
+            }
+            catch { /* the assembly list is a convenience; the raw name below is always right enough */ }
+
+            return assemblyName;
+        }
+
         internal static string For(Assembly assembly)
         {
             if (assembly == null) return Unknown;
