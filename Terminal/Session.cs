@@ -56,6 +56,15 @@ namespace Hash.Terminal
         private SuggestionSet _current = SuggestionSet.Empty;
         private int _selected;
 
+        /// <summary>
+        /// First row of the window that is actually drawn.
+        ///
+        /// The list keeps every match but only eight fit on the phone, so the window follows the selection instead
+        /// of the list being cut to eight. Without it, an empty prompt shows the first eight of sixty-three commands
+        /// and the arrows just wrap around them - you can never read the rest.
+        /// </summary>
+        private int _window;
+
         /// <summary>Where the history walk has got to, and what it started from. -1 means not walking; the draft is
         /// what the player had typed before they started, so walking back past the end restores it.</summary>
         private int _historyCursor = -1;
@@ -148,6 +157,7 @@ namespace Hash.Terminal
             {
                 int count = _current.Rows.Count;
                 _selected = ((_selected + by) % count + count) % count;
+                ScrollToSelection();
                 return Draw(line);
             }
 
@@ -311,14 +321,39 @@ namespace Hash.Terminal
             if (resetSelection) _selected = 0;
             if (_selected >= _current.Rows.Count) _selected = 0;
 
+            // A new set starts at the top. Carrying the old window over would open the list part-way down for no
+            // reason the player could see.
+            if (resetSelection) _window = 0;
+            ScrollToSelection();
+
             NavResult result = Draw(line);
             result.Line = forceLine;
             return result;
         }
 
+        /// <summary>
+        /// Move the window the least amount that puts the selection back inside it.
+        ///
+        /// Least, rather than centring on the selection: a window that recentres on every keypress makes the whole
+        /// list slide under the eye, and the row you were reading is never where you left it.
+        /// </summary>
+        private void ScrollToSelection()
+        {
+            int count = _current.Rows.Count;
+            int visible = Suggestions.MaxRows;
+
+            if (count <= visible) { _window = 0; return; }
+
+            if (_selected < _window) _window = _selected;
+            else if (_selected >= _window + visible) _window = _selected - visible + 1;
+
+            if (_window > count - visible) _window = count - visible;
+            if (_window < 0) _window = 0;
+        }
+
         private NavResult Draw(string line) => new NavResult
         {
-            Suggest = Markup.Suggestions(_current, _selected),
+            Suggest = Markup.Suggestions(_current, _selected, _window),
             Ghost = Ghost(line),
         };
 
@@ -343,6 +378,6 @@ namespace Hash.Terminal
         }
 
         /// <summary>The current block, for a redraw that changed nothing - used after a resize or a reload.</summary>
-        public string SuggestMarkup() => Markup.Suggestions(_current, _selected);
+        public string SuggestMarkup() => Markup.Suggestions(_current, _selected, _window);
     }
 }

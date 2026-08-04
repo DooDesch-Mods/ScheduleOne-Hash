@@ -96,12 +96,16 @@ namespace Hash.Terminal
         {
             if (query.Length == 0)
             {
-                lines.Add(OutputLine.Dim($"{_catalogue.Commands.Count} game commands, {Words.Length} built in. "
-                                         + "help <word> for one, help <text> to search."));
+                // A grid of words, not a line each.
+                //
+                // Sixty-three commands with descriptions is sixty-three lines, and the terminal draws eighteen - so
+                // the one command you were looking for scrolled away before you could read it, and `help` was
+                // useless precisely because it printed everything. Five to a line fits on screen, and `help <word>`
+                // is one keystroke away for the one you want.
+                lines.Add(OutputLine.Dim($"{_catalogue.Commands.Count} commands, {Words.Length} built in. "
+                                         + "help <word> explains one, help <text> searches."));
 
-                foreach (CommandInfo command in _catalogue.Commands)
-                    lines.Add(OutputLine.Out(Row(command)));
-
+                foreach (string row in Grid(_catalogue.Commands, Words)) lines.Add(OutputLine.Out(row));
                 return;
             }
 
@@ -140,6 +144,30 @@ namespace Hash.Terminal
         {
             string description = command.Description.Length > 0 ? command.Description : command.Signature;
             return Pad(command.Word, 22) + description;
+        }
+
+        /// <summary>Command words in columns, alphabetically, the game's own first and this terminal's after.</summary>
+        private static IEnumerable<string> Grid(IReadOnlyList<CommandInfo> commands, IReadOnlyList<string> builtins)
+        {
+            const int Columns = 5;
+            const int Width = 19;
+
+            var words = new List<string>();
+            foreach (CommandInfo command in commands) words.Add(command.Word);
+
+            var mine = new List<string>(builtins);
+            mine.Sort(StringComparer.OrdinalIgnoreCase);
+            words.AddRange(mine);
+
+            for (int i = 0; i < words.Count; i += Columns)
+            {
+                var row = new System.Text.StringBuilder();
+
+                for (int c = 0; c < Columns && i + c < words.Count; c++)
+                    row.Append(Pad(words[i + c], Width));
+
+                yield return row.ToString().TrimEnd();
+            }
         }
 
         // ------------------------------------------------------------------------------------------ history --

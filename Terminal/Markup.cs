@@ -32,9 +32,15 @@ namespace Hash.Terminal
         /// Returns an empty string when there is nothing to offer, which hides the block entirely rather than
         /// leaving a gap the transcript cannot use.
         /// </summary>
-        public static string Suggestions(SuggestionSet set, int selected)
+        public static string Suggestions(SuggestionSet set, int selected, int window)
         {
             if (set == null || !set.Any) return "";
+
+            int count = set.Rows.Count;
+            int visible = Math.Min(Hash.Terminal.Suggestions.MaxRows, count);
+
+            int first = Math.Max(0, Math.Min(window, count - visible));
+            int last = first + visible;
 
             var sb = new StringBuilder();
 
@@ -48,11 +54,11 @@ namespace Hash.Terminal
 
                 Line(sb, "desc", Clip(description, LineWidth - set.Command.Source.Length - 2)
                                  + "  " + set.Command.Source);
-
-                Line(sb, "rule", new string('-', LineWidth));
             }
 
-            for (int i = 0; i < set.Rows.Count; i++)
+            Line(sb, "rule", Rule(first, last, count));
+
+            for (int i = first; i < last; i++)
             {
                 Suggestion row = set.Rows[i];
                 bool picked = i == selected;
@@ -71,6 +77,23 @@ namespace Hash.Terminal
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// The line between the description and the rows, carrying how far through the list the window is.
+        ///
+        /// A count rather than an arrow: the game's font atlases are Latin-only, so a triangle or an ellipsis renders
+        /// as an empty box. And a count says more - "9-16/63" tells you both that there is more and how much, which
+        /// an arrow never does.
+        /// </summary>
+        private static string Rule(int first, int last, int count)
+        {
+            if (count <= Hash.Terminal.Suggestions.MaxRows) return new string('-', LineWidth);
+
+            string where = $" {first + 1}-{last} of {count} ";
+            int dashes = Math.Max(4, LineWidth - where.Length);
+
+            return new string('-', dashes) + where;
         }
 
         /// <summary>The transcript window as one block.</summary>

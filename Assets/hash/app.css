@@ -136,4 +136,9 @@ body {
   color: #7DFFB2;
   font-family: game-pixel;
   font-size: 12px;
+
+  /* A block, not a line. The caret is one character cell wide and amber, so it reads as a shell prompt rather than
+   * a text box - and it is the one part of the prompt row that is allowed to be loud. */
+  caret-color: #FFD27F;
+  -s1-caret-width: 7px;
 }

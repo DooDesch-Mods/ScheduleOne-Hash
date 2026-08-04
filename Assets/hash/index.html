@@ -15,8 +15,12 @@
 
   <div class="line">
     <span class="prompt" id="prompt">hash $</span>
+    <!-- data-reject-first: the console key is a dead key on German and Swiss layouts, and its mark arrives in the
+         field a moment after the terminal opens. Refusing it at the front is the only place it can be stopped -
+         removing it afterwards drags TMP's caret to the start and scrambles the next word. -->
     <input class="input" id="input" maxlength="240" autocomplete="off"
-           data-keys="Tab ArrowUp ArrowDown PageUp PageDown Ctrl+R Ctrl+L Ctrl+U Ctrl+W Ctrl+C">
+           data-keys="Tab ArrowUp ArrowDown PageUp PageDown Ctrl+R Ctrl+L Ctrl+U Ctrl+W Ctrl+C"
+           data-reject-first="^`&#180;~">
   </div>
 </div>
 

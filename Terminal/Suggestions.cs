@@ -38,9 +38,18 @@ namespace Hash.Terminal
     /// </summary>
     public sealed class Suggestions
     {
-        /// <summary>Rows offered at once. The block sits between the transcript and the prompt and pushes the
+        /// <summary>Rows DRAWN at once. The block sits between the transcript and the prompt and pushes the
         /// transcript up, so a taller list costs the player the thing they are reading.</summary>
         public const int MaxRows = 8;
+
+        /// <summary>
+        /// Matches KEPT, which is a different number and the reason the list is worth walking.
+        ///
+        /// Only <see cref="MaxRows"/> are drawn, but the selection moves through all of these and the window follows
+        /// it - so an empty prompt really does let you read every command the game has, eight at a time, instead of
+        /// wrapping around the same first eight forever.
+        /// </summary>
+        public const int MaxMatches = 300;
 
         /// <summary>History rows in a mixed list. A handful is a reminder; more would bury the real candidates.</summary>
         public const int MaxHistoryRows = 3;
@@ -103,9 +112,11 @@ namespace Hash.Terminal
             }
 
             Usage.Order(rows, s => _usage.CommandCount(s.Value));
+            Trim(rows, MaxMatches);
 
-            Trim(rows, MaxRows - HistoryBudget(rows.Count));
-            rows.AddRange(HistoryRows(wholeLine, MaxRows - rows.Count));
+            // History goes on the end rather than competing for the visible rows: it answers a different question,
+            // and a line you ran before should never push the command you are typing off the list.
+            rows.AddRange(HistoryRows(wholeLine, MaxHistoryRows));
 
             return new SuggestionSet(rows, null, -1, prefix);
         }
@@ -145,15 +156,12 @@ namespace Hash.Terminal
 
             Usage.Order(rows, s => _usage.ArgCount(word, s.Value));
             rows = Usage.GroupBySupplier(rows);
-            Trim(rows, MaxRows);
+            Trim(rows, MaxMatches);
 
             return new SuggestionSet(rows, command, argIndex, prefix);
         }
 
         // ------------------------------------------------------------------------------------------ history --
-
-        /// <summary>How many rows to leave for history: only what is spare, and never more than the cap.</summary>
-        private static int HistoryBudget(int matched) => Math.Min(MaxHistoryRows, Math.Max(0, MaxRows - matched));
 
         private List<Suggestion> HistoryRows(string line, int budget)
         {

@@ -42,6 +42,9 @@ namespace Hash
         private bool _open;
         private int _logsDrawnUpTo;
 
+        /// <summary>The frame the terminal last answered the console key on. See <see cref="Toggle"/>.</summary>
+        private int _toggledOnFrame = -1;
+
         public override void OnInitializeMelon()
         {
             Log = LoggerInstance;
@@ -129,6 +132,18 @@ namespace Hash
         {
             if (_app == null) return false;
 
+            // One press, one answer.
+            //
+            // The game has more than one ConsoleUI in the scene - Sideload sees the same duplication on the phone
+            // side and says so ("skipping this second HomeScreen") - and each of them answers the key. Without this,
+            // a single press ran the toggle twice in one frame: the first opened the terminal, the second read
+            // _open as true and closed it again, so the phone flicked up and down and nothing appeared to happen.
+            //
+            // Still returns true for the repeat, so the vanilla console bar does not open behind it.
+            int frame = UnityEngine.Time.frameCount;
+            if (frame == _toggledOnFrame) return true;
+            _toggledOnFrame = frame;
+
             if (_open)
             {
                 _app.Hide();
@@ -140,9 +155,22 @@ namespace Hash
             _index.MarkDirty();
             _providers.Invalidate();
 
-            if (!_app.Show()) return false;
+            if (!_app.Show())
+            {
+                // The game refused the phone - asleep, dead, arrested, paused. Say so, because the alternative is a
+                // key that silently does nothing and a player who thinks the mod is broken.
+                Log.Warning("[hash] the game would not take the phone out right now, so the terminal stayed shut.");
+                return false;
+            }
 
             _open = true;
+
+            // Tell the page it is on screen so it can put the caret back in the prompt.
+            //
+            // Needed because a reopen does not rebuild the page - the panel is simply shown again - so the startup
+            // code that focused the field the first time never runs a second time. On the very first open there is
+            // no page yet to hear this, which is fine: that is exactly the case the startup code covers.
+            _app.Emit("shown", "");
             return true;
         }
 

@@ -81,7 +81,13 @@ class Terminal {
       e.preventDefault();
     });
 
+    // Focus twice, for two different moments. This one covers the first open: the host grants it after the render
+    // that creates the field, because scripts run before anything is painted.
     this.#input.focus();
+
+    // And this one covers every reopen. The page is not rebuilt when the app is shown again - the panel is just
+    // switched back on - so nothing here would run a second time without the host saying so.
+    s1.on('shown', () => this.#input.focus());
   }
 
   // ---------------------------------------------------------------------------------------------- keyboard --
