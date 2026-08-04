@@ -1,6 +1,6 @@
 {
   "name": "Hash",
-  "version_number": "1.0.0",
+  "version_number": "1.0.1",
   "website_url": "https://github.com/DooDesch-Mods/ScheduleOne-Hash",
   "description": "A terminal instead of the dev console. Completion, arguments, help, output and history, on the in game phone. Needs Sideload.",
   "dependencies": [

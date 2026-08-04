@@ -134,6 +134,8 @@ namespace Hash.Game
         /// <summary>The last target, if it was seen recently enough to still be the thing the player means.</summary>
         private Mark Recent() => Time.unscaledTime - _lastAt <= Remembered ? _last : Mark.None;
 
+        /// <summary>Read once per tick and remembered in <c>_hand</c>; never asked while the phone is up, because
+        /// that is exactly when the game has deselected the hotbar and has no answer.</summary>
         private Mark LiveHand
         {
             get
@@ -245,7 +247,7 @@ namespace Hash.Game
         }
 
         // Each word: frozen while the terminal is up, read live otherwise.
-        public Mark Hand => Held("#hand", () => _hand.Exists ? _hand : LiveHand);
+        public Mark Hand => Held("#hand", () => _hand);
 
         public Mark Here => Held("#here", () => LiveHere);
 

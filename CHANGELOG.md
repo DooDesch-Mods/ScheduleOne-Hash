@@ -3,6 +3,14 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-08-04
+
+### Fixed
+
+- `#hand` names the item you are holding. It answered "nothing there right now" every time, because taking the
+  phone out deselects the hotbar - the one moment the mark is asked is the one moment the game has no answer.
+  What you last held is remembered while the phone is down.
+
 ## [1.0.0] - 2026-08-04
 
 ### Added
