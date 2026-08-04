@@ -22,6 +22,15 @@ namespace Hash.Terminal
         /// </summary>
         IReadOnlyList<ArgValue> ValuesFor(string command, int argIndex);
 
+        /// <summary>
+        /// What kind of thing this argument names, so a context word can be checked before it is used.
+        ///
+        /// <see cref="MarkKind.None"/> means "not a kind any mark can satisfy" - a number, a free string, an enum -
+        /// and a mark offered there is refused. That refusal is the whole safety of the feature: a `#` that quietly
+        /// resolved to something the command did not want would be worse than no `#` at all.
+        /// </summary>
+        MarkKind KindOf(string command, int argIndex);
+
         /// <summary>Whether a provider claims this slot, empty or not.</summary>
         bool Owns(string command, int argIndex);
     }

@@ -52,6 +52,8 @@ namespace Hash.Terminal
         private readonly History _history;
         private readonly Aliases _aliases;
         private readonly Usage _usage;
+        private readonly Marks _marks;
+        private readonly MarkExpansion _expansion;
 
         private SuggestionSet _current = SuggestionSet.Empty;
         private int _selected;
@@ -79,7 +81,7 @@ namespace Hash.Terminal
         private string _searchQuery = "";
 
         public Session(ICommandCatalogue catalogue, ICommandRunner runner, Usage usage,
-                       History history, Aliases aliases)
+                       History history, Aliases aliases, IMarks marks = null)
         {
             _catalogue = catalogue;
             _runner = runner;
@@ -87,12 +89,18 @@ namespace Hash.Terminal
             _history = history;
             _aliases = aliases;
 
+            _marks = new Marks(marks);
+            _expansion = new MarkExpansion(_marks, catalogue);
+
             _transcript = new Transcript();
-            _suggestions = new Suggestions(catalogue, usage, history, aliases);
+            _suggestions = new Suggestions(catalogue, usage, history, aliases, _marks);
             _builtins = new Builtins(_suggestions, catalogue, history, aliases, _transcript);
         }
 
         public Transcript Transcript => _transcript;
+
+        /// <summary>The context words - `#` and its family. The page shows what `#` currently points at.</summary>
+        public Marks Marks => _marks;
 
         public Builtins Builtins => _builtins;
 
@@ -356,7 +364,28 @@ namespace Hash.Terminal
             }
 
             int before = _transcript.Count;
-            foreach (string command in plan.Commands) RunOne(command, lines);
+
+            // Context words are replaced statement by statement, after parsing and before anything runs - so
+            // `give # 1 ; teleport #` checks each half against the command it belongs to, and a refusal in the
+            // second half stops the whole line rather than leaving the first half already done.
+            var ready = new List<string>();
+            foreach (string command in plan.Commands)
+            {
+                Expansion expanded = _expansion.Apply(command);
+                if (expanded.Failed)
+                {
+                    foreach (string part in expanded.Error.Split('\n')) Emit(OutputLine.Error(part), lines);
+
+                    result.Lines = lines;
+                    return result;
+                }
+
+                ready.Add(expanded.Line);
+            }
+
+            _marks.Ran(typed);
+
+            foreach (string command in ready) RunOne(command, lines);
 
             // The transcript shrinking across a run can only mean `clear`, which is the one thing the page cannot
             // work out for itself - it holds its own copy of the drawn window.
@@ -428,6 +457,9 @@ namespace Hash.Terminal
         {
             _transcript.Add(line);
             into.Add(line);
+
+            // A one-word line the game printed is an id, and `#it` is how you use it without retyping it.
+            if (line.Kind == LineKind.Out) _marks.Printed(line.Text);
         }
 
         private void Echo(string typed, List<OutputLine> lines) => Emit(OutputLine.Echo("$ " + typed), lines);

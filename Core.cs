@@ -38,6 +38,7 @@ namespace Hash
         private History _history;
         private Aliases _aliases;
         private Usage _usage;
+        private WorldMarks _marks;
 
         /// <summary>Whether the terminal was on screen last frame - used ONLY to notice when it leaves, so the
         /// session's history and aliases are written out. What the key does is decided by asking the game.</summary>
@@ -91,7 +92,8 @@ namespace Hash
             _history.Load(_store);
             _aliases.Load(_store);
 
-            _session = new Session(_index, new CommandRunner(_log), _usage, _history, _aliases);
+            _marks = new WorldMarks();
+            _session = new Session(_index, new CommandRunner(_log), _usage, _history, _aliases, _marks);
         }
 
         private void RegisterApp()
@@ -190,6 +192,10 @@ namespace Hash
 
         public override void OnUpdate()
         {
+            // What # points at, sampled every frame - the game forgets its own hover the moment the phone comes up,
+            // so there is nothing left to read at the point anyone would want to ask.
+            _marks?.Tick();
+
             // The terminal can leave the screen without the key: the back gesture, another app, Escape, the player
             // putting the phone away. None of those are worth acting on except to write history and aliases out
             // while the session is still healthy - the key itself asks the game what is on screen, so nothing here
@@ -236,6 +242,7 @@ namespace Hash
             json.Num("commands", _session.CommandCount);
             json.Str("prompt", "hash $");
             json.Str("version", Info?.Version ?? "");
+            json.Str("mark", Mark());
             json.Bool("locked", _session.Locked);
             json.Bool("live", _session.Builtins.LogsOpen);
             json.Raw("banner", Lines(_session.Transcript.Window()));
@@ -274,6 +281,7 @@ namespace Hash
             var json = new Json();
             if (result.Line != null) json.Str("line", result.Line);
             json.Str("suggest", result.Suggest);
+            json.Str("mark", Mark());
             // Sent even though the page cannot place it yet - see NavResult.Ghost.
             json.Str("ghost", result.Ghost);
             return json.Done();
@@ -298,6 +306,20 @@ namespace Hash
             return json.Done();
         }
 
+        /// <summary>
+        /// What `#` points at right now, for the header.
+        ///
+        /// Sent with every answer rather than polled, because it changes while the player is not typing - they look
+        /// somewhere else, put the phone away, come back. A header that lags behind is a header nobody trusts, and
+        /// the string costs nothing next to what is already in the reply.
+        /// </summary>
+        private string Mark()
+        {
+            Hash.Terminal.Mark mark = _session.Marks.Resolve("#");
+
+            return mark.Exists ? "# " + mark.Id : "";
+        }
+
         /// <summary>A submitted line.</summary>
         private string Run(string line)
         {
@@ -309,6 +331,7 @@ namespace Hash
             json.Raw("lines", Lines(WithLogs(result.Lines)));
             json.Num("commands", _session.CommandCount);
             json.Bool("cleared", result.Cleared);
+            json.Str("mark", Mark());
             json.Bool("live", _session.Builtins.LogsOpen);
             return json.Done();
         }

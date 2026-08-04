@@ -41,6 +41,8 @@ namespace Hash.Game
         private readonly Dictionary<string, Func<IEnumerable<ArgValue>>> _slots =
             new(StringComparer.OrdinalIgnoreCase);
 
+        private readonly Dictionary<string, MarkKind> _kinds = new(StringComparer.OrdinalIgnoreCase);
+
         private readonly Dictionary<string, (float At, IReadOnlyList<ArgValue> Values)> _cache =
             new(StringComparer.OrdinalIgnoreCase);
 
@@ -89,6 +91,25 @@ namespace Hash.Game
             Slot("disable", 0, LabelledObjects);
             Slot("enable", 0, LabelledObjects);
 
+            // ---- what a context word may stand in for --------------------------------------------------------
+            //
+            // Every argument that names a thing rather than a number. `#` is checked against this before it is
+            // substituted, so an argument missing here simply refuses marks - which is the right way round.
+            Kind("give", 0, MarkKind.Item);
+            Kind("setdiscovered", 0, MarkKind.Item);
+            Kind("packageproduct", 0, MarkKind.Item);
+
+            Kind("setunlocked", 0, MarkKind.Npc);
+            Kind("setrelationship", 0, MarkKind.Npc);
+
+            Kind("spawnvehicle", 0, MarkKind.Vehicle);
+
+            Kind("setowned", 0, MarkKind.Property);
+            Kind("addemployee", 1, MarkKind.Property);
+
+            // teleport takes all three, and a mark of any of them is right - the command sorts it out itself.
+            Kind("teleport", 0, MarkKind.Any);
+
             // ---- fixed choices the game does not spell out anywhere -----------------------------------------
             Slot("setpoliceignoreplayers", 0, () => Literals("true", "false"));
             Slot("setweather", 0, () => Literals("clear", "lightrain", "heavyrain"));
@@ -106,6 +127,16 @@ namespace Hash.Game
         }
 
         internal bool Owns(string command, int argIndex) => _slots.ContainsKey(Key(command, argIndex));
+
+        /// <summary>
+        /// What kind of thing an argument names, for the context words to be checked against.
+        ///
+        /// Written next to the slot that fills it, in <see cref="Kind"/>, so the two cannot drift: the same table
+        /// that knows `setrelationship` takes NPCs knows that `#` may stand there. An argument with no entry takes
+        /// no mark at all, which is the safe default - a number or a free string is not something `#` can be.
+        /// </summary>
+        internal MarkKind KindOf(string command, int argIndex) =>
+            _kinds.TryGetValue(Key(command, argIndex), out MarkKind kind) ? kind : MarkKind.None;
 
         internal IReadOnlyList<ArgValue> ValuesFor(string command, int argIndex)
         {
@@ -150,6 +181,10 @@ namespace Hash.Game
 
         private void Slot(string command, int argIndex, Func<IEnumerable<ArgValue>> source) =>
             _slots[Key(command, argIndex)] = source;
+
+        /// <summary>Say what kind of thing this argument names. Only for slots a mark could stand in.</summary>
+        private void Kind(string command, int argIndex, MarkKind kind) =>
+            _kinds[Key(command, argIndex)] = kind;
 
         private static string Key(string command, int argIndex) => command + "#" + argIndex;
 

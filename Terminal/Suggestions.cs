@@ -62,13 +62,16 @@ namespace Hash.Terminal
         private readonly Usage _usage;
         private readonly History _history;
         private readonly Aliases _aliases;
+        private readonly Marks _marks;
 
-        public Suggestions(ICommandCatalogue catalogue, Usage usage, History history, Aliases aliases)
+        public Suggestions(ICommandCatalogue catalogue, Usage usage, History history, Aliases aliases,
+                           Marks marks = null)
         {
             _catalogue = catalogue;
             _usage = usage;
             _history = history;
             _aliases = aliases;
+            _marks = marks;
         }
 
         /// <summary>
@@ -185,6 +188,13 @@ namespace Hash.Terminal
             rows = Usage.GroupBySupplier(rows);
             Trim(rows, MaxMatches);
 
+            // Context words first, and only where they would actually work.
+            //
+            // First because they are the shortest path to the answer - `#` is two keystrokes against a name the
+            // player would otherwise have to know. Only where they work because a row that cannot be used is worse
+            // than no row: it teaches the word and then refuses it.
+            rows.InsertRange(0, ContextRows(word, argIndex, prefix));
+
             return new SuggestionSet(rows, command, argIndex, prefix);
         }
 
@@ -251,6 +261,31 @@ namespace Hash.Terminal
 
             word = parts[0];
             argIndex += parts.Count - 1;
+        }
+
+        /// <summary>The context words that fit this argument and match what has been typed, each showing what it
+        /// currently points at.</summary>
+        private List<Suggestion> ContextRows(string command, int argIndex, string prefix)
+        {
+            var rows = new List<Suggestion>();
+            if (_marks == null) return rows;
+
+            MarkKind wanted = _catalogue.KindOf(command, argIndex);
+            if (wanted == MarkKind.None) return rows;
+
+            foreach (string word in Marks.Words)
+            {
+                MatchResult hit = FuzzyMatcher.Match(word, prefix);
+                if (!hit.IsMatch) continue;
+
+                Mark mark = _marks.Resolve(word);
+                if (!mark.Exists) continue;
+                if (mark.Kind != MarkKind.Any && wanted != MarkKind.Any && mark.Kind != wanted) continue;
+
+                rows.Add(new Suggestion(SuggestionKind.Argument, word, mark.Id, false, hit.Score));
+            }
+
+            return rows;
         }
 
         // ------------------------------------------------------------------------------------------ history --

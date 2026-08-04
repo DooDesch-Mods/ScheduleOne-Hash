@@ -39,6 +39,8 @@ namespace Hash.Game
 
         public bool Owns(string command, int argIndex) => _providers.Owns(command, argIndex);
 
+        public MarkKind KindOf(string command, int argIndex) => _providers.KindOf(command, argIndex);
+
         internal void MarkDirty() => _dirty = true;
 
         private void Rebuild()

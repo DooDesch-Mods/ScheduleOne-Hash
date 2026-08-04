@@ -37,6 +37,7 @@ class Terminal {
   #count = $('count');
   #prompt = $('prompt');
   #ver = $('ver');
+  #mark = $('mark');
   #term = document.querySelector('.term');
 
   /** The whole transcript, oldest first. Only the tail is ever rendered - the engine has no virtualisation and no
@@ -71,6 +72,7 @@ class Terminal {
     // The v is not decoration. In this pixel font a 1 is a bare vertical stroke, so "hash 1.0.0" reads as a title,
     // a pipe and a number - which is what it was mistaken for.
     if (boot.version) this.#ver.textContent = 'v' + boot.version;
+    this.#showMark(boot);
     this.#live = boot.live === true;
 
     // Locked marks the header and is enforced by the host per command - the field stays usable, because looking
@@ -206,6 +208,7 @@ class Terminal {
     // `logs` may have just been switched on or off, and the host says so with every answer rather than the page
     // parsing the line to find out.
     this.#live = reply.live === true;
+    this.#showMark(reply);
 
     this.#renderScroll();
   }
@@ -222,6 +225,14 @@ class Terminal {
 
     this.#back = wanted;
     this.#renderScroll();
+  }
+
+  /** What `#` points at, in the header - or nothing at all when nothing is marked, because an empty label is
+   *  quieter than the word "none" sitting there all session. */
+  #showMark(reply) {
+    if (typeof reply.mark !== 'string') return;
+
+    this.#mark.textContent = reply.mark;
   }
 
   /** Pull in whatever the game logged on its own since the last tick. */
@@ -247,6 +258,7 @@ class Terminal {
 
   #apply(reply) {
     this.#back = 0;
+    this.#showMark(reply);
     this.#state.suggest = reply.suggest ?? '';
     this.#suggest.innerHTML = this.#state.suggest;
 

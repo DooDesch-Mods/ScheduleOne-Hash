@@ -53,6 +53,10 @@ body {
 
 .brand { color: #7DFFB2; }
 .ver { color: #4d6b58; padding-left: 7px; }
+/* What `#` points at. Amber, because it is the one thing in the header that is about the world rather than about
+ * the terminal - and because amber is already what this page uses for "the thing being pointed at". */
+.mark { color: #FFD27F; padding-left: 14px; }
+
 .spacer { flex: 1; }
 .session { color: #4d6b58; padding-right: 14px; }
 .count { color: #4d6b58; }

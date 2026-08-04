@@ -80,6 +80,11 @@
       <HintPath>$(WorkspaceLibPath)/il2cpp/game/UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <!-- The mark casts a ray to find what the player is looking at. -->
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(WorkspaceLibPath)/il2cpp/game/UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>$(WorkspaceLibPath)/il2cpp/game/UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>false</Private>
