@@ -3,7 +3,15 @@
 A terminal on the in-game phone. Press the console key and instead of the grey bar you get a prompt that completes
 commands, shows what they printed, and remembers what you typed last time.
 
-🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
+> 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Game](https://img.shields.io/badge/game-Schedule%20I-purple)
+![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3+-green)
+![Sideload](https://img.shields.io/badge/Sideload-1.7.0+-orange)
+![Status](https://img.shields.io/badge/status-working-brightgreen)
+
+**[Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload)** · **[Support](https://support.doodesch.de/hash)**
 
 ## What it does that the console does not
 
@@ -15,13 +23,17 @@ visibly happens, because the reason is in a log file behind the game.
   `give fert` and it finds `long_life_fertilizer`; type `give fzr` and it still does.
 - **Every row says where it came from.** `brickpress   Litterally v1.1.0` - so a list of a thousand item ids from
   six mods reads as six lists.
-- **`help`.** The game registers 63 commands with a description and an example each, and shows them to nobody.
-  `help` lists them, `help give` explains one, `help weather` searches.
+- **`help`.** The game registers every command with a description and an example each, and shows them to nobody.
+  `help` lists the common ones plus a map of the topics, `help give` explains one, `help weather` searches.
+- **`#` is whatever you are looking at.** Aim at someone and `teleport #` goes to them, `sethealth # 100` heals
+  them. `#car`, `#home`, `#hand`, `#near` and `#last` cover the rest. A `#` that points at nothing refuses the
+  line instead of guessing.
 - **Up walks what you ran before**, across sessions. `Ctrl+R` searches backwards through it.
 - **Aliases.** `alias gk "give ogkush 5"`.
 - **`;` and `repeat`.** `settime 1200 ; setweather clear`, or `repeat 5 give ogkush 1`.
 - **`logs`** shows everything the game and every other mod logs, filtered, without alt-tabbing to a file.
 - **`copy`** puts a line on your system clipboard, which is how an item id gets into Discord without being retyped.
+- **`font`** switches between the machine's own monospaced face and the game's pixel one.
 
 Ordinary commands are untouched. `give ogkushseed 5` reaches the game byte for byte, and `raw <line>` turns the
 shell off entirely for a command whose arguments contain a `;` or a quote.
@@ -29,10 +41,11 @@ shell off entirely for a command whose arguments contain a `;` or a quote.
 ## Requirements
 
 - [MelonLoader](https://melonwiki.xyz/) 0.7.3
-- [Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload) 1.5.0 or newer
+- [Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload) 1.7.0 or newer
 
-Sideload is what draws the app. hash has no home-screen icon on purpose - the console key is the way in - so on an
-older Sideload it refuses to start rather than leaving you with a mod you cannot reach.
+Sideload is what draws the app, and on a host too old to take the phone out hash refuses to start rather than
+leaving you with a mod you cannot reach. The console key is the way in; a home-screen icon appears alongside it
+while the game's console is switched on, and goes away when it is not.
 
 ## Settings
 
