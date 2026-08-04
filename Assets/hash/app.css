@@ -145,6 +145,48 @@ body {
   padding-right: 7px;
 }
 
+/* The watermark.
+ *
+ * Inside the log window and nowhere else: top right, below the header line, which stays fully opaque. Lines of
+ * output start at the left and the long ones wrap, so that corner is the last place the transcript reaches.
+ *
+ * Absolute, so it is out of the flow and cannot push a single pixel of text around, and behind everything: the
+ * engine paints in document order and these two elements are first in the markup.
+ *
+ * The look is the glyph punched OUT of the panel - black, darker than the background - with the panel's own
+ * green bleeding around the silhouette. That needs two colours, and an <img> here takes exactly one: the engine
+ * tints it with the element's `color`. Hence two files, two elements, same box.
+ *
+ * Both weights were set by measuring a capture rather than by eye. The rule is that the brightest pixel of the
+ * watermark stays under the dimmest text:
+ *
+ *     core          ( 1,  1,  1)   <- darker than the panel, which is what sells the cut-out
+ *     background    (13, 13, 13)
+ *     glow peak     (35, 74, 50)   <- 0.07
+ *     dim text      (58, 81, 66)
+ *
+ * At 0.13 the glow peaked at 98 and overtook the dim text: a second thing on the screen instead of a texture.
+ * If this changes, re-measure with `help all 4` on screen, which drives long lines through the corner. */
+.watermark {
+  position: absolute;
+  top: 42px;
+  right: 16px;
+  width: 100px;
+  height: 100px;
+}
+
+/* Black, so the glyph reads as something cut out of the panel rather than drawn on it. */
+.watermark.core {
+  color: #000000;
+  opacity: 0.85;
+}
+
+/* The light bleeding around that cut-out. This is the half that has to stay quiet. */
+.watermark.glow {
+  color: #7DFFB2;
+  opacity: 0.07;
+}
+
 /* The other face, chosen with `font pixel`.
  *
  * The game's own pixel font, which is what every other app on the phone is drawn in - smaller, denser, and the

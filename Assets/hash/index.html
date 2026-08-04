@@ -1,6 +1,15 @@
 <link rel="stylesheet" href="app.css">
 
 <div class="term">
+  <!-- A mark of whose terminal this is, not decoration: it sits in the corner the transcript reaches last, at a
+       weight where it reads as texture rather than as content. First thing to check on any change is that a full
+       line of output stays as legible over it as beside it - `help all 4` sends long lines straight through it.
+
+       Two elements for one glyph, because the engine tints an <img> with the element's `color` and a tint has
+       one colour: the cut-out and the light around it cannot come from the same file. -->
+  <img class="watermark glow" src="watermark-glow.png" alt="">
+  <img class="watermark core" src="watermark-core.png" alt="">
+
   <div class="head">
     <span class="brand">hash</span>
     <span class="ver" id="ver">v1.0.0</span>

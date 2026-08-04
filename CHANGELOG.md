@@ -3,6 +3,14 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-08-05
+
+### Added
+
+- A quiet mark in the top right of the log window: the hash glyph punched out of the panel, with the terminal's
+  own green bleeding around it. Set so the brightest pixel of it stays under the dimmest text on screen, and a
+  line of output crossing it reads exactly as it does anywhere else.
+
 ## [1.0.1] - 2026-08-04
 
 ### Fixed

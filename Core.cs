@@ -3,7 +3,7 @@ using Hash.Terminal;
 using MelonLoader;
 using Sideload.Api;
 
-[assembly: MelonInfo(typeof(Hash.Core), "hash", "1.0.1", "DooDesch", "https://github.com/DooDesch-Mods/ScheduleOne-Hash")]
+[assembly: MelonInfo(typeof(Hash.Core), "hash", "1.0.2", "DooDesch", "https://github.com/DooDesch-Mods/ScheduleOne-Hash")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace Hash
