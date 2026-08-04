@@ -19,6 +19,10 @@ namespace Hash.Game
     /// <para>By reflection, because hash must not require S1API. The registry is internal to S1API, which rules out
     /// referencing it even if the dependency were acceptable - and a missing or renamed member has to cost these
     /// commands, not the whole index.</para>
+    ///
+    /// <para>Internal is the part worth replacing: a rename upstream costs these commands silently. S1API 3.1.8 has
+    /// no public way to enumerate them; once <c>ConsoleHelper.RegisteredCommands</c> exists, read that instead and
+    /// keep this path only for older versions.</para>
     /// </summary>
     internal static class S1ApiCommands
     {

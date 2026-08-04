@@ -34,6 +34,7 @@ namespace Hash
         private CommandIndex _index;
         private ArgProviders _providers;
         private LogCapture _log;
+        private CommandRunner _runner;
         private Store _store;
         private History _history;
         private Aliases _aliases;
@@ -45,6 +46,11 @@ namespace Hash
         private bool _wasOnScreen;
 
         private int _logsDrawnUpTo;
+
+        /// <summary>Seconds between two checks of whether the console is switched on. See <see cref="IconFollowsTheConsole"/>.</summary>
+        private const float IconInterval = 0.5f;
+
+        private float _iconCheckedAt;
 
         /// <summary>The frame the terminal last answered the console key on. See <see cref="Toggle"/>.</summary>
         private int _toggledOnFrame = -1;
@@ -93,7 +99,10 @@ namespace Hash
             _aliases.Load(_store);
 
             _marks = new WorldMarks();
-            _session = new Session(_index, new CommandRunner(_log), _usage, _history, _aliases, _marks);
+            _runner = new CommandRunner(_log);
+            _session = new Session(_index, _runner, _usage, _history, _aliases, _marks);
+
+            _runner.LogViewOpen = () => _session.Builtins.LogsOpen;
         }
 
         private void RegisterApp()
@@ -196,6 +205,8 @@ namespace Hash
             // so there is nothing left to read at the point anyone would want to ask.
             _marks?.Tick();
 
+            IconFollowsTheConsole();
+
             // The terminal can leave the screen without the key: the back gesture, another app, Escape, the player
             // putting the phone away. None of those are worth acting on except to write history and aliases out
             // while the session is still healthy - the key itself asks the game what is on screen, so nothing here
@@ -206,6 +217,28 @@ namespace Hash
 
             _wasOnScreen = false;
             Persist();
+        }
+
+        /// <summary>
+        /// Put a square on the home screen exactly while the game would let commands run.
+        ///
+        /// A second way in for the player who never learns the key, and honest about the times there is nothing to
+        /// open: the console setting is a live toggle in the settings window and the console is host-only, so the
+        /// answer changes mid-session and the icon has to follow it.
+        ///
+        /// <para>Re-stated twice a second rather than remembered, because the phone is rebuilt on every scene load
+        /// and a remembered "already showing" would be a promise about an icon that no longer exists. Two property
+        /// reads and a lookup at 2 Hz costs nothing measurable.</para>
+        /// </summary>
+        private void IconFollowsTheConsole()
+        {
+            if (_app == null || _runner == null) return;
+
+            float now = UnityEngine.Time.unscaledTime;
+            if (now - _iconCheckedAt < IconInterval) return;
+
+            _iconCheckedAt = now;
+            _app.Icon(_runner.CanRun);
         }
 
         public override void OnDeinitializeMelon()

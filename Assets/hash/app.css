@@ -11,8 +11,10 @@
  * actually went wrong. The three foreground colours are lifted from the console autocomplete mod, where they earned
  * their keep against real suggestion lists.
  *
- * Every glyph is drawn at a fixed advance through -s1-mono-advance. That is the only reason a column of sources can
- * line up under a heading: none of the game's fonts are monospaced, so without it the pipes wander.
+ * The face is `monospace`, which Sideload builds from the machine's own Consolas rather than anything the game
+ * ships - the game has no monospaced font at all, and a terminal drawn in a pixel face is a terminal nobody can
+ * read. -s1-mono-advance stays as the safety net: it matches Consolas at this size, so it changes nothing while
+ * Consolas is there and keeps the columns straight on a machine where it is not.
  */
 
 /* The root is auto-height in this engine, so `height: 100%` on the terminal resolves against nothing and every
@@ -27,9 +29,9 @@ body {
   height: 100%;
   padding: 8px 10px;
   background: #070b08;
-  font-family: game-pixel;
-  font-size: 12px;
-  -s1-mono-advance: 7px;
+  font-family: monospace;
+  font-size: 13px;
+  -s1-mono-advance: 7.15px;
   color: #7DFFB2;
 
   /* nowrap here, pre only on the two text blocks below.
@@ -53,9 +55,13 @@ body {
 
 .brand { color: #7DFFB2; }
 .ver { color: #4d6b58; padding-left: 7px; }
-/* What `#` points at. Amber, because it is the one thing in the header that is about the world rather than about
- * the terminal - and because amber is already what this page uses for "the thing being pointed at". */
-.mark { color: #FFD27F; padding-left: 14px; }
+/* What `#` points at, centred between the title and the session.
+ *
+ * Amber, because it is the one thing in the header that is about the world rather than about the terminal - and
+ * because amber is already what this page uses for "the thing being pointed at". Centred by a spacer on each side
+ * rather than by text-align: the header is a flex row, so two equal springs are what put something between two
+ * blocks of different widths. */
+.mark { color: #FFD27F; }
 
 .spacer { flex: 1; }
 .session { color: #4d6b58; padding-right: 14px; }
@@ -141,10 +147,10 @@ body {
 
 /* The prompt field.
  *
- * NOT monospaced, and it cannot be: -s1-mono-advance works through a rich-text tag on a text leaf, and a form
- * control's text is written by the control itself with rich text switched off - which is correct, or a player
- * typing `give <item>` would watch the argument disappear into a tag. The suggestion block above is monospaced and
- * carries the aligned columns; the line being typed does not need them. */
+ * -s1-mono-advance cannot reach in here: it works through a rich-text tag on a text leaf, and a form control writes
+ * its own text with rich text switched off - which is correct, or a player typing `give <item>` would watch the
+ * argument disappear into a tag. With a real monospaced face that no longer matters, because the field and the
+ * block above finally measure the same. */
 .input {
   flex: 1;
   height: 16px;
@@ -152,13 +158,13 @@ body {
   border: none;
   background: #070b08;
   color: #7DFFB2;
-  font-family: game-pixel;
-  font-size: 12px;
+  font-family: monospace;
+  font-size: 13px;
 
   /* A block, not a line. The caret is one character cell wide and amber, so it reads as a shell prompt rather than
    * a text box - and it is the one part of the prompt row that is allowed to be loud. */
   caret-color: #FFD27F;
-  -s1-caret-width: 7px;
+  -s1-caret-width: 7.15px;
 
   /* The rest of the highlighted suggestion, behind the caret. Dim enough to read as "not typed yet", bright
    * enough to read at all - the same muted grey fish and PSReadLine use for the same thing. */

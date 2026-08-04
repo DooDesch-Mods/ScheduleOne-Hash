@@ -323,13 +323,42 @@ namespace Hash.Terminal
         /// care about the difference. All four end in a command, so all four should complete like one, and keeping
         /// them in one table is what stops the next word of this kind from being forgotten.
         /// </summary>
-        private static readonly (string Word, int OwnArguments)[] TakeACommand =
+        private static readonly (string Word, int OwnArguments, bool RunsNow)[] TakeACommand =
         {
-            (RawWord, 0),
-            (RepeatWord, 1),
-            ("alias", 1),
-            ("bind", 1),
+            (RawWord, 0, true),
+            (RepeatWord, 1, true),
+            ("alias", 1, false),
+            ("bind", 1, false),
         };
+
+        /// <summary>
+        /// Where a STORED command line starts in this statement, or -1.
+        ///
+        /// The difference between `repeat 3 teleport #` and `alias t "teleport #"` is when the command runs. The
+        /// first runs now, so `#` means what is marked now. The second is being written down for later, so `#` has
+        /// to survive as the character `#` and be resolved every time the alias is used - an alias that froze the
+        /// mark at the moment it was defined would be a different command every session and the same command
+        /// forever after.
+        /// </summary>
+        public static int StoredCommandAt(string statement)
+        {
+            if (string.IsNullOrEmpty(statement)) return -1;
+
+            string trimmed = statement.TrimStart();
+            int at = 0;
+            string word = ReadWord(trimmed, ref at);
+
+            foreach ((string candidate, int arguments, bool runsNow) in TakeACommand)
+            {
+                if (runsNow) continue;
+                if (!string.Equals(word, candidate, StringComparison.OrdinalIgnoreCase)) continue;
+
+                // Its own arguments come first; the stored line starts at the token after them.
+                return arguments + 1;
+            }
+
+            return -1;
+        }
 
         /// <summary>How many characters at the front are the word plus its own arguments plus the space after them,
         /// or 0 when this word takes no command or the player is still typing its own arguments.</summary>
@@ -339,7 +368,7 @@ namespace Hash.Terminal
             string word = ReadWord(statement, ref at);
 
             int ownArguments = -1;
-            foreach ((string candidate, int arguments) in TakeACommand)
+            foreach ((string candidate, int arguments, bool _) in TakeACommand)
                 if (string.Equals(word, candidate, StringComparison.OrdinalIgnoreCase)) ownArguments = arguments;
 
             if (ownArguments < 0) return 0;

@@ -19,6 +19,14 @@ namespace Hash.Game
 
         internal CommandRunner(LogCapture log) => _log = log;
 
+        /// <summary>
+        /// Whether the log view is showing every line anyway.
+        ///
+        /// Set by the mod once the session exists. With the view on, the lines this held back are printed right
+        /// underneath by the view itself, and a note saying they are hidden would be a lie.
+        /// </summary>
+        internal Func<bool> LogViewOpen { get; set; }
+
         public bool CanRun => Refusal() == null;
 
         public string RefusalReason => Refusal() ?? "";
@@ -76,13 +84,22 @@ namespace Hash.Game
                 return new[] { OutputLine.Error("The command threw: " + e.Message) };
             }
 
-            IReadOnlyList<OutputLine> captured = _log.Close();
+            CapturedOutput captured = _log.Close();
 
             // A command that ran and said nothing is the normal case for half of them - `hideui` just hides the UI.
             // Silence after a successful run reads as a hang, so say something.
-            if (captured.Count == 0) return new[] { OutputLine.Dim("ok") };
+            if (captured.Lines.Count == 0 && captured.Hidden == 0) return new[] { OutputLine.Dim("ok") };
 
-            return captured;
+            var output = new List<OutputLine>(captured.Lines);
+
+            // Named rather than dropped silently, because the one time it matters is when the answer looks wrong and
+            // the reason is in the part that was left out.
+            if (captured.Hidden > 0 && LogViewOpen?.Invoke() != true)
+                output.Add(OutputLine.Dim(captured.Hidden == 1
+                    ? "1 game log line hidden - 'logs' shows it"
+                    : $"{captured.Hidden} game log lines hidden - 'logs' shows them"));
+
+            return output;
         }
     }
 }

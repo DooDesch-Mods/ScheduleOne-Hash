@@ -60,11 +60,17 @@ namespace Hash.Terminal
             string command = tokens[0];
             var rebuilt = new System.Text.StringBuilder(command);
 
+            // `alias t teleport #` writes a line down for later, so its `#` must stay a `#` - resolved every time
+            // the alias runs, not once when it was defined. Quoting it already had that effect; without quotes it
+            // did not, and the same line meant two different things depending on punctuation.
+            int stored = CommandLine.StoredCommandAt(statement);
+
             for (int i = 1; i < tokens.Count; i++)
             {
                 string token = tokens[i];
                 rebuilt.Append(' ');
 
+                if (stored >= 0 && i >= stored) { rebuilt.Append(Quote(token)); continue; }
                 if (!Marks.IsWord(token)) { rebuilt.Append(Quote(token)); continue; }
 
                 Mark mark = _marks.Resolve(token);

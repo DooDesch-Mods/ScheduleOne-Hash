@@ -42,8 +42,25 @@ namespace Hash.Game
         /// at anything thin; a small sphere is what makes pointing at a person feel like pointing at a person.</summary>
         private const float Radius = 0.2f;
 
+        /// <summary>
+        /// Seconds between casts. Ten a second, not sixty.
+        ///
+        /// Measured: at every frame this was 0.085 ms/frame, which made hash the second most expensive mod in the
+        /// game while doing nothing anybody asked for - the terminal may never be opened at all. Nothing here needs
+        /// frame accuracy: the mark answers "what was I looking at", and a tenth of a second is far below the time
+        /// it takes to look at something and reach for a key.
+        /// </summary>
+        private const float Interval = 0.1f;
+
         private Mark _last = Mark.None;
         private float _lastAt = float.NegativeInfinity;
+        private float _nextCast;
+
+        /// <summary>The collider the last cast hit, and what it resolved to. Walking a hierarchy to find an NPC and
+        /// then testing every property's bounds is the expensive half, and standing still means hitting the same
+        /// wall over and over.</summary>
+        private int _lastCollider;
+        private Mark _lastResolved = Mark.None;
 
         /// <summary>Every word as it stood the moment the phone came up.</summary>
         private readonly Dictionary<string, Mark> _frozen = new(StringComparer.Ordinal);
@@ -73,6 +90,9 @@ namespace Hash.Game
             }
 
             _terminalOpen = false;
+
+            if (Time.unscaledTime < _nextCast) return;
+            _nextCast = Time.unscaledTime + Interval;
 
             Mark seen = Cast();
             if (!seen.Exists) return;
@@ -258,17 +278,32 @@ namespace Hash.Game
 
                 if (hit.collider == null) return Mark.None;
 
-                NPC npc = hit.collider.GetComponentInParent<NPC>();
-                if (npc != null && !string.IsNullOrWhiteSpace(npc.ID))
-                    return new Mark(MarkKind.Npc, npc.ID.ToLowerInvariant(), npc.FullName);
+                // Same collider as last time means the same answer. Standing in a room looking at one wall is the
+                // normal case, and it is the case that would otherwise walk a hierarchy and test fifteen bounding
+                // boxes ten times a second for a result that cannot have changed.
+                int collider = hit.collider.GetInstanceID();
+                if (collider == _lastCollider) return _lastResolved;
 
-                LandVehicle vehicle = hit.collider.GetComponentInParent<LandVehicle>();
-                if (vehicle != null && !string.IsNullOrWhiteSpace(vehicle.VehicleCode))
-                    return new Mark(MarkKind.Vehicle, vehicle.VehicleCode.ToLowerInvariant(), vehicle.VehicleCode);
+                _lastCollider = collider;
+                _lastResolved = Resolve(hit);
 
-                return PropertyAt(hit.point);
+                return _lastResolved;
             }
             catch (Exception e) { return Failed("#", e); }
+        }
+
+        /// <summary>What one hit names, most specific first: a person standing inside a shop is the person.</summary>
+        private static Mark Resolve(RaycastHit hit)
+        {
+            NPC npc = hit.collider.GetComponentInParent<NPC>();
+            if (npc != null && !string.IsNullOrWhiteSpace(npc.ID))
+                return new Mark(MarkKind.Npc, npc.ID.ToLowerInvariant(), npc.FullName);
+
+            LandVehicle vehicle = hit.collider.GetComponentInParent<LandVehicle>();
+            if (vehicle != null && !string.IsNullOrWhiteSpace(vehicle.VehicleCode))
+                return new Mark(MarkKind.Vehicle, vehicle.VehicleCode.ToLowerInvariant(), vehicle.VehicleCode);
+
+            return PropertyAt(hit.point);
         }
 
         private static Mark PropertyAt(Vector3 point)

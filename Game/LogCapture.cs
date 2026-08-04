@@ -25,7 +25,7 @@ namespace Hash.Game
         private const int RingSize = 400;
 
         private readonly List<OutputLine> _ring = new();
-        private readonly List<OutputLine> _window = new();
+        private readonly List<Captured> _window = new();
 
         private Application.LogCallback _callback;
         private bool _capturing;
@@ -75,10 +75,42 @@ namespace Hash.Game
             _capturing = true;
         }
 
-        internal IReadOnlyList<OutputLine> Close()
+        /// <summary>
+        /// What the command answered, and how much of the game's own noise was left out.
+        ///
+        /// If nothing in the window looks like the command talking, everything is returned instead. A command from
+        /// another mod may log through a path this cannot recognise, and showing too much beats showing nothing.
+        /// </summary>
+        internal CapturedOutput Close()
         {
             _capturing = false;
-            return new List<OutputLine>(_window);
+
+            bool spoke = false;
+            for (int i = 0; i < _window.Count; i++)
+            {
+                if (!_window[i].Own) continue;
+
+                spoke = true;
+                break;
+            }
+
+            var lines = new List<OutputLine>();
+            int hidden = 0;
+
+            foreach (Captured entry in _window)
+            {
+                if (spoke && !entry.Own)
+                {
+                    hidden += entry.Times;
+                    continue;
+                }
+
+                lines.Add(entry.Times > 1
+                    ? new OutputLine(entry.Line.Kind, entry.Line.Text + $"  (x{entry.Times})")
+                    : entry.Line);
+            }
+
+            return new CapturedOutput(lines, hidden);
         }
 
         private void OnLog(string message, string stackTrace, LogType type)
@@ -88,7 +120,57 @@ namespace Hash.Game
             OutputLine line = new(Kind(type), Clean(message));
 
             Remember(line);
-            if (_capturing) _window.Add(line);
+            if (!_capturing) return;
+
+            // The same line twice in a row is one event told twice - `settime` runs through the host path and then
+            // through the client sync, and both log it. Counted rather than repeated.
+            Captured last = _window.Count > 0 ? _window[_window.Count - 1] : null;
+            if (last != null && last.Line.Kind == line.Kind && last.Line.Text == line.Text)
+            {
+                last.Times++;
+                return;
+            }
+
+            _window.Add(new Captured(line, Own(type, stackTrace)));
+        }
+
+        /// <summary>
+        /// Whether this line is the command talking, or the game reacting.
+        ///
+        /// `settime 0900` answers in one line and sets off nine more: the time manager narrating, the weather system
+        /// rebuilding its volumes, an audio source complaining, and the whole lot again over the network sync. All of
+        /// it happens inside <c>SubmitCommand</c>, so the capture window cannot tell them apart - but the stack can.
+        ///
+        /// <para>The frame below the logging call is the answer. A command's own line is logged from its
+        /// <c>Execute</c> or from <c>Console.Log</c>; everything downstream carries the system that produced it
+        /// instead. Errors skip the test - an exception during a command is always worth showing.</para>
+        /// </summary>
+        private static bool Own(LogType type, string stackTrace)
+        {
+            if (type is LogType.Error or LogType.Exception or LogType.Assert) return true;
+            if (string.IsNullOrEmpty(stackTrace)) return true;
+
+            string caller = Frame(stackTrace, 1);
+            if (caller.Length == 0) return true;
+
+            return caller.Contains("ScheduleOne.Console:") || caller.Contains(":Execute(");
+        }
+
+        /// <summary>One line of a Unity stack trace, or "" past its end.</summary>
+        private static string Frame(string stackTrace, int index)
+        {
+            int start = 0;
+
+            for (int i = 0; i < index; i++)
+            {
+                int next = stackTrace.IndexOf('\n', start);
+                if (next < 0) return "";
+
+                start = next + 1;
+            }
+
+            int end = stackTrace.IndexOf('\n', start);
+            return end < 0 ? stackTrace.Substring(start) : stackTrace.Substring(start, end - start);
         }
 
         private void Remember(OutputLine line)
@@ -120,5 +202,36 @@ namespace Hash.Game
 
             return one.Length > 400 ? one.Substring(0, 397) + "..." : one;
         }
+
+        /// <summary>A captured line, who it came from, and how many times in a row it arrived.</summary>
+        private sealed class Captured
+        {
+            internal Captured(OutputLine line, bool own)
+            {
+                Line = line;
+                Own = own;
+                Times = 1;
+            }
+
+            internal OutputLine Line { get; }
+
+            internal bool Own { get; }
+
+            internal int Times { get; set; }
+        }
+    }
+
+    /// <summary>What one command printed, plus the count of game lines held back.</summary>
+    internal readonly struct CapturedOutput
+    {
+        internal CapturedOutput(IReadOnlyList<OutputLine> lines, int hidden)
+        {
+            Lines = lines;
+            Hidden = hidden;
+        }
+
+        internal IReadOnlyList<OutputLine> Lines { get; }
+
+        internal int Hidden { get; }
     }
 }
