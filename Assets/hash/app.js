@@ -17,6 +17,18 @@ const $ = (id) => document.getElementById(id);
  *  lose its argument to an unknown tag. */
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/** Cut a line to the width of the screen.
+ *
+ *  The transcript does not wrap - it is `white-space: pre`, because the columns are spaces - so a long line does not
+ *  fold, it keeps going. And it keeps going past the edge of the phone and out onto the game world, because the
+ *  clip is computed from a box the text has already outgrown. Cutting here is what the renderer will not do.
+ *
+ *  Only the drawn copy is shortened. The host still holds the whole line, so `grep` and `copy` see all of it. */
+const clip = (s) => {
+  const text = String(s ?? '');
+  return text.length <= Terminal.Columns ? text : text.slice(0, Terminal.Columns - 2) + '..';
+};
+
 class Terminal {
   #input = $('input');
   #scroll = $('scroll');
@@ -184,7 +196,10 @@ class Terminal {
 
     this.#scroll.innerHTML = this.#lines
       .slice(-room)
-      .map(({ cls, text }) => (cls ? `<span class="${cls}">${esc(text)}</span>` : esc(text)))
+      .map(({ cls, text }) => {
+        const cut = clip(text);
+        return cls ? `<span class="${cls}">${esc(cut)}</span>` : esc(cut);
+      })
       .join('<br>');
   }
 
@@ -222,6 +237,10 @@ class Terminal {
  *  The host keeps far more than this (Transcript.Kept), and `grep` and `history` read from there, so nothing is
  *  actually lost by not drawing it. */
 Terminal.Shown = 18;
+
+/** Characters that fit across the landscape viewport at the terminal's fixed glyph advance: 733 css px less the
+ *  padding, divided by 7. Two spare so a cut line never touches the edge. */
+Terminal.Columns = 99;
 
 /** Never draw fewer than this, however tall the suggestion block gets. A terminal that shows the menu and none of
  *  what just happened has lost the thread. */
