@@ -13,6 +13,8 @@ commands, shows what they printed, and remembers what you typed last time.
 
 **[Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload)** · **[Support](https://support.doodesch.de/hash)**
 
+<img src=".github/media/dan.gif" alt="Dan waiting on the pier at sunset" width="360">
+
 ## What it does that the console does not
 
 The vanilla console is one input field. It has no output, no help, and no memory: run `give bananas 1` and nothing

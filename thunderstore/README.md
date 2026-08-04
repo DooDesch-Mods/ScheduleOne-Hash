@@ -13,6 +13,8 @@
 
 **[Source](https://github.com/DooDesch-Mods/ScheduleOne-Hash)** · **[Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload)** · **[Support](https://support.doodesch.de/hash)**
 
+<img src="https://raw.githubusercontent.com/DooDesch-Mods/ScheduleOne-Hash/main/.github/media/dan.gif" alt="Dan waiting on the pier at sunset" width="360">
+
 ## What you get
 
 - **Tab completes.** Command words, item ids, npc ids, properties, vehicles, quests, weather, keys. `give ogk`
