@@ -62,6 +62,9 @@ namespace Hash.Game
         private int _lastCollider;
         private Mark _lastResolved = Mark.None;
 
+        /// <summary>The last item the player actually held. See the note in <see cref="Tick"/>.</summary>
+        private Mark _hand = Mark.None;
+
         /// <summary>Every word as it stood the moment the phone came up.</summary>
         private readonly Dictionary<string, Mark> _frozen = new(StringComparer.Ordinal);
 
@@ -94,6 +97,16 @@ namespace Hash.Game
             if (Time.unscaledTime < _nextCast) return;
             _nextCast = Time.unscaledTime + Interval;
 
+            // Remembered rather than read on demand, because taking the phone out DESELECTS the hotbar: by the
+            // time a line is typed, equippedSlot is null and #hand would answer "nothing" every single time. What
+            // the player last held is also the honest reading - it does not stop being the thing they meant just
+            // because they reached for the phone.
+            //
+            // No expiry, unlike the raycast. What you are looking at changes by turning your head; what you are
+            // holding changes only when you equip something else.
+            Mark held = LiveHand;
+            if (held.Exists) _hand = held;
+
             Mark seen = Cast();
             if (!seen.Exists) return;
 
@@ -105,7 +118,7 @@ namespace Hash.Game
         {
             _frozen.Clear();
             _frozen["#"] = Recent();
-            _frozen["#hand"] = Live(() => Hand);
+            _frozen["#hand"] = _hand;
             _frozen["#here"] = Live(() => Here);
             _frozen["#car"] = Live(() => Car);
             _frozen["#home"] = Live(() => Home);
@@ -232,7 +245,7 @@ namespace Hash.Game
         }
 
         // Each word: frozen while the terminal is up, read live otherwise.
-        public Mark Hand => Held("#hand", () => LiveHand);
+        public Mark Hand => Held("#hand", () => _hand.Exists ? _hand : LiveHand);
 
         public Mark Here => Held("#here", () => LiveHere);
 
