@@ -1,0 +1,290 @@
+using Hash.Game;
+using Hash.Terminal;
+using MelonLoader;
+using Sideload.Api;
+
+[assembly: MelonInfo(typeof(Hash.Core), "hash", "1.0.0", "DooDesch", "https://github.com/DooDesch-Mods/ScheduleOne-Hash")]
+[assembly: MelonGame("TVGS", "Schedule I")]
+
+namespace Hash
+{
+    /// <summary>
+    /// hash - a terminal on the in-game phone.
+    ///
+    /// Press the console key and the phone comes out with a terminal on it instead of the grey bar at the bottom of
+    /// the screen. It completes commands and arguments, it shows what a command printed, and it remembers what you
+    /// typed last session. None of that is in the game: the vanilla console is one input field with no output, no
+    /// help and no memory.
+    ///
+    /// The mod is two halves that meet at the interfaces in Terminal/Ports.cs. <c>Terminal/</c> is the shell and
+    /// knows nothing about Unity, which is why its behaviour is covered by a headless suite that runs in a second.
+    /// <c>Game/</c> is everything that has to ask the running game. The page in <c>Assets/hash/</c> draws and
+    /// forwards; it holds no state beyond the text in the field.
+    /// </summary>
+    public class Core : MelonMod
+    {
+        internal const string AppId = "hash";
+
+        internal static MelonLogger.Instance Log;
+
+        private static MelonPreferences_Entry<bool> _hijack;
+
+        private AppHandle _app;
+        private Session _session;
+        private CommandIndex _index;
+        private ArgProviders _providers;
+        private LogCapture _log;
+        private Store _store;
+        private History _history;
+        private Aliases _aliases;
+        private Usage _usage;
+
+        private bool _open;
+        private int _logsDrawnUpTo;
+
+        public override void OnInitializeMelon()
+        {
+            Log = LoggerInstance;
+
+            MelonPreferences_Category category = MelonPreferences.CreateCategory("Hash", "hash");
+            _hijack = category.CreateEntry(
+                "HijackConsoleKey", true, "Console key opens the terminal",
+                "ON (default): the key that opened the console now takes the phone out with hash on it. OFF: the "
+                + "vanilla console bar comes back and hash stays reachable only from code. Turn it off if another "
+                + "mod needs the vanilla bar.");
+
+            // Refuse rather than half-work. hash has no home-screen icon on purpose - the key is the only way in -
+            // so a host that cannot raise the phone would leave the player with a mod that does nothing and no way
+            // to find out why.
+            if (!PhoneScreen.Available)
+            {
+                Log.Error("[hash] needs Sideload 1.5.0 or newer - this one cannot take the phone out of the "
+                          + "player's pocket, so the terminal could never be reached. Nothing was registered.");
+                return;
+            }
+
+            Build();
+            Register();
+            Patch();
+
+            Log.Msg("[hash] ready. Press the console key.");
+        }
+
+        /// <summary>Wire the two halves together. Nothing here touches the game, so it is safe at init.</summary>
+        private void Build()
+        {
+            _store = new Store();
+            _log = new LogCapture();
+            _providers = new ArgProviders();
+            _index = new CommandIndex(_providers);
+
+            _history = new History();
+            _aliases = new Aliases();
+            _usage = new Usage();
+
+            _history.Load(_store);
+            _aliases.Load(_store);
+
+            _session = new Session(_index, new CommandRunner(_log), _usage, _history, _aliases);
+        }
+
+        private void Register()
+        {
+            _app = Apps.Register(AppId, "Hash.Assets.hash", "hash", "hash")
+                       .Orientation("landscape")
+                       .NoIcon()
+                       .OnCall("boot", _ => Boot())
+                       .OnCall("nav", Nav)
+                       .OnCall("run", Run);
+        }
+
+        private void Patch()
+        {
+            ItemSourcePatch.Providers = _providers;
+            ConsoleAwakePatch.OnAwake = () => _index.MarkDirty();
+            ConsoleKeyPatch.OnOpen = Toggle;
+            ConsoleKeyPatch.Enabled = _hijack.Value;
+
+            try
+            {
+                HarmonyInstance.PatchAll();
+            }
+            catch (Exception e)
+            {
+                Log.Error("[hash] patching failed - the console key will open the vanilla bar: " + e);
+                ConsoleKeyPatch.Enabled = false;
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------ the key --
+
+        /// <summary>
+        /// The console key was pressed. Returns whether the terminal took it.
+        ///
+        /// Returning false hands the key back to the vanilla console, which is what should happen when the game
+        /// refuses the phone - asleep, dead, arrested, paused. Silently swallowing the key in those states would
+        /// look exactly like the mod having crashed.
+        /// </summary>
+        private bool Toggle()
+        {
+            if (_app == null) return false;
+
+            if (_open)
+            {
+                _app.Hide();
+                _open = false;
+                Persist();
+                return true;
+            }
+
+            _index.MarkDirty();
+            _providers.Invalidate();
+
+            if (!_app.Show()) return false;
+
+            _open = true;
+            return true;
+        }
+
+        public override void OnUpdate()
+        {
+            // The app can be closed from the phone itself - the back gesture, another app, the player putting the
+            // phone away. Noticing keeps the key a toggle instead of drifting out of step with what is on screen.
+            if (_open && _app != null && !_app.IsOpen)
+            {
+                _open = false;
+                Persist();
+            }
+        }
+
+        public override void OnDeinitializeMelon()
+        {
+            Persist();
+            _log?.Dispose();
+        }
+
+        private void Persist()
+        {
+            _history.Save(_store);
+            _aliases.Save(_store);
+            _usage.Save(_store);
+        }
+
+        // --------------------------------------------------------------------------------- what the page asks --
+
+        /// <summary>
+        /// The page asking what to draw: who this player is, how many commands there are, and what is on screen.
+        ///
+        /// Called on every build, not only the first. Sideload throws a page away and builds it again for a hot
+        /// reload, an orientation change and a reopen, so a boot that only ever returned the banner would wipe the
+        /// transcript each time - the terminal would forget what it just told you because the phone turned.
+        /// </summary>
+        private string Boot()
+        {
+            _usage.Load(_store);
+            _logsDrawnUpTo = _log.Ring.Count;
+
+            if (_session.Transcript.Count == 0) _session.Transcript.Add(_session.Banner());
+
+            var json = new Json();
+            json.Str("session", _session.Locked ? "session:client" : "session:host");
+            json.Num("commands", _index.Commands.Count);
+            json.Str("prompt", "hash $");
+            json.Bool("locked", _session.Locked);
+            json.Raw("banner", Lines(_session.Transcript.Window()));
+            return json.Done();
+        }
+
+        /// <summary>A key that moves through what is on offer, or a keystroke that changed the line.</summary>
+        private string Nav(string argument)
+        {
+            string line = Json.Field(argument, "line");
+            string action = Json.Field(argument, "action");
+
+            NavResult result = _session.Navigate(line, action);
+
+            var json = new Json();
+            if (result.Line != null) json.Str("line", result.Line);
+            json.Str("suggest", result.Suggest);
+            // Sent even though the page cannot place it yet - see NavResult.Ghost.
+            json.Str("ghost", result.Ghost);
+            return json.Done();
+        }
+
+        /// <summary>A submitted line.</summary>
+        private string Run(string line)
+        {
+            RunResult result = _session.Run(line);
+
+            if (!string.IsNullOrEmpty(result.Clipboard)) Clipboard.Put(result.Clipboard);
+
+            var json = new Json();
+            json.Raw("lines", Lines(Drain(result.Lines)));
+            json.Num("commands", _index.Commands.Count);
+            json.Bool("cleared", result.Cleared);
+            return json.Done();
+        }
+
+        /// <summary>
+        /// Add whatever the game logged on its own since the last look, when the log view is on.
+        ///
+        /// Only drained on submit rather than streamed: a page that rebuilt every time another mod logged a line
+        /// would rebuild several times a second while the player was trying to type.
+        /// </summary>
+        private IReadOnlyList<OutputLine> Drain(IReadOnlyList<OutputLine> ran)
+        {
+            if (!_session.Builtins.LogsOpen) { _logsDrawnUpTo = _log.Ring.Count; return ran; }
+
+            var all = new List<OutputLine>(ran);
+            string filter = _session.Builtins.LogsFilter;
+
+            for (int i = Math.Max(0, _logsDrawnUpTo); i < _log.Ring.Count; i++)
+            {
+                OutputLine line = _log.Ring[i];
+
+                if (filter.Length > 0 && line.Text.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0
+                    && !filter.Equals(Kind(line), StringComparison.OrdinalIgnoreCase)) continue;
+
+                _session.Push(line);
+                all.Add(line);
+            }
+
+            _logsDrawnUpTo = _log.Ring.Count;
+            return all;
+        }
+
+        private static string Kind(OutputLine line) => line.Kind switch
+        {
+            LineKind.Warn => "warn",
+            LineKind.Error => "error",
+            _ => "log",
+        };
+
+        /// <summary>The lines as a JSON array of {cls, text}, which is what the page draws.</summary>
+        private static string Lines(IReadOnlyList<OutputLine> lines)
+        {
+            var sb = new System.Text.StringBuilder("[");
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (i > 0) sb.Append(',');
+
+                var one = new Json();
+                one.Str("cls", Css(lines[i].Kind));
+                one.Str("text", lines[i].Text);
+                sb.Append(one.Done());
+            }
+
+            return sb.Append(']').ToString();
+        }
+
+        private static string Css(LineKind kind) => kind switch
+        {
+            LineKind.Echo => "echo",
+            LineKind.Warn => "warn",
+            LineKind.Error => "err",
+            LineKind.Dim => "dim",
+            _ => "",
+        };
+    }
+}

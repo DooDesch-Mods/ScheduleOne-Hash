@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="app.css">
+
+<div class="term">
+  <div class="head">
+    <span class="brand">hash</span>
+    <span class="ver">1.0</span>
+    <span class="spacer"></span>
+    <span class="session" id="session">session:host</span>
+    <span class="count" id="count">0 commands</span>
+  </div>
+
+  <div class="scroll" id="scroll"></div>
+
+  <div class="suggest" id="suggest"></div>
+
+  <div class="line">
+    <span class="prompt" id="prompt">hash $</span>
+    <input class="input" id="input" maxlength="240" autocomplete="off"
+           data-keys="Tab ArrowUp ArrowDown PageUp PageDown Ctrl+R Ctrl+L Ctrl+U Ctrl+W Ctrl+C">
+  </div>
+</div>
+
+<script src="app.js"></script>

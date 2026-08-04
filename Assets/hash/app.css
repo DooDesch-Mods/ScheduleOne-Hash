@@ -1,0 +1,139 @@
+/* hash - a terminal on the phone.
+ *
+ * Written against Sideload's renderer, not a browser. Three of its defaults shape everything below and are worth
+ * saying out loud, because the file reads wrong without them:
+ *
+ *   every box is a flex container, and flex-direction defaults to COLUMN
+ *   width includes padding and border, always (box-sizing is a no-op)
+ *   px and % are the only units - no em, rem, vh, vw or calc()
+ *
+ * The look is a phosphor terminal: near-black, one green, amber for whatever is selected, red only for things that
+ * actually went wrong. The three foreground colours are lifted from the console autocomplete mod, where they earned
+ * their keep against real suggestion lists.
+ *
+ * Every glyph is drawn at a fixed advance through -s1-mono-advance. That is the only reason a column of sources can
+ * line up under a heading: none of the game's fonts are monospaced, so without it the pipes wander.
+ */
+
+/* The root is auto-height in this engine, so `height: 100%` on the terminal resolves against nothing and every
+ * child collapses to its content - which puts the prompt under the banner instead of at the bottom of the screen,
+ * and leaves the game showing through the rest. body has to be told first. */
+body {
+  height: 100%;
+  background: #070b08;
+}
+
+.term {
+  height: 100%;
+  padding: 8px 10px;
+  background: #070b08;
+  font-family: game-pixel;
+  font-size: 12px;
+  -s1-mono-advance: 7px;
+  color: #7DFFB2;
+
+  /* nowrap here, pre only on the two text blocks below.
+   *
+   * Preserved whitespace is content, including the newlines and indentation BETWEEN elements in the source. A row
+   * of spans under `pre` therefore stops being a row of spans and becomes one preformatted text block with the
+   * source formatting baked into it - which is correct, and which turns the header into three stacked lines
+   * hanging off the bottom of the phone. Only a block that really is preformatted text gets `pre`. */
+  white-space: nowrap;
+}
+
+/* --- header ------------------------------------------------------------------------------------------------- */
+
+.head {
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #16301f;
+}
+
+.brand { color: #7DFFB2; }
+.ver { color: #4d6b58; padding-left: 7px; }
+.spacer { flex: 1; }
+.session { color: #4d6b58; padding-right: 14px; }
+.count { color: #4d6b58; }
+
+/* Not the host: the prompt is locked and the header says so before the player types into a void. */
+.term.readonly .session { color: #FF6B6B; }
+
+/* --- scrollback --------------------------------------------------------------------------------------------- */
+
+/* ONE box, not one per line. Sideload rebuilds the whole page for any text change at roughly half a millisecond per
+ * box, so twenty-five lines as twenty-five divs would tax every keystroke with a rebuild they had no part in. As a
+ * single text leaf with <br> and <span>, the whole transcript costs the same as one word. */
+/* min-height: 0 is what lets this shrink at all - the automatic minimum of a flex item in a column is its content
+ * height, so without it the transcript pushes the prompt off the bottom of the phone instead of giving way.
+ * overflow: hidden rather than auto: the window is already sized to fit, and a scroll area that never scrolls is a
+ * ScrollRect built for nothing. */
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 5px;
+  line-height: 15px;
+  white-space: pre;
+}
+
+.dim { color: #4d6b58; }
+.err { color: #FF6B6B; }
+.warn { color: #FFD27F; }
+.echo { color: #cfe9dc; }
+
+/* --- suggestions -------------------------------------------------------------------------------------------- */
+
+/* Also one box. Sits between the transcript and the prompt and pushes the transcript up, the way a zsh menu does -
+ * the prompt never moves, so the eye never has to find it again. */
+/* pre and the fixed advance together are what make the source labels line up: every row is padded to a fixed
+ * character count, and both halves of that only work if a space is a space and every glyph is the same width. */
+.suggest {
+  flex-shrink: 0;
+  line-height: 15px;
+  padding-top: 4px;
+  white-space: pre;
+}
+
+.suggest:empty { display: none; }
+
+.sig { color: #FFD27F; }
+.desc { color: #cfe9dc; }
+.rule { color: #16301f; }
+.pick { color: #FFD27F; }
+.src-mod { color: #7DFFB2; }
+.src-game { color: #4d6b58; }
+
+/* --- prompt ------------------------------------------------------------------------------------------------- */
+
+.line {
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 5px;
+  border-top: 1px solid #16301f;
+}
+
+.prompt {
+  flex-shrink: 0;
+  color: #7DFFB2;
+  padding-right: 7px;
+}
+
+/* The prompt field.
+ *
+ * NOT monospaced, and it cannot be: -s1-mono-advance works through a rich-text tag on a text leaf, and a form
+ * control's text is written by the control itself with rich text switched off - which is correct, or a player
+ * typing `give <item>` would watch the argument disappear into a tag. The suggestion block above is monospaced and
+ * carries the aligned columns; the line being typed does not need them. */
+.input {
+  flex: 1;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: #070b08;
+  color: #7DFFB2;
+  font-family: game-pixel;
+  font-size: 12px;
+}
