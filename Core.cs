@@ -39,7 +39,10 @@ namespace Hash
         private Aliases _aliases;
         private Usage _usage;
 
-        private bool _open;
+        /// <summary>Whether the terminal was on screen last frame - used ONLY to notice when it leaves, so the
+        /// session's history and aliases are written out. What the key does is decided by asking the game.</summary>
+        private bool _wasOnScreen;
+
         private int _logsDrawnUpTo;
 
         /// <summary>The frame the terminal last answered the console key on. See <see cref="Toggle"/>.</summary>
@@ -67,7 +70,7 @@ namespace Hash
             }
 
             Build();
-            Register();
+            RegisterApp();
             Patch();
 
             Log.Msg("[hash] ready. Press the console key.");
@@ -91,14 +94,16 @@ namespace Hash
             _session = new Session(_index, new CommandRunner(_log), _usage, _history, _aliases);
         }
 
-        private void Register()
+        private void RegisterApp()
         {
             _app = Apps.Register(AppId, "Hash.Assets.hash", "hash", "hash")
                        .Orientation("landscape")
                        .NoIcon()
                        .OnCall("boot", _ => Boot())
                        .OnCall("nav", Nav)
-                       .OnCall("run", Run);
+                       .OnCall("run", Run)
+                       .OnCall("drain", _ => Drain())
+                       .OnCall("close", _ => { Toggle(); return ""; });
         }
 
         private void Patch()
@@ -144,10 +149,19 @@ namespace Hash
             if (frame == _toggledOnFrame) return true;
             _toggledOnFrame = frame;
 
-            if (_open)
+            // Asked, not remembered.
+            //
+            // A flag saying "the terminal is open" goes stale the moment anything else touches the phone, and
+            // Escape does exactly that: it lowers the phone WITHOUT closing the app, so the app is still the phone's
+            // current screen while nothing is on screen at all. The key then read the flag, decided the terminal was
+            // up, and closed something the player could not see - so the phone only came back on the second press,
+            // or not at all if the two answers kept passing each other.
+            //
+            // Both halves have to be true to count as visible, and both are read from the game.
+            if (_app.IsOpen && PhoneScreen.IsRaised)
             {
                 _app.Hide();
-                _open = false;
+                _wasOnScreen = false;
                 Persist();
                 return true;
             }
@@ -163,7 +177,7 @@ namespace Hash
                 return false;
             }
 
-            _open = true;
+            _wasOnScreen = true;
 
             // Tell the page it is on screen so it can put the caret back in the prompt.
             //
@@ -176,13 +190,16 @@ namespace Hash
 
         public override void OnUpdate()
         {
-            // The app can be closed from the phone itself - the back gesture, another app, the player putting the
-            // phone away. Noticing keeps the key a toggle instead of drifting out of step with what is on screen.
-            if (_open && _app != null && !_app.IsOpen)
-            {
-                _open = false;
-                Persist();
-            }
+            // The terminal can leave the screen without the key: the back gesture, another app, Escape, the player
+            // putting the phone away. None of those are worth acting on except to write history and aliases out
+            // while the session is still healthy - the key itself asks the game what is on screen, so nothing here
+            // has to be kept in step with it.
+            if (!_wasOnScreen || _app == null) return;
+
+            if (_app.IsOpen && PhoneScreen.IsRaised) return;
+
+            _wasOnScreen = false;
+            Persist();
         }
 
         public override void OnDeinitializeMelon()
@@ -212,15 +229,38 @@ namespace Hash
             _usage.Load(_store);
             _logsDrawnUpTo = _log.Ring.Count;
 
-            if (_session.Transcript.Count == 0) _session.Transcript.Add(_session.Banner());
+            if (_session.Transcript.Count == 0) _session.Transcript.Add(_session.Banner(Identity()));
 
             var json = new Json();
             json.Str("session", _session.Locked ? "session:client" : "session:host");
-            json.Num("commands", _index.Commands.Count);
+            json.Num("commands", _session.CommandCount);
             json.Str("prompt", "hash $");
+            json.Str("version", Info?.Version ?? "");
             json.Bool("locked", _session.Locked);
+            json.Bool("live", _session.Builtins.LogsOpen);
             json.Raw("banner", Lines(_session.Transcript.Window()));
             return json.Done();
+        }
+
+        /// <summary>
+        /// The first line of the banner: this terminal and the game it is attached to.
+        ///
+        /// Both versions are read rather than written down. A banner that claims 1.0.0 after the mod has been
+        /// updated, or names a game version the player is not running, is worse than no banner - it is the first
+        /// thing anyone screenshots when reporting a bug.
+        /// </summary>
+        private string Identity()
+        {
+            string mine = Info?.Version ?? "";
+            string game = "";
+
+            try { game = UnityEngine.Application.version ?? ""; }
+            catch { /* not worth a line in the log; the banner just says less */ }
+
+            // 'v' before the number for the same reason the header carries one: in this font a bare 1 is a
+            // vertical stroke and reads as a separator.
+            return "hash" + (mine.Length > 0 ? " v" + mine : "")
+                   + (game.Length > 0 ? " on Schedule I " + game : "");
         }
 
         /// <summary>A key that moves through what is on offer, or a keystroke that changed the line.</summary>
@@ -239,6 +279,25 @@ namespace Hash
             return json.Done();
         }
 
+        /// <summary>
+        /// Whatever the game has logged since the page last asked, when the log view is on.
+        ///
+        /// Polled rather than pushed. Emitting on every captured line would rebuild the page several times a second
+        /// while another mod chatters, and the player would be trying to type through it; asking once a second costs
+        /// one rebuild and only while `logs` is actually open.
+        /// </summary>
+        private string Drain()
+        {
+            // A hidden page still has its timer. Answering with nothing keeps a terminal left open behind a closed
+            // phone from rebuilding itself once a second for a screen nobody is looking at.
+            bool wanted = _wasOnScreen && _session.Builtins.LogsOpen;
+
+            var json = new Json();
+            json.Raw("lines", Lines(wanted ? Fresh() : Array.Empty<OutputLine>()));
+            json.Bool("live", _session.Builtins.LogsOpen);
+            return json.Done();
+        }
+
         /// <summary>A submitted line.</summary>
         private string Run(string line)
         {
@@ -247,9 +306,10 @@ namespace Hash
             if (!string.IsNullOrEmpty(result.Clipboard)) Clipboard.Put(result.Clipboard);
 
             var json = new Json();
-            json.Raw("lines", Lines(Drain(result.Lines)));
-            json.Num("commands", _index.Commands.Count);
+            json.Raw("lines", Lines(WithLogs(result.Lines)));
+            json.Num("commands", _session.CommandCount);
             json.Bool("cleared", result.Cleared);
+            json.Bool("live", _session.Builtins.LogsOpen);
             return json.Done();
         }
 
@@ -259,11 +319,19 @@ namespace Hash
         /// Only drained on submit rather than streamed: a page that rebuilt every time another mod logged a line
         /// would rebuild several times a second while the player was trying to type.
         /// </summary>
-        private IReadOnlyList<OutputLine> Drain(IReadOnlyList<OutputLine> ran)
+        private IReadOnlyList<OutputLine> WithLogs(IReadOnlyList<OutputLine> ran)
         {
             if (!_session.Builtins.LogsOpen) { _logsDrawnUpTo = _log.Ring.Count; return ran; }
 
             var all = new List<OutputLine>(ran);
+            all.AddRange(Fresh());
+            return all;
+        }
+
+        /// <summary>Captured lines the page has not seen, filtered by whatever `logs` was given.</summary>
+        private List<OutputLine> Fresh()
+        {
+            var fresh = new List<OutputLine>();
             string filter = _session.Builtins.LogsFilter;
 
             for (int i = Math.Max(0, _logsDrawnUpTo); i < _log.Ring.Count; i++)
@@ -274,11 +342,11 @@ namespace Hash
                     && !filter.Equals(Kind(line), StringComparison.OrdinalIgnoreCase)) continue;
 
                 _session.Push(line);
-                all.Add(line);
+                fresh.Add(line);
             }
 
             _logsDrawnUpTo = _log.Ring.Count;
-            return all;
+            return fresh;
         }
 
         private static string Kind(OutputLine line) => line.Kind switch

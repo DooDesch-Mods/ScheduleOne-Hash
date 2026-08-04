@@ -36,6 +36,7 @@ class Terminal {
   #session = $('session');
   #count = $('count');
   #prompt = $('prompt');
+  #ver = $('ver');
   #term = document.querySelector('.term');
 
   /** The whole transcript, oldest first. Only the tail is ever rendered - the engine has no virtualisation and no
@@ -49,11 +50,28 @@ class Terminal {
    *  complete a value the player did not type. */
   #echoing = false;
 
+  /** Whether the log view is on, so the ticker knows to stay quiet. */
+  #live = false;
+
+  /** How many lines back the view is scrolled. 0 is the bottom, which is where it belongs almost all of the time.
+   *
+   *  Without this the terminal has no scrollback at all: an output taller than the screen - `help all`, `history`,
+   *  a command that printed thirty lines - shows its tail and the beginning is simply unreachable. */
+  #back = 0;
+
   start() {
     const boot = this.#host('boot', '');
     this.#session.textContent = boot.session ?? 'session:?';
     this.#count.textContent = `${boot.commands ?? 0} commands`;
     this.#prompt.textContent = boot.prompt ?? 'hash $';
+
+    // Read rather than written into the page: a title bar still claiming 1.0 after an update is the kind of small
+    // wrongness that makes a bug report point at the wrong version.
+    //
+    // The v is not decoration. In this pixel font a 1 is a bare vertical stroke, so "hash 1.0.0" reads as a title,
+    // a pipe and a number - which is what it was mistaken for.
+    if (boot.version) this.#ver.textContent = 'v' + boot.version;
+    this.#live = boot.live === true;
 
     // Locked marks the header and is enforced by the host per command - the field stays usable, because looking
     // things up is exactly what a client came for and a disabled field would take that away too.
@@ -71,6 +89,20 @@ class Terminal {
     });
 
     this.#input.addEventListener('keydown', (e) => this.#key(e));
+
+    // The mouse wheel over the transcript, which is how anyone reaches for scrollback first. Three lines a notch,
+    // the same step a browser uses.
+    this.#scroll.addEventListener('wheel', (e) => {
+      this.#scrollBy(e.wheelDelta > 0 ? 3 : -3);
+      e.preventDefault();
+    });
+
+    // The log view, once a second and only while it is on.
+    //
+    // Polled rather than pushed: a line arriving from another mod would otherwise rebuild the page the moment it
+    // was logged, several times a second, while the player is trying to type through it. A second is fast enough
+    // to read as live and costs one rebuild - and the host answers with nothing at all when `logs` is off.
+    setInterval(() => this.#drain(), 1000);
 
     // The phone's back gesture and Escape both arrive here. A suggestion list open means Escape dismisses it; with
     // nothing open the app should close, so the event is left to the host.
@@ -106,8 +138,15 @@ class Terminal {
 
       case 'ArrowUp': this.#move('up'); return;
       case 'ArrowDown': this.#move('down'); return;
-      case 'PageUp': this.#move('pageup'); return;
-      case 'PageDown': this.#move('pagedown'); return;
+      // Windows deletes a word with Ctrl+Backspace; TMP has no such thing and would take a single character, so
+      // the page does it and the renderer keeps TMP off the key for as long as Ctrl is down.
+      case 'Backspace': if (e.ctrlKey) this.#setLine(this.#input.value.replace(/\s*\S+\s*$/, '')); return;
+      case 'Delete': if (e.ctrlKey) this.#setLine(this.#input.value.replace(/^\s*\S+\s*/, '')); return;
+
+      // Shift is the scrollback modifier every terminal emulator uses; without it the key walks the suggestion
+      // list, which is the more common thing to want while typing.
+      case 'PageUp': if (e.shiftKey) this.#scrollBy(Terminal.Shown - 2); else this.#move('pageup'); return;
+      case 'PageDown': if (e.shiftKey) this.#scrollBy(-(Terminal.Shown - 2)); else this.#move('pagedown'); return;
     }
 
     if (!e.ctrlKey) return;
@@ -116,8 +155,11 @@ class Terminal {
       case 'l': this.#run('clear'); return;   // through the host, or grep would still see it
       case 'u': this.#setLine(''); return;
       case 'w': this.#setLine(this.#input.value.replace(/\s*\S+\s*$/, '')); return;
-      case 'c': this.#cancel(); return;
+      // Copy when something is selected, interrupt when nothing is - which is what a Windows terminal does, and
+      // the field has already put the selection on the clipboard by the time this runs.
+      case 'c': if (!e.hasSelection) this.#cancel(); return;
       case 'r': this.#move('search'); return;
+      case 'd': s1.call('close', ''); return;   // EOF, the way a shell reads it
     }
   }
 
@@ -127,7 +169,9 @@ class Terminal {
   #move(action) {
     const reply = this.#host('nav', JSON.stringify({ line: this.#input.value, action }));
 
-    if (typeof reply.line === 'string' && reply.line !== this.#input.value) this.#setLine(reply.line);
+    // `false`: the host already told us what to show, and asking it again as if the player had typed the recalled
+    // line would reset the very walk that produced it - so Up would hand back the newest entry over and over.
+    if (typeof reply.line === 'string' && reply.line !== this.#input.value) this.#setLine(reply.line, false);
     this.#apply(reply);
   }
 
@@ -151,6 +195,7 @@ class Terminal {
 
   /** Send a line to the host and draw what came back. `clear` answers with nothing, which empties the screen. */
   #run(line) {
+    this.#back = 0;
     const reply = this.#host('run', line);
 
     this.#lines = reply.cleared ? [] : this.#lines;
@@ -158,10 +203,42 @@ class Terminal {
 
     if (typeof reply.commands === 'number') this.#count.textContent = `${reply.commands} commands`;
 
+    // `logs` may have just been switched on or off, and the host says so with every answer rather than the page
+    // parsing the line to find out.
+    this.#live = reply.live === true;
+
     this.#renderScroll();
   }
 
   // ------------------------------------------------------------------------------------------------ render --
+
+  /** Move the view through the buffer. Clamped at both ends, and it never scrolls past what the page kept. */
+  #scrollBy(lines) {
+    const room = this.#room();
+    const most = Math.max(0, this.#lines.length - room);
+
+    const wanted = Math.min(most, Math.max(0, this.#back + lines));
+    if (wanted === this.#back) return;
+
+    this.#back = wanted;
+    this.#renderScroll();
+  }
+
+  /** Pull in whatever the game logged on its own since the last tick. */
+  #drain() {
+    if (!this.#live) return;
+
+    const reply = this.#host('drain', '');
+    if (!reply.lines || reply.lines.length === 0) return;
+
+    for (const line of reply.lines) this.#lines.push(line);
+
+    // Stay where the eye is. Without this a line arriving while the player reads scrollback shifts the whole view
+    // up by one, because the offset is counted from the end.
+    if (this.#back > 0) this.#back += reply.lines.length;
+
+    this.#renderScroll();
+  }
 
   /** Ask the host what the current line should look like, and draw the answer. */
   #refresh() {
@@ -169,8 +246,13 @@ class Terminal {
   }
 
   #apply(reply) {
+    this.#back = 0;
     this.#state.suggest = reply.suggest ?? '';
     this.#suggest.innerHTML = this.#state.suggest;
+
+    // The inline suggestion, drawn behind the caret by the renderer. Only the REMAINDER goes here - the host sends
+    // "ve" for a typed "gi" - and it is empty unless the highlighted row actually continues what was typed.
+    this.#input.setAttribute('data-ghost', reply.ghost ?? '');
 
     // The suggestion block took rows away from the transcript, so redraw it shorter. The engine will not do this
     // for us: a flex child with min-height: 0 still refuses to give way here, and the two blocks end up drawn on
@@ -184,13 +266,16 @@ class Terminal {
     this.#suggest.innerHTML = '';
   }
 
-  /** Write to the field without asking the host to complete what we just wrote. */
-  #setLine(text) {
+  /** Write to the field without asking the host to complete what we just wrote.
+   *
+   *  `refresh` is false when the text came from the host: it already knows, and telling it again as if the player
+   *  had typed would throw away whatever walk it is in the middle of. */
+  #setLine(text, refresh = true) {
     this.#echoing = true;
     this.#input.value = text;
     this.#echoing = false;
 
-    this.#refresh();
+    if (refresh) this.#refresh();
   }
 
   /** The transcript as a single text leaf, tail first and only as much of it as there is room for. The host keeps
@@ -198,15 +283,27 @@ class Terminal {
   #renderScroll() {
     if (this.#lines.length > Terminal.Kept) this.#lines = this.#lines.slice(-Terminal.Kept);
 
-    const room = Math.max(Terminal.MinLines, Terminal.Shown - this.#suggestRows());
+    const room = this.#room();
+    if (this.#back > Math.max(0, this.#lines.length - room)) this.#back = Math.max(0, this.#lines.length - room);
 
-    this.#scroll.innerHTML = this.#lines
-      .slice(-room)
-      .map(({ cls, text }) => {
-        const cut = clip(text);
-        return cls ? `<span class="${cls}">${esc(cut)}</span>` : esc(cut);
-      })
-      .join('<br>');
+    const end = this.#lines.length - this.#back;
+    const shown = this.#lines.slice(Math.max(0, end - room), end);
+
+    const rows = shown.map(({ cls, text }) => {
+      const cut = clip(text);
+      return cls ? `<span class="${cls}">${esc(cut)}</span>` : esc(cut);
+    });
+
+    // Say how far down the buffer goes. A scrolled-up terminal that looks exactly like a terminal at the bottom is
+    // how people end up thinking output went missing.
+    if (this.#back > 0) rows.push(`<span class="dim">-- ${this.#back} more below --</span>`);
+
+    this.#scroll.innerHTML = rows.join('<br>');
+  }
+
+  /** Lines the transcript may draw right now. The suggestion block takes its rows off the top. */
+  #room() {
+    return Math.max(Terminal.MinLines, Terminal.Shown - this.#suggestRows());
   }
 
   /** Rows the suggestion block occupies right now. One <br> per row boundary, so rows are breaks plus one. */
@@ -254,6 +351,6 @@ Terminal.MinLines = 4;
 
 /** Lines the page keeps in hand for a redraw. Above the drawn window so shrinking and growing the suggestion block
  *  does not permanently throw lines away, but far below what the host keeps. */
-Terminal.Kept = 60;
+Terminal.Kept = 200;
 
 new Terminal().start();

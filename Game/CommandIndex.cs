@@ -45,6 +45,7 @@ namespace Hash.Game
         {
             _dirty = false;
             ModAttribution.Forget();
+            S1ApiCommands.Forget();
 
             var found = new List<CommandInfo>();
             var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -79,10 +80,23 @@ namespace Hash.Game
                 Core.Log?.Error("[hash] reading the command list failed: " + e);
             }
 
+            // Second source. S1API keeps its commands in a dictionary of its own and routes to them from a prefix on
+            // SubmitCommand, so they run when typed but are invisible in Console.Commands - which is why a mod using
+            // it had to register itself a second time just to be discoverable.
+            int native = found.Count;
+            foreach (CommandInfo info in S1ApiCommands.All(seen))
+            {
+                if (!seen.Add(info.Word)) continue;
+
+                found.Add(info);
+            }
+
             found.Sort((a, b) => string.Compare(a.Word, b.Word, StringComparison.OrdinalIgnoreCase));
             _commands = found;
 
-            Core.Log?.Msg($"[hash] indexed {found.Count} command(s).");
+            int viaApi = found.Count - native;
+            Core.Log?.Msg($"[hash] indexed {found.Count} command(s)"
+                          + (viaApi > 0 ? $", {viaApi} of them through S1API." : "."));
         }
 
         private static CommandInfo Describe(GameConsole.ConsoleCommand command)

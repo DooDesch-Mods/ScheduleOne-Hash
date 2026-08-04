@@ -99,11 +99,25 @@ body {
 .suggest:empty { display: none; }
 
 .sig { color: #FFD27F; }
+
+/* The argument being typed, one step brighter than the rest of the shape. A warm white rather than a fourth hue:
+ * the block already carries amber for the shape and green for a source, and a new colour here would be read as
+ * meaning something it does not. */
+.cur { color: #FFF6E5; }
+
 .desc { color: #cfe9dc; }
 .rule { color: #16301f; }
 .pick { color: #FFD27F; }
 .src-mod { color: #7DFFB2; }
 .src-game { color: #4d6b58; }
+
+/* A line you ran before is not framing, and grey filed it with the framing. Amber is the colour this terminal
+ * already uses for "the thing you are pointing at", and a recalled command is exactly that. */
+.src-history { color: #FFD27F; }
+
+/* What Tab would insert, shown while the list is shut. Dimmer than the shape above it: it is a preview of a
+ * keystroke, not part of the command being described. */
+.ghost { color: #6f8f7d; }
 
 /* --- prompt ------------------------------------------------------------------------------------------------- */
 
@@ -141,4 +155,8 @@ body {
    * a text box - and it is the one part of the prompt row that is allowed to be loud. */
   caret-color: #FFD27F;
   -s1-caret-width: 7px;
+
+  /* The rest of the highlighted suggestion, behind the caret. Dim enough to read as "not typed yet", bright
+   * enough to read at all - the same muted grey fish and PSReadLine use for the same thing. */
+  -s1-ghost-color: #47664f;
 }

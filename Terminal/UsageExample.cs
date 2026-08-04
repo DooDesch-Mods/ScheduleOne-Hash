@@ -52,6 +52,17 @@ namespace Hash.Terminal
             ["setstaminareserve"] = "setstaminareserve <amount>",
             ["setmovespeed"] = "setmovespeed <multiplier>",
             ["setjumpforce"] = "setjumpforce <multiplier>",
+            ["setemotion"] = "setemotion <emotion>",
+            ["disable"] = "disable <label>",
+            ["enable"] = "enable <label>",
+            ["disablenpcasset"] = "disablenpcasset <asset|all>",
+            ["playcutscene"] = "playcutscene <cutscene>",
+            ["sethealth"] = "sethealth <amount>",
+            ["setquantity"] = "setquantity <amount>",
+            ["settimescale"] = "settimescale <scale>",
+            ["setgravitymultiplier"] = "setgravitymultiplier <multiplier>",
+            ["setdayduration"] = "setdayduration <minutes>",
+            ["setlawintensity"] = "setlawintensity <intensity>",
         };
 
         /// <summary>Commands whose last argument is genuinely optional, where the example always shows it.</summary>
@@ -63,17 +74,19 @@ namespace Hash.Terminal
         /// <summary>
         /// The line shown above the suggestions: the command and its arguments.
         ///
-        /// A command that already writes its own shape into the example - anything containing an angle bracket -
-        /// keeps it, because whoever wrote that knew better than any heuristic here.
+        /// The table wins, then the command's own shape if it wrote one - anything containing an angle bracket -
+        /// then the heuristic. That order matters for the several vanilla commands that write half a shape:
+        /// `setrelationship &lt;npc_id&gt; 5` names its first argument and then shows a literal for the second, so
+        /// taking it at face value tells the player the value has to be five.
         /// </summary>
         public static string Signature(string word, string example)
         {
             if (string.IsNullOrEmpty(word)) return "";
 
-            if (!string.IsNullOrEmpty(example) && example.IndexOf('<') >= 0)
-                return Collapse(FirstExample(example));
-
             if (Known.TryGetValue(word, out string known)) return known;
+
+            if (!string.IsNullOrEmpty(example) && example.IndexOf('<') >= 0)
+                return Tighten(Collapse(FirstExample(example)));
 
             return FromExample(word, example);
         }
@@ -189,6 +202,32 @@ namespace Hash.Terminal
 
         private static List<string> Split(string line) =>
             new List<string>((line ?? "").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+
+        /// <summary>
+        /// Make every placeholder one token, so counting arguments by spaces still works.
+        ///
+        /// A shape written by hand often spells a placeholder out - `setquestentrystate &lt;quest name&gt;
+        /// &lt;entry index&gt; &lt;state&gt;` reads well and describes three arguments, but splits into five words.
+        /// Everything downstream counts tokens: which argument the caret is in, which one to highlight, how many the
+        /// command takes. An underscore keeps the reading and fixes the counting.
+        /// </summary>
+        private static string Tighten(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return "";
+
+            var sb = new StringBuilder(value.Length);
+            bool inside = false;
+
+            foreach (char c in value)
+            {
+                if (c == '<' || c == '[') inside = true;
+                else if (c == '>' || c == ']') inside = false;
+
+                sb.Append(inside && c == ' ' ? '_' : c);
+            }
+
+            return sb.ToString();
+        }
 
         private static string Collapse(string value)
         {

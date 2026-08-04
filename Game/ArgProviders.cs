@@ -1,12 +1,17 @@
 using Hash.Terminal;
+using Il2CppScheduleOne.AvatarFramework.Emotions;
+using Il2CppScheduleOne.Cutscenes;
 using Il2CppScheduleOne.DevUtilities;
 using Il2CppScheduleOne.Employees;
 using Il2CppScheduleOne.ItemFramework;
 using Il2CppScheduleOne.Map;
 using Il2CppScheduleOne.NPCs;
+using Il2CppScheduleOne.PlayerScripts;
 using Il2CppScheduleOne.Product;
 using Il2CppScheduleOne.Product.Packaging;
 using Il2CppScheduleOne.Property;
+using Il2CppScheduleOne.Quests;
+using Il2CppScheduleOne.Variables;
 using Il2CppScheduleOne.Vehicles;
 using UnityEngine;
 using GameConsole = Il2CppScheduleOne.Console;
@@ -67,9 +72,29 @@ namespace Hash.Game
             Slot("addemployee", 0, () => EnumNames<EEmployeeType>());
             Slot("addemployee", 1, () => Properties());
 
+            // ---- quests ------------------------------------------------------------------------------------
+            Slot("setqueststate", 0, Quests);
+            Slot("setqueststate", 1, () => EnumNames<EQuestState>());
+            Slot("setquestentrystate", 0, Quests);
+            Slot("setquestentrystate", 2, () => EnumNames<EQuestState>());
+
+            // ---- the rest of the game's own vocabularies -----------------------------------------------------
+            Slot("setvar", 0, Variables);
+            Slot("setemotion", 0, Emotions);
+            Slot("playcutscene", 0, Cutscenes);
+
+            // Two commands nobody could use without this. The labels live on a list in the scene and are written
+            // nowhere else - not in the description, not in the example - so `disable` and `enable` shipped with
+            // exactly one known argument: the `pp` in their own example.
+            Slot("disable", 0, LabelledObjects);
+            Slot("enable", 0, LabelledObjects);
+
             // ---- fixed choices the game does not spell out anywhere -----------------------------------------
             Slot("setpoliceignoreplayers", 0, () => Literals("true", "false"));
             Slot("setweather", 0, () => Literals("clear", "lightrain", "heavyrain"));
+            Slot("setrelationship", 1, () => Literals("0", "1", "2", "3", "4", "5"));
+            Slot("bind", 0, () => EnumNames<KeyCode>());
+            Slot("unbind", 0, () => EnumNames<KeyCode>());
         }
 
         /// <summary>Note that a mod added this item, so its rows can say which one.</summary>
@@ -259,6 +284,100 @@ namespace Hash.Game
                 string code = vehicle.VehicleCode;
                 if (!string.IsNullOrWhiteSpace(code))
                     yield return new ArgValue(code.ToLowerInvariant(), ModAttribution.Vanilla, true);
+            }
+        }
+
+        /// <summary>
+        /// Every quest, by the title the command matches on.
+        ///
+        /// Spaces become underscores because that is what the command expects - it undoes the substitution before it
+        /// looks the quest up, since a console line is split on spaces and a title like "Making a name" would arrive
+        /// as three arguments.
+        /// </summary>
+        private static IEnumerable<ArgValue> Quests()
+        {
+            Il2CppSystem.Collections.Generic.List<Quest> all = Quest.Quests;
+            if (all == null) yield break;
+
+            for (int i = 0; i < all.Count; i++)
+            {
+                Quest quest = all[i];
+                if (quest == null) continue;
+
+                string title = quest.Title;
+                if (!string.IsNullOrWhiteSpace(title))
+                    yield return new ArgValue(title.Replace(' ', '_').ToLowerInvariant(), ModAttribution.Vanilla, true);
+            }
+        }
+
+        private static IEnumerable<ArgValue> Variables()
+        {
+            VariableDatabase database = NetworkSingleton<VariableDatabase>.InstanceExists
+                ? NetworkSingleton<VariableDatabase>.Instance
+                : null;
+
+            Il2CppSystem.Collections.Generic.List<BaseVariable> all = database?.VariableList;
+            if (all == null) yield break;
+
+            for (int i = 0; i < all.Count; i++)
+            {
+                BaseVariable variable = all[i];
+                if (variable == null || string.IsNullOrWhiteSpace(variable.Name)) continue;
+
+                yield return new ArgValue(variable.Name.ToLowerInvariant(), ModAttribution.Vanilla, true);
+            }
+        }
+
+        /// <summary>The faces the player's own avatar knows. Read off the local player rather than a global list -
+        /// that is where the command looks them up too, and there is no list anywhere else.</summary>
+        private static IEnumerable<ArgValue> Emotions()
+        {
+            AvatarEmotionManager emotions = Player.Local?.Avatar?.EmotionManager;
+
+            Il2CppSystem.Collections.Generic.List<AvatarEmotionPreset> all = emotions?.EmotionPresetList;
+            if (all == null) yield break;
+
+            for (int i = 0; i < all.Count; i++)
+            {
+                AvatarEmotionPreset preset = all[i];
+                if (preset == null || string.IsNullOrWhiteSpace(preset.PresetName)) continue;
+
+                yield return new ArgValue(preset.PresetName.ToLowerInvariant(), ModAttribution.Vanilla, true);
+            }
+        }
+
+        private static IEnumerable<ArgValue> Cutscenes()
+        {
+            CutsceneManager manager = Singleton<CutsceneManager>.InstanceExists
+                ? Singleton<CutsceneManager>.Instance
+                : null;
+
+            Il2CppSystem.Collections.Generic.List<Cutscene> all = manager?.Cutscenes;
+            if (all == null) yield break;
+
+            for (int i = 0; i < all.Count; i++)
+            {
+                Cutscene cutscene = all[i];
+                if (cutscene == null || string.IsNullOrWhiteSpace(cutscene.Name)) continue;
+
+                yield return new ArgValue(cutscene.Name.ToLowerInvariant(), ModAttribution.Vanilla, true);
+            }
+        }
+
+        /// <summary>The named GameObjects `disable` and `enable` accept.</summary>
+        private static IEnumerable<ArgValue> LabelledObjects()
+        {
+            GameConsole console = Singleton<GameConsole>.InstanceExists ? Singleton<GameConsole>.Instance : null;
+
+            Il2CppSystem.Collections.Generic.List<GameConsole.LabelledGameObject> all = console?.LabelledGameObjectList;
+            if (all == null) yield break;
+
+            for (int i = 0; i < all.Count; i++)
+            {
+                GameConsole.LabelledGameObject labelled = all[i];
+                if (labelled == null || string.IsNullOrWhiteSpace(labelled.Label)) continue;
+
+                yield return new ArgValue(labelled.Label.ToLowerInvariant(), ModAttribution.Vanilla, true);
             }
         }
 

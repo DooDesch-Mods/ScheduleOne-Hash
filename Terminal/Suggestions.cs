@@ -54,6 +54,10 @@ namespace Hash.Terminal
         /// <summary>History rows in a mixed list. A handful is a reminder; more would bury the real candidates.</summary>
         public const int MaxHistoryRows = 3;
 
+        /// <summary>History rows on an untouched prompt, where nothing is competing with them - one screenful, so
+        /// holding Up walks back through a session the way it does in a shell.</summary>
+        public const int MaxHistoryRowsAlone = 8;
+
         private readonly ICommandCatalogue _catalogue;
         private readonly Usage _usage;
         private readonly History _history;
@@ -79,8 +83,9 @@ namespace Hash.Terminal
         {
             if (line == null) line = "";
 
-            // Only the last statement matters: after `settime 1200 ; give ` the player is completing `give`.
-            string tail = LastStatement(line);
+            // Only the last statement matters: after `settime 1200 ; give ` the player is completing `give`. And
+            // inside that statement, only what will actually run: `repeat 5 give ` is completing `give`.
+            string tail = CommandLine.Unwrap(LastStatement(line));
 
             CommandLine.TokenAtCaret(tail, out int tokenIndex, out string prefix);
 
@@ -103,6 +108,19 @@ namespace Hash.Terminal
                 rows.Add(new Suggestion(SuggestionKind.Command, command.Word, command.Source, command.IsVanilla, hit.Score));
             }
 
+            // The terminal's own commands rank with the game's rather than after them. They are the only way to reach
+            // `help` or `grep`, and a list that offered every command except the ones this mod added would be an odd
+            // thing to ship.
+            foreach (CommandInfo builtin in Builtins.Catalogue)
+            {
+                if (InCatalogue(builtin.Word) != null) continue;   // a game command of that name wins, and runs
+
+                MatchResult hit = FuzzyMatcher.Match(builtin.Word, prefix);
+                if (!hit.IsMatch) continue;
+
+                rows.Add(new Suggestion(SuggestionKind.Command, builtin.Word, builtin.Source, false, hit.Score));
+            }
+
             foreach (KeyValuePair<string, string> alias in _aliases.All)
             {
                 MatchResult hit = FuzzyMatcher.Match(alias.Key, prefix);
@@ -114,9 +132,16 @@ namespace Hash.Terminal
             Usage.Order(rows, s => _usage.CommandCount(s.Value));
             Trim(rows, MaxMatches);
 
-            // History goes on the end rather than competing for the visible rows: it answers a different question,
-            // and a line you ran before should never push the command you are typing off the list.
-            rows.AddRange(HistoryRows(wholeLine, MaxHistoryRows));
+            // History goes at the BOTTOM, oldest first - which puts the last thing you ran on the very last row.
+            //
+            // The block is drawn above the prompt and grows downwards, so the bottom row is the one nearest the
+            // hand. Down from a closed list opens on the commands; Up opens on the last row, which is the command
+            // you just ran; Up again is the one before it. Both arrows land where a shell puts them, and neither
+            // needed a second meaning to get there.
+            List<Suggestion> past = HistoryRows(wholeLine, prefix.Length == 0 ? MaxHistoryRowsAlone : MaxHistoryRows);
+            past.Reverse();
+
+            rows.AddRange(past);
 
             return new SuggestionSet(rows, null, -1, prefix);
         }
@@ -127,13 +152,15 @@ namespace Hash.Terminal
         {
             List<string> tokens = CommandLine.Tokenise(statement);
             string word = tokens.Count > 0 ? tokens[0] : "";
+            int argIndex = tokenIndex - 1;
+
+            Resolve(ref word, ref argIndex);
 
             CommandInfo command = Find(word);
-            int argIndex = tokenIndex - 1;
 
             var rows = new List<Suggestion>();
 
-            foreach (ArgValue value in _catalogue.ValuesFor(word, argIndex))
+            foreach (ArgValue value in Values(word, argIndex))
             {
                 MatchResult hit = FuzzyMatcher.Match(value.Value, prefix);
                 if (!hit.IsMatch) continue;
@@ -161,6 +188,71 @@ namespace Hash.Terminal
             return new SuggestionSet(rows, command, argIndex, prefix);
         }
 
+        /// <summary>
+        /// The values for one argument: the game's, or the terminal's own.
+        ///
+        /// The terminal's commands take arguments too, and nothing in the game can know what they are - the aliases
+        /// live here, the topics live here, the log filters live here. Left to the catalogue alone, `unalias` had a
+        /// completion list of nothing while the answer sat two fields away.
+        /// </summary>
+        private IEnumerable<ArgValue> Values(string word, int argIndex)
+        {
+            IReadOnlyList<ArgValue> fromGame = _catalogue.ValuesFor(word, argIndex);
+            if (fromGame.Count > 0) return fromGame;
+
+            if (argIndex != 0) return fromGame;
+
+            switch (word.ToLowerInvariant())
+            {
+                case "unalias": return Aliases();
+                case "help": return Topics();
+                case "logs": return Literals("off", "warn", "error", "log");
+                default: return fromGame;
+            }
+        }
+
+        private IEnumerable<ArgValue> Aliases()
+        {
+            foreach (KeyValuePair<string, string> alias in _aliases.All)
+                yield return new ArgValue(alias.Key, "Alias", false);
+        }
+
+        /// <summary>What `help` takes: a topic, `all`, or any command word - and the words are already offered by the
+        /// command list, so only the ones nothing else would name go here.</summary>
+        private static IEnumerable<ArgValue> Topics()
+        {
+            yield return new ArgValue("all", Builtins.Source, false);
+
+            foreach ((string topic, string[] _) in HelpTopics.Groups)
+                yield return new ArgValue(topic, Builtins.Source, false);
+
+            yield return new ArgValue(HelpTopics.Terminal, Builtins.Source, false);
+        }
+
+        private static IEnumerable<ArgValue> Literals(params string[] values)
+        {
+            foreach (string value in values) yield return new ArgValue(value, Builtins.Source, false);
+        }
+
+        /// <summary>
+        /// Follow an alias to the command it stands for, and move the argument index by what it already filled in.
+        ///
+        /// Both halves are needed. Without the first, an alias completes nothing at all - which is backwards, since
+        /// the whole point of `alias gk "give ogkush"` is to type it often. Without the second, the caret in `gk 5`
+        /// would be offered items for what is actually the quantity.
+        /// </summary>
+        private void Resolve(ref string word, ref int argIndex)
+        {
+            string expansion = _aliases.Expand(word);
+            if (string.IsNullOrEmpty(expansion)) return;
+
+            List<string> parts = CommandLine.Tokenise(expansion);
+            if (parts.Count == 0) return;
+
+            word = parts[0];
+            argIndex += parts.Count - 1;
+        }
+
         // ------------------------------------------------------------------------------------------ history --
 
         private List<Suggestion> HistoryRows(string line, int budget)
@@ -182,7 +274,21 @@ namespace Hash.Terminal
 
         // -------------------------------------------------------------------------------------------- shared --
 
-        public CommandInfo Find(string word)
+        /// <summary>Anything the terminal can describe: the game's commands and its own.</summary>
+        public CommandInfo Find(string word) => InCatalogue(word) ?? InBuiltins(word);
+
+        /// <summary>
+        /// Whether the GAME registered this word.
+        ///
+        /// Narrower than <see cref="Find"/> on purpose, and the two must not be merged: this is what decides whether
+        /// a builtin steps aside, so counting the builtins themselves would make every one of them refuse to run.
+        /// </summary>
+        public bool IsCommand(string word) => InCatalogue(word) != null;
+
+        /// <summary>Whether anything already answers to this word - what an alias must not shadow.</summary>
+        public bool IsKnown(string word) => Find(word) != null;
+
+        private CommandInfo InCatalogue(string word)
         {
             if (string.IsNullOrEmpty(word)) return null;
 
@@ -192,7 +298,15 @@ namespace Hash.Terminal
             return null;
         }
 
-        public bool IsCommand(string word) => Find(word) != null;
+        private static CommandInfo InBuiltins(string word)
+        {
+            if (string.IsNullOrEmpty(word)) return null;
+
+            foreach (CommandInfo builtin in Builtins.Catalogue)
+                if (string.Equals(builtin.Word, word, StringComparison.OrdinalIgnoreCase)) return builtin;
+
+            return null;
+        }
 
         private static void Trim(List<Suggestion> rows, int max)
         {

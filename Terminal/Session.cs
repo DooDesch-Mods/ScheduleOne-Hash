@@ -10,13 +10,13 @@ namespace Hash.Terminal
         public string Suggest { get; internal set; } = "";
 
         /// <summary>
-        /// The grey completion that would sit behind the caret, or an empty string.
+        /// The dimmed completion sitting behind the caret, or an empty string - what Tab would add, and nothing else.
         ///
-        /// Computed but not currently drawn. Placing it needs the typed text measured in the field's own font, and
-        /// the field cannot be monospaced - a form control's text is written by the control with rich text off, so
-        /// the fixed-advance tag never reaches it. Sideload would have to expose a text measurement for an app to
-        /// put this in the right place, and until it does the highlighted row above the prompt shows the same thing
-        /// a character further away.
+        /// The page hands it to the renderer as <c>data-ghost</c> and it is drawn in the field's own font. It took a
+        /// while to find a way that did not need measuring: the field cannot be monospaced, because a form control
+        /// writes its text with rich text off and the fixed-advance tag never reaches it. The answer was to let TMP
+        /// lay it out - the ghost element holds the typed text too, made invisible, so the visible part begins
+        /// exactly where the typing stops.
         /// </summary>
         public string Ghost { get; internal set; } = "";
     }
@@ -65,10 +65,14 @@ namespace Hash.Terminal
         /// </summary>
         private int _window;
 
-        /// <summary>Where the history walk has got to, and what it started from. -1 means not walking; the draft is
-        /// what the player had typed before they started, so walking back past the end restores it.</summary>
-        private int _historyCursor = -1;
-        private string _historyDraft = "";
+        /// <summary>
+        /// Whether the rows are drawn, as opposed to just the shape and what Tab would do.
+        ///
+        /// Closed while typing and opened by an arrow key. The list is eight lines tall and it takes them off the
+        /// transcript, so leaving it open meant the output of the command you just ran was half hidden behind
+        /// suggestions for the command you were typing next.
+        /// </summary>
+        private bool _expanded;
 
         /// <summary>How far back Ctrl+R has looked, and for what.</summary>
         private int _searchSkip;
@@ -96,20 +100,46 @@ namespace Hash.Terminal
         /// off.</summary>
         public bool Locked => !_runner.CanRun;
 
-        /// <summary>The banner the page shows on first open: what this terminal is, and why it might be locked.</summary>
-        public IReadOnlyList<OutputLine> Banner()
+        /// <summary>
+        /// How many words the prompt accepts.
+        ///
+        /// Counted the way the completion list is built rather than straight off the catalogue, so the header cannot
+        /// claim a number the list then disagrees with: the terminal's own commands are in that list too, and a
+        /// header saying 65 above a list of 75 is the kind of small lie that makes people distrust the rest.
+        /// </summary>
+        public int CommandCount
         {
-            var lines = new List<OutputLine>
+            get
             {
-                OutputLine.Dim($"hash - {_catalogue.Commands.Count} commands. Tab completes, help lists, "
-                               + "Up walks what you ran before."),
-            };
+                int count = _catalogue.Commands.Count;
 
-            if (Locked)
-            {
-                lines.Add(OutputLine.Error(_runner.RefusalReason));
-                lines.Add(OutputLine.Dim("Looking things up still works."));
+                foreach (CommandInfo builtin in Builtins.Catalogue)
+                    if (!_suggestions.IsCommand(builtin.Word)) count++;
+
+                return count;
             }
+        }
+
+        /// <summary>
+        /// What the terminal prints when it starts.
+        ///
+        /// Shaped like a shell's, because it is one: the first line names the program and what it is attached to, the
+        /// second says how many commands are loaded and where to go next. Every shell worth using opens this way -
+        /// cmd states its build, PowerShell its version, python tells you to type help. What it does NOT do is
+        /// explain the keyboard: a line reading "Tab completes, Up walks what you ran before" is a tooltip, it says
+        /// nothing about THIS session, and it is still sitting there on the twentieth open.
+        ///
+        /// <paramref name="identity"/> comes from the host because only the host can ask the game its version.
+        /// </summary>
+        public IReadOnlyList<OutputLine> Banner(string identity)
+        {
+            var lines = new List<OutputLine>();
+
+            if (!string.IsNullOrEmpty(identity)) lines.Add(OutputLine.Out(identity));
+
+            lines.Add(OutputLine.Dim($"{CommandCount} commands loaded. Type 'help' for the list."));
+
+            if (Locked) lines.Add(OutputLine.Error(_runner.RefusalReason + " Lookups still work."));
 
             return lines;
         }
@@ -119,8 +149,14 @@ namespace Hash.Terminal
         /// <summary>The player typed. Recompute what is on offer and drop any walk they were in the middle of.</summary>
         public NavResult Typed(string line)
         {
-            _historyCursor = -1;
             _searchSkip = 0;
+
+            // An open list STAYS open while the line is edited. Opening it is a decision - "show me what there is" -
+            // and typing the next letter is the player narrowing that list, not withdrawing the question. Closing it
+            // on every keystroke meant re-opening it after every keystroke.
+            //
+            // An empty line ends it, because there is nothing left to narrow, and so does submitting (see Run).
+            if (string.IsNullOrWhiteSpace(line)) _expanded = false;
 
             return Offer(line, resetSelection: true);
         }
@@ -147,50 +183,63 @@ namespace Hash.Terminal
         /// <summary>
         /// Up and Down.
         ///
-        /// With a list open they walk it, wrapping at both ends - a list you can only leave by pressing the other
-        /// arrow the same number of times is a list you stop using. With no list open, Up walks history instead,
-        /// which is what every shell does and what the vanilla console did before this mod took the key.
+        /// They do exactly one thing: move the highlight through the list. Nothing reaches the prompt until Tab.
+        /// A key that both moves and types is the worst of both - looking at the previous command means having it
+        /// pasted in, and then deleted again before anything else can be typed.
+        ///
+        /// History is IN that list rather than a second mode reached through the same keys. Two modes on two keys
+        /// is how Up ended up meaning "recall" from an empty prompt and "move" from a full one, and how the fourth
+        /// press of Down followed by one Up jumped out of the list entirely.
         /// </summary>
         private NavResult Move(string line, int by)
         {
-            if (_current.Any)
+            // Nothing has worked out a list yet: the terminal was just opened, or the last thing that happened was a
+            // submit. An arrow asks to see what there is, so compute it now - and stop there, because moving as well
+            // would step straight past the row the player asked to look at.
+            if (_current.Rows.Count == 0)
             {
-                int count = _current.Rows.Count;
-                _selected = ((_selected + by) % count + count) % count;
+                _current = _suggestions.For(line);
+                _selected = 0;
+                _window = 0;
+            }
+
+            if (!_current.Any) return Draw(line);
+
+            // The first arrow OPENS the list and stops there - moving as well would step straight past the row the
+            // player asked to look at. WHICH row depends on the arrow: Down opens at the top, on the commands, and
+            // Up opens at the bottom, where history is and where the thing you just ran sits on the last line.
+            if (!_expanded)
+            {
+                _expanded = true;
+                _selected = by < 0 ? _current.Rows.Count - 1 : 0;
+
                 ScrollToSelection();
                 return Draw(line);
             }
 
-            return WalkHistory(line, by);
+            int count = _current.Rows.Count;
+            _selected = ((_selected + by) % count + count) % count;
+
+            ScrollToSelection();
+            return Draw(line);
         }
 
-        private NavResult WalkHistory(string line, int by)
+        /// <summary>
+        /// Put a line straight into the prompt with the list closed - what Ctrl+R does.
+        ///
+        /// Reverse search is the one place a key still types rather than highlights, because that is the whole
+        /// gesture: keep pressing and keep replacing until the line you meant is there. A recalled line is also not
+        /// a prefix anybody is completing, so offering to complete it would replace the list of everything with a
+        /// list of one.
+        /// </summary>
+        private NavResult Recall(string line)
         {
-            if (_history.Count == 0) return Draw(line);
+            _current = SuggestionSet.Empty;
+            _selected = 0;
+            _window = 0;
+            _expanded = false;
 
-            if (_historyCursor < 0)
-            {
-                if (by > 0) return Draw(line);   // Down with no walk in progress does nothing
-
-                _historyDraft = line ?? "";
-                _historyCursor = 0;
-            }
-            else
-            {
-                _historyCursor += by > 0 ? -1 : 1;
-            }
-
-            // Walked back past the newest entry: give the player their own half-typed line back.
-            if (_historyCursor < 0)
-            {
-                _historyCursor = -1;
-                return Offer(_historyDraft, resetSelection: true, forceLine: _historyDraft);
-            }
-
-            if (_historyCursor >= _history.Count) _historyCursor = _history.Count - 1;
-
-            string recalled = _history.Lines[_historyCursor];
-            return Offer(recalled, resetSelection: true, forceLine: recalled);
+            return new NavResult { Line = line };
         }
 
         /// <summary>
@@ -212,18 +261,29 @@ namespace Hash.Terminal
             }
 
             _searchSkip++;
-            return Offer(hit, resetSelection: true, forceLine: hit);
+            return Recall(hit);
         }
 
         /// <summary>
         /// Tab. Put the highlighted row into the line.
         ///
         /// A history row replaces the whole prompt, because it is a line and not a token. Everything else replaces
-        /// the token under the caret, and a completed command word gets a trailing space - the next thing the player
-        /// wants is the argument list, and making them press space for it is a keystroke that teaches nothing.
+        /// the token under the caret and is followed by a space when there is something left to type - which is
+        /// every command word, and every argument the shape says is not the last one. Making the player press space
+        /// between `give` and the item, or between the item and the quantity, is a keystroke that teaches nothing;
+        /// adding one after the LAST argument is a keystroke they have to undo before Enter.
         /// </summary>
         private NavResult Accept(string line)
         {
+            // Tab works with the list shut, which is its normal state - the row it takes is the one the header has
+            // been showing all along.
+            if (_current.Rows.Count == 0)
+            {
+                _current = _suggestions.For(line);
+                _selected = 0;
+                _window = 0;
+            }
+
             if (!_current.Any) return Draw(line);
 
             Suggestion pick = _current.Rows[Math.Min(_selected, _current.Rows.Count - 1)];
@@ -231,10 +291,19 @@ namespace Hash.Terminal
             if (pick.Kind == SuggestionKind.History)
                 return Offer(pick.Value, resetSelection: true, forceLine: pick.Value);
 
-            bool isCommandWord = pick.Kind == SuggestionKind.Command;
-            string replaced = CommandLine.ReplaceTokenAtCaret(line, pick.Value, trailingSpace: isCommandWord);
+            bool more = pick.Kind == SuggestionKind.Command || MoreArgumentsAfter();
+            string replaced = CommandLine.ReplaceTokenAtCaret(line, pick.Value, trailingSpace: more);
 
             return Offer(replaced, resetSelection: true, forceLine: replaced);
+        }
+
+        /// <summary>Whether the shape describes another argument after the one just completed. Unknown shapes say
+        /// no: a space that turns out to be wrong is worse than one the player types themselves.</summary>
+        private bool MoreArgumentsAfter()
+        {
+            if (_current.Command == null || _current.ArgIndex < 0) return false;
+
+            return _current.ArgIndex + 1 < UsageExample.ArgumentCount(_current.Command.Signature);
         }
 
         // -------------------------------------------------------------------------------------------- running --
@@ -255,8 +324,17 @@ namespace Hash.Terminal
             if (typed.Length == 0) { result.Lines = lines; return result; }
 
             _current = SuggestionSet.Empty;
-            _historyCursor = -1;
             _searchSkip = 0;
+            _expanded = false;
+
+            // History expansion happens before anything else looks at the line, the way a shell does it - `!!` IS
+            // the previous command by the time the parser sees it, so `repeat 3 !!` and `!! ; settime 1200` work
+            // without either of them knowing that history exists.
+            if (!Expand(ref typed, lines))
+            {
+                result.Lines = lines;
+                return result;
+            }
 
             Echo(typed, lines);
             _history.Add(typed);
@@ -265,7 +343,14 @@ namespace Hash.Terminal
 
             if (plan.Failed)
             {
-                Emit(OutputLine.Error(plan.Error), lines);
+                // A parse error is "what went wrong" and then "what it should look like", and the second of those is
+                // a usage line - dim, and a line of its own so that grep, copy and the scroll window all count it as
+                // one. Splitting here rather than at the source keeps the parser free of anything about drawing.
+                string[] parts = plan.Error.Split('\n');
+
+                Emit(OutputLine.Error(parts[0]), lines);
+                for (int i = 1; i < parts.Length; i++) Emit(OutputLine.Dim(parts[i]), lines);
+
                 result.Lines = lines;
                 return result;
             }
@@ -279,6 +364,43 @@ namespace Hash.Terminal
             result.Lines = lines;
             result.Clipboard = _builtins.TakeClipboard();
             return result;
+        }
+
+        /// <summary>
+        /// Replace `!!` with the previous line and `!text` with the most recent line starting with it.
+        ///
+        /// Only when the line BEGINS with the mark, so an argument containing an exclamation mark is left alone.
+        /// Returns false when nothing matched, having already said so - running `!zzz` as a command would produce
+        /// "command not found" for something the player never typed.
+        /// </summary>
+        private bool Expand(ref string line, List<OutputLine> lines)
+        {
+            if (line.Length < 2 || line[0] != '!') return true;
+
+            string rest = line.Substring(1);
+            string found;
+
+            if (rest == "!")
+            {
+                found = _history.Count > 0 ? _history.Lines[0] : null;
+                if (found == null) { Emit(OutputLine.Warn("No previous command."), lines); return false; }
+            }
+            else
+            {
+                found = null;
+                foreach (string past in _history.Lines)
+                {
+                    if (!past.StartsWith(rest, StringComparison.OrdinalIgnoreCase)) continue;
+
+                    found = past;
+                    break;
+                }
+
+                if (found == null) { Emit(OutputLine.Warn($"Nothing in history starts with '{rest}'."), lines); return false; }
+            }
+
+            line = found;
+            return true;
         }
 
         private void RunOne(string command, List<OutputLine> lines)
@@ -353,31 +475,48 @@ namespace Hash.Terminal
 
         private NavResult Draw(string line) => new NavResult
         {
-            Suggest = Markup.Suggestions(_current, _selected, _window),
+            Suggest = Markup.Suggestions(_current, _selected, _window, _expanded),
             Ghost = Ghost(line),
         };
 
         /// <summary>
-        /// The grey remainder shown behind the caret.
+        /// The dimmed remainder shown behind the caret - what Tab would add.
         ///
-        /// Only for a prefix match on the highlighted row: showing the tail of a fuzzy hit would put letters behind
-        /// the caret that are not the ones about to be typed, which reads as the field having gone wrong.
+        /// Only for a PREFIX match on the highlighted row: the tail of a fuzzy hit would put letters behind the
+        /// caret that are not the ones about to be typed, which reads as the field having gone wrong.
+        ///
+        /// An untouched prompt is the one case with nothing to say. Every command matches it, so the row that
+        /// happens to be first is not a suggestion, it is the top of an alphabet - and pushing it into the field
+        /// would make an empty prompt look occupied. Browsing changes that: a highlighted row IS a choice, and it
+        /// belongs behind the caret whether or not anything was typed first.
         /// </summary>
         private string Ghost(string line)
         {
             if (!_current.Any) return "";
 
             Suggestion pick = _current.Rows[Math.Min(_selected, _current.Rows.Count - 1)];
-            if (pick.Kind == SuggestionKind.History) return "";
+
+            // A history row replaces the WHOLE line rather than the token under the caret, so its remainder is what
+            // is left of the line - which is exactly the suggestion fish offers from history, and the reason it can
+            // finish a command from three letters.
+            if (pick.Kind == SuggestionKind.History)
+            {
+                string typed = line ?? "";
+                if (typed.Length == 0) return _expanded ? pick.Value : "";
+
+                return pick.Value.StartsWith(typed, StringComparison.OrdinalIgnoreCase)
+                    ? pick.Value.Substring(typed.Length)
+                    : "";
+            }
 
             string prefix = _current.Prefix;
-            if (prefix.Length == 0) return "";
+            if (prefix.Length == 0 && !_expanded) return "";
             if (!pick.Value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return "";
 
             return pick.Value.Substring(prefix.Length);
         }
 
         /// <summary>The current block, for a redraw that changed nothing - used after a resize or a reload.</summary>
-        public string SuggestMarkup() => Markup.Suggestions(_current, _selected, _window);
+        public string SuggestMarkup() => Markup.Suggestions(_current, _selected, _window, _expanded);
     }
 }

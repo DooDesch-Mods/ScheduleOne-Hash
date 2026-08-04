@@ -61,7 +61,7 @@ namespace Hash.Terminal
             if (StartsWithWord(trimmed, RawWord, out string rest))
             {
                 return rest.Length == 0
-                    ? new Plan(null, "raw needs a command after it.")
+                    ? new Plan(null, "raw: no command after it\nusage: raw <command>")
                     : new Plan(new[] { rest }, null);
             }
 
@@ -97,7 +97,7 @@ namespace Hash.Terminal
 
                 if (StartsWithWord(one, RawWord, out string raw))
                 {
-                    if (raw.Length == 0) return new Plan(null, "raw needs a command after it.");
+                    if (raw.Length == 0) return new Plan(null, "raw: no command after it\nusage: raw <command>");
                     plan.Add(raw);
                     continue;
                 }
@@ -128,36 +128,55 @@ namespace Hash.Terminal
 
             if (!int.TryParse(countText, out int count))
             {
-                error = $"repeat needs a number, not '{countText}'.";
+                error = $"repeat: '{countText}' is not a number\nusage: repeat <count> <command>";
                 return false;
             }
 
             if (count < 1)
             {
-                error = "repeat needs a count of 1 or more.";
+                error = "repeat: the count has to be 1 or more\nusage: repeat <count> <command>";
                 return false;
             }
 
             if (count > MaxRepeat)
             {
-                error = $"repeat is capped at {MaxRepeat}; every repetition runs in the same frame.";
+                error = $"repeat: {MaxRepeat} is the most that can run in one frame";
                 return false;
             }
 
             if (command.Length == 0)
             {
-                error = "repeat needs a command after the count.";
+                error = "repeat: no command after the count\nusage: repeat <count> <command>";
                 return false;
             }
 
             // The body keeps its own raw, so `repeat 3 raw weird;line` still works.
             if (StartsWithWord(command, RawWord, out string rawBody))
             {
-                if (rawBody.Length == 0) { error = "raw needs a command after it."; return false; }
+                if (rawBody.Length == 0) { error = "raw: no command after it\nusage: raw <command>"; return false; }
                 command = rawBody;
             }
 
-            for (int i = 0; i < count; i++) into.Add(command);
+            // The body is expanded in turn, so `repeat 5 repeat 5 give ogkushseed 1` is twenty-five gives. Without
+            // this it was five copies of the line `repeat 5 give ogkushseed 1` handed to a game that has no `repeat`,
+            // and the terminal had offered to complete the inner one all the way.
+            //
+            // Built into a list of its own first: the cap has to count what THIS repeat produced, and `into` already
+            // holds whatever came before the semicolon.
+            var made = new List<string>();
+
+            for (int i = 0; i < count; i++)
+            {
+                if (!Expand(command, made, out error)) return false;
+
+                if (made.Count > MaxRepeat)
+                {
+                    error = $"repeat: that comes to more than {MaxRepeat} commands, and they all run in one frame";
+                    return false;
+                }
+            }
+
+            into.AddRange(made);
             return true;
         }
 
@@ -266,6 +285,87 @@ namespace Hash.Terminal
             if (string.IsNullOrEmpty(replacement)) return statement;
 
             return space < 0 ? replacement : replacement + statement.Substring(space);
+        }
+
+        /// <summary>
+        /// Peel off the words that take a command as their argument, so what is left completes as the command it
+        /// actually is.
+        ///
+        /// `repeat 5 give og` runs `give og` five times, so that is what the caret is inside and that is what should
+        /// be offered - the alternative is a terminal where wrapping a command in `repeat` costs you every
+        /// suggestion, which teaches people not to use it.
+        ///
+        /// A wrapper's OWN arguments are peeled only once they are finished, and "finished" means a space after
+        /// them: `repeat 5` is someone still typing the count, `repeat 5 ` is someone starting the command.
+        /// </summary>
+        public static string Unwrap(string statement)
+        {
+            if (string.IsNullOrEmpty(statement)) return statement ?? "";
+
+            // Bounded rather than while(true): `raw raw raw` is legal, silly, and must not spin.
+            for (int guard = 0; guard < 4; guard++)
+            {
+                string rest = statement.TrimStart();
+                int peel = WrapperWidth(rest);
+                if (peel <= 0) return statement;
+
+                statement = rest.Substring(peel);
+            }
+
+            return statement;
+        }
+
+        /// <summary>
+        /// Words whose LAST argument is itself a command line, and how many arguments of their own come first.
+        ///
+        /// Two of these change what runs - `raw` suspends the shell, `repeat` multiplies it - and two do not:
+        /// `alias gk "give ogkush 5"` and `bind t 'settime 1200'` merely store a line for later. Completion does not
+        /// care about the difference. All four end in a command, so all four should complete like one, and keeping
+        /// them in one table is what stops the next word of this kind from being forgotten.
+        /// </summary>
+        private static readonly (string Word, int OwnArguments)[] TakeACommand =
+        {
+            (RawWord, 0),
+            (RepeatWord, 1),
+            ("alias", 1),
+            ("bind", 1),
+        };
+
+        /// <summary>How many characters at the front are the word plus its own arguments plus the space after them,
+        /// or 0 when this word takes no command or the player is still typing its own arguments.</summary>
+        private static int WrapperWidth(string statement)
+        {
+            int at = 0;
+            string word = ReadWord(statement, ref at);
+
+            int ownArguments = -1;
+            foreach ((string candidate, int arguments) in TakeACommand)
+                if (string.Equals(word, candidate, StringComparison.OrdinalIgnoreCase)) ownArguments = arguments;
+
+            if (ownArguments < 0) return 0;
+
+            for (int i = 0; i <= ownArguments; i++)
+            {
+                if (at >= statement.Length || statement[at] != ' ') return 0;
+                while (at < statement.Length && statement[at] == ' ') at++;
+
+                if (i < ownArguments && ReadWord(statement, ref at).Length == 0) return 0;
+            }
+
+            // An embedded command is usually quoted, because it has spaces in it - `alias gk "give ogkush 5"`. The
+            // quote is not part of the command, and leaving it on would make the first word `"give` and match
+            // nothing at all.
+            if (at < statement.Length && (statement[at] == '"' || statement[at] == '\'')) at++;
+
+            return at;
+        }
+
+        private static string ReadWord(string line, ref int at)
+        {
+            int start = at;
+            while (at < line.Length && line[at] != ' ') at++;
+
+            return line.Substring(start, at - start);
         }
 
         /// <summary>True when the line begins with this word followed by a space or nothing - not merely with those

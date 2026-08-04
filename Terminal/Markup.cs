@@ -32,21 +32,21 @@ namespace Hash.Terminal
         /// Returns an empty string when there is nothing to offer, which hides the block entirely rather than
         /// leaving a gap the transcript cannot use.
         /// </summary>
-        public static string Suggestions(SuggestionSet set, int selected, int window)
+        public static string Suggestions(SuggestionSet set, int selected, int window, bool expanded)
         {
-            if (set == null || !set.Any) return "";
+            if (set == null) return "";
 
-            int count = set.Rows.Count;
-            int visible = Math.Min(Hash.Terminal.Suggestions.MaxRows, count);
-
-            int first = Math.Max(0, Math.Min(window, count - visible));
-            int last = first + visible;
+            // A known command keeps its header even with nothing to offer. Most second arguments are a number or a
+            // free string that no provider can list - `give <item> [quantity]` is the obvious one - so hiding the
+            // block for want of rows took the shape away at the exact moment it was the only thing left to say, and
+            // the player had no way to learn the command took a quantity at all.
+            if (set.Command == null && !set.Any) return "";
 
             var sb = new StringBuilder();
 
             if (set.Command != null)
             {
-                Line(sb, "sig", set.Command.Signature);
+                Signature(sb, set.Command.Signature, set.ArgIndex);
 
                 string description = set.Command.Description.Length > 0
                     ? set.Command.Description
@@ -55,6 +55,36 @@ namespace Hash.Terminal
                 Line(sb, "desc", Clip(description, LineWidth - set.Command.Source.Length - 2)
                                  + "  " + set.Command.Source);
             }
+
+            // Closed: say what Tab would insert and stop there.
+            //
+            // The block sits between the transcript and the prompt and pushes the transcript up, so eight rows of
+            // suggestions cost eight lines of whatever the last command printed - which is most of the screen, and
+            // exactly the lines you were trying to read. Shut, it costs one line and still answers the question the
+            // list was open for: what happens if I press Tab.
+            if (!expanded)
+            {
+                if (set.Any)
+                {
+                    // Key first, then the verb, two spaces between pairs - the shape every footer key strip uses
+                    // ("F1 Help  F5 Refresh  q Quit"). A sentence in its place reads as prose the eye has to
+                    // parse; this reads as a row of keys, which is what it is.
+                    Suggestion pick = set.Rows[Math.Min(Math.Max(selected, 0), set.Rows.Count - 1)];
+
+                    Line(sb, "ghost", Pad("tab  " + pick.Value, ValueColumn + 8)
+                                      + (set.Rows.Count > 1 ? $"up/down  browse {set.Rows.Count}" : ""));
+                }
+
+                return sb.ToString();
+            }
+
+            if (!set.Any) return sb.ToString();
+
+            int count = set.Rows.Count;
+            int visible = Math.Min(Hash.Terminal.Suggestions.MaxRows, count);
+
+            int first = Math.Max(0, Math.Min(window, count - visible));
+            int last = first + visible;
 
             Line(sb, "rule", Rule(first, last, count));
 
@@ -72,11 +102,40 @@ namespace Hash.Terminal
                 // The value and its source carry different colours, so the row is two spans rather than one. Still
                 // one box: spans are inline, and the whole block compiles to a single text leaf.
                 Span(sb, picked ? "pick" : null, text.ToString());
-                Span(sb, row.Kind == SuggestionKind.History ? "dim" : row.IsVanilla ? "src-game" : "src-mod",
+                Span(sb, row.Kind == SuggestionKind.History ? "src-history"
+                                                            : row.IsVanilla ? "src-game" : "src-mod",
                      row.Source);
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// The command's shape, with the argument the caret sits in picked out.
+        ///
+        /// Highlighting is the half that makes the shape useful past the first argument. `setquestentrystate
+        /// &lt;quest&gt; &lt;entry&gt; &lt;state&gt;` printed flat tells you three things are wanted but not which one
+        /// you are typing, and counting spaces backwards to work it out is exactly the work the line is meant to save.
+        ///
+        /// Three spans at most, never nested: whichever run comes before the current argument, the argument, and
+        /// whatever follows.
+        /// </summary>
+        private static void Signature(StringBuilder sb, string signature, int argIndex)
+        {
+            if (string.IsNullOrEmpty(signature)) return;
+
+            var parts = new List<string>(signature.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+
+            // Part 0 is the command word. A caret past the last argument highlights nothing rather than clamping to
+            // the end - the game ignores the extra token, and pointing at one that is not there would say it does not.
+            int wanted = argIndex + 1;
+            if (wanted <= 0 || wanted >= parts.Count) { Span(sb, "sig", signature); return; }
+
+            Span(sb, "sig", string.Join(" ", parts.GetRange(0, wanted)) + " ");
+            Span(sb, "cur", parts[wanted]);
+
+            if (wanted + 1 < parts.Count)
+                Span(sb, "sig", " " + string.Join(" ", parts.GetRange(wanted + 1, parts.Count - wanted - 1)));
         }
 
         /// <summary>
