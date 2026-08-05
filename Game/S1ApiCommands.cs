@@ -20,12 +20,17 @@ namespace Hash.Game
     /// referencing it even if the dependency were acceptable - and a missing or renamed member has to cost these
     /// commands, not the whole index.</para>
     ///
-    /// <para>Internal is the part worth replacing: a rename upstream costs these commands silently. S1API 3.1.8 has
-    /// no public way to enumerate them; once <c>ConsoleHelper.RegisteredCommands</c> exists, read that instead and
-    /// keep this path only for older versions.</para>
+    /// <para>Two routes, best first. <c>ConsoleHelper.RegisteredCommands</c> is public API since S1API 3.1.9 and is
+    /// what this reads. Older versions only have the internal <c>CustomConsoleRegistry</c>, which is still tried
+    /// afterwards - it works, but a rename there would cost these commands silently, which is exactly why the
+    /// public one was added.</para>
     /// </summary>
     internal static class S1ApiCommands
     {
+        /// <summary>Public since S1API 3.1.9 (ifBars/S1API#200) - the supported way to enumerate.</summary>
+        private const string HelperTypeName = "S1API.Console.ConsoleHelper";
+
+        /// <summary>Internal, and all an older S1API has.</summary>
         private const string RegistryTypeName = "S1API.Console.CustomConsoleRegistry";
 
         private static bool _looked;
@@ -105,13 +110,36 @@ namespace Hash.Game
             }
         }
 
+        /// <summary>The RegisteredCommands property on one named type, or null when this assembly is not it.</summary>
+        private static PropertyInfo ListingOn(Assembly assembly, string typeName)
+        {
+            try
+            {
+                Type type = assembly.GetType(typeName, false);
+                if (type == null) return null;
+
+                PropertyInfo property = type.GetProperty("RegisteredCommands",
+                                                         BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+                if (property == null)
+                    WarnOnce($"{typeName} is here but has no RegisteredCommands - "
+                             + "commands registered through S1API will not be listed.");
+
+                return property;
+            }
+            catch { return null; }
+        }
+
         private static string Read(object target, string property)
         {
             try { return target.GetType().GetProperty(property)?.GetValue(target) as string; }
             catch { return null; }
         }
 
-        /// <summary>Locate S1API's registry once per index rebuild. Absent is the normal answer and says nothing.</summary>
+        /// <summary>
+        /// Locate the listing once per index rebuild. Absent is the normal answer and says nothing - plenty of
+        /// installs have no S1API at all.
+        /// </summary>
         private static PropertyInfo Registry()
         {
             if (_looked) return _registered;
@@ -121,19 +149,12 @@ namespace Hash.Game
             {
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    Type type;
-                    try { type = assembly.GetType(RegistryTypeName, false); }
-                    catch { continue; }
+                    PropertyInfo found = ListingOn(assembly, HelperTypeName)
+                                         ?? ListingOn(assembly, RegistryTypeName);
+                    if (found == null) continue;
 
-                    if (type == null) continue;
-
-                    _registered = type.GetProperty("RegisteredCommands",
-                                                   BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-
-                    if (_registered == null)
-                        WarnOnce("S1API is here but its command registry has no RegisteredCommands - "
-                                 + "commands registered through it will not be listed.");
-
+                    _registered = found;
+                    Core.Log?.Msg($"[hash] reading S1API's commands from {found.DeclaringType?.FullName}.");
                     return _registered;
                 }
             }

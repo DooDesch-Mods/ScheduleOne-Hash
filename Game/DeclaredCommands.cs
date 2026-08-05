@@ -61,8 +61,7 @@ namespace Hash.Game
             }
 
             _declared.Add(new Declaration(word, Clean(description), Clean(example), Clean(owner)));
-            Core.Log?.Msg($"[hash] '{word}' declared by {(string.IsNullOrEmpty(owner) ? "a mod" : owner)}"
-                          + " - it will be listed with the game's own.");
+            Say($"'{word}' declared by {(string.IsNullOrEmpty(owner) ? "a mod" : owner)}");
 
             Apply();
         }
@@ -95,6 +94,33 @@ namespace Hash.Game
             {
                 Core.Log?.Warning("[hash] a declared command could not be listed: " + e.Message);
             }
+        }
+
+        /// <summary>
+        /// Log, or remember to log.
+        ///
+        /// A mod that declares from its own init may well run before hash's - MelonLoader initialises in file-name
+        /// order, and half the alphabet sorts ahead of "Hash". The declaration itself lands either way (the bridge
+        /// is a static field, not something hash has to be awake for), but <c>Core.Log</c> is still null at that
+        /// point and the line would vanish into a null-conditional. Held instead, and written out by
+        /// <see cref="FlushLog"/> once there is a logger.
+        /// </summary>
+        private static void Say(string message)
+        {
+            if (Core.Log == null) { _early.Add(message); return; }
+
+            Core.Log.Msg("[hash] " + message);
+        }
+
+        private static readonly List<string> _early = new();
+
+        /// <summary>Write out whatever was declared before hash had a logger. Called once, at the end of init.</summary>
+        internal static void FlushLog()
+        {
+            if (_early.Count == 0) return;
+
+            Core.Log?.Msg($"[hash] before hash loaded: {string.Join(", ", _early)}.");
+            _early.Clear();
         }
 
         /// <summary>Which mod declared this word, or "" when nobody did.</summary>

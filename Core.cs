@@ -80,6 +80,9 @@ namespace Hash
             RegisterApp();
             Patch();
 
+            // Mods that declared a command word before this ran had nowhere to log it - see DeclaredCommands.Say.
+            DeclaredCommands.FlushLog();
+
             Log.Msg("[hash] ready. Press the console key.");
         }
 

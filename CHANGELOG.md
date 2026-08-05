@@ -3,6 +3,15 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.3] - 2026-08-05
+
+### Changed
+
+- Commands that other mods register through S1API are read through `ConsoleHelper.RegisteredCommands`, which
+  S1API 3.1.9 added for exactly this. Nothing changes on screen; what changes is that the listing no longer
+  depends on reaching into S1API's internals, where a rename would have made those commands disappear without a
+  word. S1API 3.1.8 and older still work through the old route.
+
 ## [1.0.2] - 2026-08-05
 
 ### Added
