@@ -28,7 +28,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Warning($"[hash] could not read {name}: {e.Message}");
+                Core.Log?.Warning($"could not read {name}: {e.Message}");
                 return null;
             }
         }
@@ -56,7 +56,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Warning($"[hash] could not write {name}: {e.Message}");
+                Core.Log?.Warning($"could not write {name}: {e.Message}");
             }
         }
 

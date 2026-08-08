@@ -173,7 +173,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Warning("[hash] an argument provider failed: " + e.Message);
+                Core.Log?.Warning("an argument provider failed: " + e.Message);
             }
 
             return values;

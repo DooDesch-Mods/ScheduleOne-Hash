@@ -37,7 +37,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Error("[hash] opening the terminal failed, falling back to the vanilla console: " + e);
+                Core.Log?.Error("opening the terminal failed, falling back to the vanilla console: " + e);
             }
 
             return true;
@@ -85,7 +85,7 @@ namespace Hash.Game
         private static void Postfix()
         {
             try { OnAwake?.Invoke(); }
-            catch (Exception e) { Core.Log?.Warning("[hash] rebuilding the command index failed: " + e.Message); }
+            catch (Exception e) { Core.Log?.Warning("rebuilding the command index failed: " + e.Message); }
         }
     }
 }

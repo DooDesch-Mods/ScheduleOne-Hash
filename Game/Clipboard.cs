@@ -23,7 +23,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Warning("[hash] the clipboard refused: " + e.Message);
+                Core.Log?.Warning("the clipboard refused: " + e.Message);
             }
         }
     }

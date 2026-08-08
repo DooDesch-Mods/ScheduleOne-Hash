@@ -57,7 +57,7 @@ namespace Hash.Game
                 Il2CppSystem.Collections.Generic.List<GameConsole.ConsoleCommand> commands = GameConsole.Commands;
                 if (commands == null)
                 {
-                    Core.Log?.Warning("[hash] the game has no command list yet - the terminal will be empty.");
+                    Core.Log?.Warning("the game has no command list yet - the terminal will be empty.");
                     _commands = found;
                     return;
                 }
@@ -79,7 +79,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Error("[hash] reading the command list failed: " + e);
+                Core.Log?.Error("reading the command list failed: " + e);
             }
 
             // Second source. S1API keeps its commands in a dictionary of its own and routes to them from a prefix on
@@ -97,7 +97,7 @@ namespace Hash.Game
             _commands = found;
 
             int viaApi = found.Count - native;
-            Core.Log?.Msg($"[hash] indexed {found.Count} command(s)"
+            Core.Log?.Msg($"indexed {found.Count} command(s)"
                           + (viaApi > 0 ? $", {viaApi} of them through S1API." : "."));
         }
 
@@ -128,7 +128,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Warning("[hash] a command refused to describe itself: " + e.Message);
+                Core.Log?.Warning("a command refused to describe itself: " + e.Message);
                 return null;
             }
         }

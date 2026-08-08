@@ -92,7 +92,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Warning("[hash] a declared command could not be listed: " + e.Message);
+                Core.Log?.Warning("a declared command could not be listed: " + e.Message);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Hash.Game
         {
             if (Core.Log == null) { _early.Add(message); return; }
 
-            Core.Log.Msg("[hash] " + message);
+            Core.Log.Msg("" + message);
         }
 
         private static readonly List<string> _early = new();
@@ -119,7 +119,7 @@ namespace Hash.Game
         {
             if (_early.Count == 0) return;
 
-            Core.Log?.Msg($"[hash] before hash loaded: {string.Join(", ", _early)}.");
+            Core.Log?.Msg($"before hash loaded: {string.Join(", ", _early)}.");
             _early.Clear();
         }
 

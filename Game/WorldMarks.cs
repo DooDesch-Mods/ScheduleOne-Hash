@@ -352,7 +352,7 @@ namespace Hash.Game
 
         private static Mark Failed(string word, Exception e)
         {
-            if (_complained.Add(word)) Core.Log?.Warning($"[hash] {word} could not be read: {e.Message}");
+            if (_complained.Add(word)) Core.Log?.Warning($"{word} could not be read: {e.Message}");
 
             return Mark.None;
         }
