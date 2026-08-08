@@ -71,7 +71,7 @@ namespace Hash
             // to find out why.
             if (!PhoneScreen.Available)
             {
-                Log.Error("[hash] needs Sideload 1.5.0 or newer - this one cannot take the phone out of the "
+                Log.Error("needs Sideload 1.5.0 or newer - this one cannot take the phone out of the "
                           + "player's pocket, so the terminal could never be reached. Nothing was registered.");
                 return;
             }
@@ -83,7 +83,7 @@ namespace Hash
             // Mods that declared a command word before this ran had nowhere to log it - see DeclaredCommands.Say.
             DeclaredCommands.FlushLog();
 
-            Log.Msg("[hash] ready. Press the console key.");
+            Log.Msg("ready. Press the console key.");
         }
 
         /// <summary>Wire the two halves together. Nothing here touches the game, so it is safe at init.</summary>
@@ -139,7 +139,7 @@ namespace Hash
             }
             catch (Exception e)
             {
-                Log.Error("[hash] patching failed - the console key will open the vanilla bar: " + e);
+                Log.Error("patching failed - the console key will open the vanilla bar: " + e);
                 ConsoleKeyPatch.Enabled = false;
             }
         }
@@ -193,7 +193,7 @@ namespace Hash
             {
                 // The game refused the phone - asleep, dead, arrested, paused. Say so, because the alternative is a
                 // key that silently does nothing and a player who thinks the mod is broken.
-                Log.Warning("[hash] the game would not take the phone out right now, so the terminal stayed shut.");
+                Log.Warning("the game would not take the phone out right now, so the terminal stayed shut.");
                 return false;
             }
 

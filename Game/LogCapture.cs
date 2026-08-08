@@ -50,7 +50,7 @@ namespace Hash.Game
             }
             catch (Exception e)
             {
-                Core.Log?.Error("[hash] could not listen to the game's log - commands will run but show nothing: " + e);
+                Core.Log?.Error("could not listen to the game's log - commands will run but show nothing: " + e);
                 _callback = null;
             }
         }
@@ -60,7 +60,7 @@ namespace Hash.Game
             if (_callback == null) return;
 
             try { Application.remove_logMessageReceived(_callback); }
-            catch (Exception e) { Core.Log?.Warning("[hash] could not stop listening to the log: " + e.Message); }
+            catch (Exception e) { Core.Log?.Warning("could not stop listening to the log: " + e.Message); }
 
             _callback = null;
         }

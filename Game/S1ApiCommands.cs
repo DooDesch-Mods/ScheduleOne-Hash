@@ -154,7 +154,7 @@ namespace Hash.Game
                     if (found == null) continue;
 
                     _registered = found;
-                    Core.Log?.Msg($"[hash] reading S1API's commands from {found.DeclaringType?.FullName}.");
+                    Core.Log?.Msg($"reading S1API's commands from {found.DeclaringType?.FullName}.");
                     return _registered;
                 }
             }
@@ -171,7 +171,7 @@ namespace Hash.Game
             if (_warned) return;
 
             _warned = true;
-            Core.Log?.Warning("[hash] " + message);
+            Core.Log?.Warning("" + message);
         }
     }
 }
