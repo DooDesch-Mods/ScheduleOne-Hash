@@ -55,6 +55,11 @@ namespace Hash
         /// <summary>The frame the terminal last answered the console key on. See <see cref="Toggle"/>.</summary>
         private int _toggledOnFrame = -1;
 
+        /// <summary>Whether the console key took the phone out of the player's pocket for this session on screen, as
+        /// opposed to them already holding it and pressing the icon. Decides where right-click leaves them - see
+        /// <see cref="Back"/>. Cleared when the terminal leaves the screen, so an icon press always starts false.</summary>
+        private bool _raisedPhone;
+
         public override void OnInitializeMelon()
         {
             Log = LoggerInstance;
@@ -118,6 +123,7 @@ namespace Hash
                        .OnCall("nav", Nav)
                        .OnCall("run", Run)
                        .OnCall("drain", _ => Drain())
+                       .OnCall("back", _ => Back())
                        .OnCall("close", _ => { Toggle(); return ""; });
         }
 
@@ -181,13 +187,16 @@ namespace Hash
             if (_app.IsOpen && PhoneScreen.IsRaised)
             {
                 _app.Hide();
-                _wasOnScreen = false;
-                Persist();
+                Left();
                 return true;
             }
 
             _index.MarkDirty();
             _providers.Invalidate();
+
+            // Read BEFORE Show, which is what raises it. This is the whole basis for where right-click leaves the
+            // player: the key can be pressed with the phone already in their hand, and then it did not fetch it.
+            _raisedPhone = !PhoneScreen.IsRaised;
 
             if (!_app.Show())
             {
@@ -224,8 +233,46 @@ namespace Hash
 
             if (_app.IsOpen && PhoneScreen.IsRaised) return;
 
+            Left();
+        }
+
+        /// <summary>
+        /// The terminal is off the screen. EVERY way out has to end here - the key, the back press, another app, the
+        /// player pocketing the phone - because the state left behind decides what the next appearance does, and a
+        /// close path that only does half of this leaves the other half describing the session before it.
+        /// </summary>
+        private void Left()
+        {
             _wasOnScreen = false;
+
+            // The next appearance starts from "the player already had the phone" until the key says otherwise, and
+            // pressing the icon never runs Toggle - so a leftover true would decide the next right-click wrongly.
+            _raisedPhone = false;
+
             Persist();
+        }
+
+        /// <summary>
+        /// Right-click inside the terminal. Leaves the way the player came in.
+        ///
+        /// The console key fetches the phone out of a pocket, so right-click puts it back - one press in, one press
+        /// out, and the home screen in between is a place nobody was going. Pressing the icon happens on a phone that
+        /// is already in their hand, and there the home screen IS the way back, so this hands the press to the host
+        /// and lets it do what it does for every other app.
+        ///
+        /// <para>Answered rather than decided in the page: which of the two happened is a fact about the phone, and
+        /// the page cannot see the phone at all.</para>
+        /// </summary>
+        private string Back()
+        {
+            // Read before the toggle: closing runs Left(), which clears the flag, so asking afterwards always
+            // answers false and the page would let the host close the app a second time.
+            bool handled = _raisedPhone;
+            if (handled) Toggle();
+
+            var json = new Json();
+            json.Bool("handled", handled);
+            return json.Done();
         }
 
         /// <summary>

@@ -3,6 +3,15 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-08-09
+
+### Fixed
+
+- Right-click closes the terminal on the first press. It took three: one was swallowed while the prompt held the caret, one cleared the suggestion list, one shut the app.
+- Right-click leaves the way you came in. Opened with the console key it puts the phone away; opened from the home screen it goes back there.
+- Escape clears the suggestion list, right-click no longer does. An empty prompt lists every command, so that press was being spent on a block nobody opened.
+- The caret returns to the prompt after clicking in the transcript.
+
 ## [1.0.3] - 2026-08-05
 
 ### Changed

@@ -107,9 +107,21 @@ class Terminal {
     // to read as live and costs one rebuild - and the host answers with nothing at all when `logs` is off.
     setInterval(() => this.#drain(), 1000);
 
-    // The phone's back gesture and Escape both arrive here. A suggestion list open means Escape dismisses it; with
-    // nothing open the app should close, so the event is left to the host.
+    // Escape and right-click both arrive here, and they mean different things.
+    //
+    // Right-click leaves. Where to is the host's call, not this file's: the console key fetched the phone out of a
+    // pocket, so one press should put it back, while an icon press happened on a phone already in hand and the home
+    // screen is the way back from there. `handled` false means the host wants its own close, so the press is left
+    // alone and the app lands on the home screen like any other app.
+    //
+    // Escape dismisses the suggestion block. Only Escape: an empty prompt lists every command the game has, so a
+    // handler that took both spent a right-click on a block the player never opened.
     document.addEventListener('back', (e) => {
+      if (e.source === 'rightClick') {
+        if (this.#host('back', '').handled) e.preventDefault();
+        return;
+      }
+
       if (!this.#state.suggest) return;
 
       this.#clearSuggestions();
