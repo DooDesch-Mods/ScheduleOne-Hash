@@ -139,6 +139,12 @@ namespace Hash
             ConsoleKeyPatch.OnOpen = Toggle;
             ConsoleKeyPatch.Enabled = _hijack.Value;
 
+#if DEBUG
+            // Before the rebuild below, for the same reason the vanilla declarations are: the index is built from
+            // the list these are added to.
+            Debugging.DevKit.Declare();
+#endif
+
             try
             {
                 HarmonyInstance.PatchAll();

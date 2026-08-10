@@ -34,6 +34,9 @@ visibly happens, because the reason is in a log file behind the game.
   more of whatever you are holding, `setowned #home` buys the property you are standing in, and `teleport #it`
   goes to the id in the line that just printed. A `#` that points at nothing refuses the line instead of
   guessing.
+- **`@` is how many you have, and numbers do arithmetic.** `give #hand @` doubles the stack, `give #hand 10-@`
+  tops it up to ten, `setquantity @*2` doubles what is in your hand. `+ - * /` and brackets work anywhere a
+  command wants a number; anything the game could already read as a number is passed through untouched.
 - **Up walks what you ran before**, across sessions. `Ctrl+R` searches backwards through it.
 - **Aliases.** `alias gk "give ogkush 5"`.
 - **`;` and `repeat`.** `settime 1200 ; setweather clear`, or `repeat 5 give ogkush 1`.
@@ -67,6 +70,47 @@ Your history and aliases live in `UserData/Hash/`. Which commands you use most i
 The console is host-only, and the game says so by doing nothing at all when a client presses the key. hash opens
 anyway and says why - and `help`, the command reference and the search still work, because looking something up is
 not the same as running it.
+
+## For mod authors
+
+Two things decide whether your commands work in hash, and both are easy to get wrong because the game gives you no
+warning either way.
+
+**Write your answer to Unity's log, or the terminal shows nothing.** hash captures output the way the game's own
+console does: `ScheduleOne.Console.Log` is three lines around `UnityEngine.Debug.Log`, and hash listens on
+`Application.logMessageReceived`. `MelonLogger` does not go there - it writes to the MelonLoader file log and
+nowhere else. A command that answers only through `LoggerInstance.Msg` therefore runs, succeeds, and prints a bare
+`ok` into a terminal that never heard it.
+
+```csharp
+UnityEngine.Debug.Log("[YourMod] 3 modules, all healthy.");   // reaches hash and the vanilla console
+LoggerInstance.Msg("[YourMod] 3 modules, all healthy.");      // reaches the log file only
+```
+
+Log both if you want the line in the file too. Keep ordinary diagnostics on `MelonLogger` alone - the game's console
+belongs to what the player asked for.
+
+**Declare a prefix command, or nothing can list it.** Handling console input with a Harmony prefix on
+`SubmitCommand` is the pattern for anything that wants subcommands or arguments the game's own `ConsoleCommand`
+cannot express. It registers nothing: your words run when typed and are invisible to every list, autocomplete and
+help overlay, hash included, because they only exist as string literals in a switch.
+
+One call each fixes that:
+
+```csharp
+using Hash.Api;
+
+HashCommands.Add("snitch", "profiler: start, stop, top, report", "snitch start");
+```
+
+Compile [`Hash.Api/HashCommands.cs`](Hash.Api/HashCommands.cs) into your mod - one file, no reference, no hard
+dependency. Every call is a no-op while hash is absent, and calls made before it loads are replayed once it
+appears, so load order does not matter. The word goes into the game's own `Console.Commands`, so this reaches the
+vanilla list and any other autocomplete as well, not only hash. It is listing only: your prefix keeps running the
+command, and the entry never dispatches, so a line cannot run twice.
+
+One trap worth knowing: inside a `MelonMod`, writing `Hash.Api.HashCommands` out in full does not compile.
+`MelonBase` has a string property called `Hash`, and the member wins over the namespace. Use `using Hash.Api;`.
 
 ## Credits
 

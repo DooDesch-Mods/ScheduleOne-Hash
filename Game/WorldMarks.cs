@@ -1,6 +1,7 @@
 using Hash.Terminal;
 using Il2CppScheduleOne.DevUtilities;
 using Il2CppScheduleOne.Interaction;
+using Il2CppScheduleOne.ItemFramework;
 using Il2CppScheduleOne.NPCs;
 using Il2CppScheduleOne.PlayerScripts;
 using Il2CppScheduleOne.Property;
@@ -257,6 +258,64 @@ namespace Hash.Game
 
         public Mark Near => Held("#near", () => LiveNear);
 
+        /// <summary>
+        /// How many of this item are in one stack - what `@` counts.
+        ///
+        /// <b>Read live, unlike every mark above.</b> A mark names the world as it was when the terminal opened,
+        /// because the player walking around must not change what they pointed at. A count is the opposite: the
+        /// only thing that changes it while the phone is up is the terminal itself, and `give #hand 5 ; give #hand @`
+        /// has to see the five it just added or the second half is about a stack that no longer exists.
+        ///
+        /// <para>The hand is read through <see cref="HeldSlot.Index"/> rather than <c>equippedSlot</c>, for the
+        /// same reason the whole of that file exists: with the phone up the game has already put the hand away.</para>
+        /// </summary>
+        public int Stack(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId)) return -1;
+
+            try
+            {
+                PlayerInventory inventory = PlayerSingleton<PlayerInventory>.InstanceExists
+                    ? PlayerSingleton<PlayerInventory>.Instance
+                    : null;
+
+                if (inventory == null) return -1;
+
+                // The hand first, so `give #hand @` counts the stack the player is looking at rather than an
+                // older one further along the bar.
+                int held = HeldSlot.Index(inventory);
+                int inHand = Counted(inventory.IndexAllSlots(held), itemId);
+                if (inHand >= 0) return inHand;
+
+                Il2CppSystem.Collections.Generic.List<HotbarSlot> slots = inventory.hotbarSlots;
+                if (slots == null) return -1;
+
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    int found = Counted(slots[i], itemId);
+                    if (found >= 0) return found;
+                }
+
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Complain("@", e);
+                return -1;
+            }
+        }
+
+        /// <summary>What this slot holds of that item, or -1 when it holds something else or nothing.</summary>
+        private static int Counted(HotbarSlot slot, string itemId)
+        {
+            if (slot == null) return -1;
+
+            ItemInstance item = slot.ItemInstance;
+            string id = item?.Definition?.ID;
+
+            return string.Equals(id, itemId, StringComparison.OrdinalIgnoreCase) ? item.Quantity : -1;
+        }
+
         /// <summary>Read one now, for freezing. Wrapped so a reader that throws costs its own word and not the
         /// snapshot.</summary>
         private static Mark Live(Func<Mark> read)
@@ -352,9 +411,15 @@ namespace Hash.Game
 
         private static Mark Failed(string word, Exception e)
         {
-            if (_complained.Add(word)) Core.Log?.Warning($"{word} could not be read: {e.Message}");
+            Complain(word, e);
 
             return Mark.None;
+        }
+
+        /// <summary>The same once-per-word grumble for a reader that answers with a number rather than a mark.</summary>
+        private static void Complain(string word, Exception e)
+        {
+            if (_complained.Add(word)) Core.Log?.Warning($"{word} could not be read: {e.Message}");
         }
     }
 }

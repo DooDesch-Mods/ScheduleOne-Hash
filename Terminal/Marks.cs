@@ -87,6 +87,18 @@ namespace Hash.Terminal
 
         /// <summary>The NPC closest to the player.</summary>
         Mark Near { get; }
+
+        /// <summary>
+        /// How many of this item are in the stack that holds it - what <c>@</c> stands for.
+        ///
+        /// The hand first, then the first hotbar slot carrying it. One stack rather than the whole inventory,
+        /// because `give #hand @` is about the stack in front of you; a total across slots would make the same
+        /// line mean different things depending on how the items happen to be split up.
+        ///
+        /// <para>-1 when no slot has it, which is a refusal rather than a zero: a sum built on a count nobody
+        /// took is exactly the kind of quiet wrong answer the rest of this file exists to avoid.</para>
+        /// </summary>
+        int Stack(string itemId);
     }
 
     /// <summary>
@@ -144,6 +156,10 @@ namespace Hash.Terminal
                 default: return Mark.None;
             }
         }
+
+        /// <summary>How many of this item the player has in one stack, or -1. What <c>@</c> stands for; see
+        /// <see cref="IMarks.Stack"/>.</summary>
+        public int Stack(string itemId) => _world?.Stack(itemId) ?? -1;
 
         /// <summary>Whether this word is one of ours, whether or not it resolves to anything.</summary>
         public static bool IsWord(string word)
