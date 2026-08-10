@@ -237,6 +237,29 @@ jobs:
           name: Hash-nexus
           path: "Hash_${{ steps.version-check.outputs.version }}_nexus.zip"
 
+      # DEBUG BUILD - GitHub release only, never Thunderstore or Nexus.
+      #
+      # A mod that declares a command word through the Hash.Api shim is developing against this one, and the
+      # Debug DLL is where the tooling for that lives. Building it themselves means cloning this repo and the
+      # private build-libs one first; one extra compile here saves every one of them that detour. It is
+      # deliberately NOT on the player channels: it carries developer console commands and louder logging, and a
+      # player installing it by accident would only make their log noisier.
+      - name: Build the project (Debug, IL2CPP)
+        run: dotnet build Hash.csproj --configuration Debug /p:Version="${{ steps.version-check.outputs.version }}" /p:WorkspaceLibPath="${{ github.workspace }}/Workspace/lib"
+
+      - name: Package the Debug build
+        run: |
+          mkdir -p debug
+          cp bin/Debug/net6.0/Hash.dll debug/
+          [ -f "LICENSE.md" ] && cp LICENSE.md debug/ || true
+          (cd debug && zip -r "../Hash_${{ steps.version-check.outputs.version }}_debug.zip" .)
+
+      - name: Upload Debug ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hash-debug
+          path: "Hash_${{ steps.version-check.outputs.version }}_debug.zip"
+
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -254,13 +277,22 @@ jobs:
           unzip -q "Hash_${{ needs.build.outputs.version }}.zip" -d release/
           ls -la release/
 
+      - name: Download Debug ZIP
+        uses: actions/download-artifact@v4
+        with:
+          name: Hash-debug
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
-          files: release/Hash.dll
+          files: |
+            release/Hash.dll
+            Hash_${{ needs.build.outputs.version }}_debug.zip
           body: |
             ## Changes in ${{ needs.build.outputs.version }}
+
+            **Writing a mod that registers a console command?** `Hash_${{ needs.build.outputs.version }}_debug.zip` is the same version built in Debug. It adds `hashequip <slot>` and `hashhand`, which print and change what the game thinks is in the player's hand - the state that decides whether `packageproduct`, `setquality` and `setquantity` see anything at all. Players want `Hash.dll` above it.
 
             ${{ needs.build.outputs.notes }}
         env:
