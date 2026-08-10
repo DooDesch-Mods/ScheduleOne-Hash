@@ -3,6 +3,16 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.5] - 2026-08-10
+
+### Added
+
+- `@` is how many you are carrying, and `+ - * /` work where a command wants a number. `give #hand 10-@` tops the stack up to ten, `setquantity @*2` doubles it.
+
+### Fixed
+
+- `packageproduct`, `setquality` and `setquantity` act on what you are holding. All three answered "No product equipped" from the terminal, because taking the phone out empties your hand.
+
 ## [1.0.4] - 2026-08-09
 
 ### Fixed

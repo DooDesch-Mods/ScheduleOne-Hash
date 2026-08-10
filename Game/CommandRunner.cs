@@ -76,7 +76,9 @@ namespace Hash.Game
 
             try
             {
-                GameConsole.SubmitCommand(line);
+                // The terminal is on the phone, and taking the phone out unequips - see HeldSlot. Without this,
+                // `packageproduct`, `setquality` and `setquantity` answer for an empty hand every single time.
+                using (HeldSlot.Restored()) GameConsole.SubmitCommand(line);
             }
             catch (Exception e)
             {
