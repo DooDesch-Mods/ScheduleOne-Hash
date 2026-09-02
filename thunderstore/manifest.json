@@ -2,7 +2,7 @@
   "name": "Hash",
   "version_number": "1.0.3",
   "website_url": "https://github.com/DooDesch-Mods/ScheduleOne-Hash",
-  "description": "A terminal instead of the dev console. Completion, arguments, help, output and history, on the in game phone. Needs Sideload.",
+  "description": "An in-game terminal with completion, output, history, and offline natural-language commands. Needs Sideload.",
   "dependencies": [
     "LavaGang-MelonLoader-0.7.3",
     "DooDesch-Sideload-1.7.0"

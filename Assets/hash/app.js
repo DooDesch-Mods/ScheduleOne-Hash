@@ -54,6 +54,9 @@ class Terminal {
   /** Whether the log view is on, so the ticker knows to stay quiet. */
   #live = false;
 
+  /** Whether a native-language request is running, so its result is polled even with the log view closed. */
+  #pending = false;
+
   /** How many lines back the view is scrolled. 0 is the bottom, which is where it belongs almost all of the time.
    *
    *  Without this the terminal has no scrollback at all: an output taller than the screen - `help all`, `history`,
@@ -75,6 +78,7 @@ class Terminal {
     this.#showMark(boot);
     this.#face(boot);
     this.#live = boot.live === true;
+    this.#pending = boot.pending === true;
 
     // Locked marks the header and is enforced by the host per command - the field stays usable, because looking
     // things up is exactly what a client came for and a disabled field would take that away too.
@@ -100,12 +104,14 @@ class Terminal {
       e.preventDefault();
     });
 
-    // The log view, once a second and only while it is on.
+    // A pending translation is latency-sensitive; the log view is not. Keep the cheap one-second log rhythm, but
+    // ask promptly while Hash is working so a finished native answer does not sit behind a full timer tick.
     //
     // Polled rather than pushed: a line arriving from another mod would otherwise rebuild the page the moment it
     // was logged, several times a second, while the player is trying to type through it. A second is fast enough
     // to read as live and costs one rebuild - and the host answers with nothing at all when `logs` is off.
-    setInterval(() => this.#drain(), 1000);
+    setInterval(() => { if (this.#pending) this.#drain(); }, 75);
+    setInterval(() => { if (!this.#pending) this.#drain(); }, 1000);
 
     // Escape and right-click both arrive here, and they mean different things.
     //
@@ -193,6 +199,9 @@ class Terminal {
   #cancel() {
     if (this.#input.value) this.#lines.push({ cls: 'dim', text: `${this.#prompt.textContent} ${this.#input.value}^C` });
 
+    const reply = this.#host('cancel', '');
+    this.#pending = reply.pending === true;
+
     this.#setLine('');
     this.#renderScroll();
   }
@@ -221,6 +230,7 @@ class Terminal {
     // `logs` may have just been switched on or off, and the host says so with every answer rather than the page
     // parsing the line to find out.
     this.#live = reply.live === true;
+    this.#pending = reply.pending === true;
     this.#face(reply);
     this.#showMark(reply);
 
@@ -263,9 +273,11 @@ class Terminal {
 
   /** Pull in whatever the game logged on its own since the last tick. */
   #drain() {
-    if (!this.#live) return;
+    if (!this.#live && !this.#pending) return;
 
     const reply = this.#host('drain', '');
+    this.#live = reply.live === true;
+    this.#pending = reply.pending === true;
     if (!reply.lines || reply.lines.length === 0) return;
 
     for (const line of reply.lines) this.#lines.push(line);
@@ -284,6 +296,7 @@ class Terminal {
 
   #apply(reply) {
     this.#back = 0;
+    if (typeof reply.pending === 'boolean') this.#pending = reply.pending;
     this.#showMark(reply);
     this.#state.suggest = reply.suggest ?? '';
     this.#suggest.innerHTML = this.#state.suggest;

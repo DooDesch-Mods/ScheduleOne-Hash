@@ -188,13 +188,31 @@ jobs:
             echo "CHANGELOG_EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Run headless terminal tests
+        run: dotnet run --project Workspace/Tests/Hash.Tests/Hash.Tests.csproj --configuration Release
+
       - name: Build the project (Release, IL2CPP)
         run: dotnet build Hash.csproj --configuration Release /p:Version="${{ steps.version-check.outputs.version }}" /p:WorkspaceLibPath="${{ github.workspace }}/Workspace/lib"
+
+      # Needle 2.0.2 is the newest published win_amd64 wheel. Pin both the container and the extracted engine:
+      # a repacked wheel or a changed engine must fail the release instead of silently changing shipped native code.
+      - name: Fetch and verify the Windows Needle engine
+        env:
+          NEEDLE_WHEEL_URL: https://huggingface.co/Cactus-Compute/needle2/resolve/main/python/cactus_needle-2.0.2-py3-none-win_amd64.whl
+          NEEDLE_WHEEL_SHA256: 718955a433f4c16c193266a37627dd34167389fa55d0c385a2a38064a5691403
+          NEEDLE_LIBRARY_SHA256: ec6f681d86e7a31ee81d02930b8bc5abf7b1a8da25b6c24dd3188fd62e950f13
+        run: |
+          mkdir -p native-package
+          curl -fsSL --retry 3 "$NEEDLE_WHEEL_URL" -o native-package/needle.whl
+          echo "$NEEDLE_WHEEL_SHA256  native-package/needle.whl" | sha256sum -c -
+          unzip -p native-package/needle.whl needle/libneedle.dll > native-package/Hash.Needle.bin
+          echo "$NEEDLE_LIBRARY_SHA256  native-package/Hash.Needle.bin" | sha256sum -c -
 
       - name: Prepare release directory
         run: |
           mkdir -p release
           cp bin/Release/net6.0/Hash.dll release/
+          cp native-package/Hash.Needle.bin release/
           if [ -d "thunderstore" ]; then
             cp -r thunderstore/* release/ 2>/dev/null || true
             if [ -f "release/manifest.json" ]; then
@@ -203,6 +221,7 @@ jobs:
           fi
           [ -f "LICENSE.md" ] && cp LICENSE.md release/ || true
           [ -f "CHANGELOG.md" ] && cp CHANGELOG.md release/ || true
+          cp THIRD-PARTY-NOTICES.md NEEDLE-LICENSE.txt release/
           if [ -f "thunderstore/README.md" ]; then
             cat thunderstore/README.md | iconv -f UTF-8 -t UTF-8//IGNORE > release/README.md 2>/dev/null || \
             sed '1s/^\xEF\xBB\xBF//' thunderstore/README.md > release/README.md || \
@@ -221,12 +240,12 @@ jobs:
       # Nexus is installed through Vortex, whose Schedule 1 extension deploys relative to the game root and
       # maps loose non-.md files at the archive root (manifest.json, icon.png) to a bare "mods" path - which
       # lands a FILE named "mods" in the game folder, replacing the real Mods DIRECTORY and wiping other mods.
-      # So Nexus gets its own archive: the DLL under a mods/ folder, and none of the Thunderstore-only files.
+      # So Nexus gets its own archive: both runtime files under a mods/ folder, and none of the Thunderstore-only files.
       - name: Create Nexus/Vortex ZIP (payload under mods/ so the Schedule 1 Vortex extension installs cleanly)
         run: |
           mkdir -p nexus/mods
-          cp release/Hash.dll nexus/mods/
-          for f in README.md CHANGELOG.md LICENSE.md; do
+          cp release/Hash.dll release/Hash.Needle.bin nexus/mods/
+          for f in README.md CHANGELOG.md LICENSE.md THIRD-PARTY-NOTICES.md NEEDLE-LICENSE.txt; do
             [ -f "release/$f" ] && cp "release/$f" nexus/ || true
           done
           (cd nexus && zip -r "../Hash_${{ steps.version-check.outputs.version }}_nexus.zip" .)
@@ -240,7 +259,7 @@ jobs:
       # DEBUG BUILD - GitHub release only, never Thunderstore or Nexus.
       #
       # A mod that declares a command word through the Hash.Api shim is developing against this one, and the
-      # Debug DLL is where the tooling for that lives. Building it themselves means cloning this repo and the
+      # Debug package is where the tooling for that lives. Building it themselves means cloning this repo and the
       # private build-libs one first; one extra compile here saves every one of them that detour. It is
       # deliberately NOT on the player channels: it carries developer console commands and louder logging, and a
       # player installing it by accident would only make their log noisier.
@@ -251,7 +270,9 @@ jobs:
         run: |
           mkdir -p debug
           cp bin/Debug/net6.0/Hash.dll debug/
+          cp native-package/Hash.Needle.bin debug/
           [ -f "LICENSE.md" ] && cp LICENSE.md debug/ || true
+          cp THIRD-PARTY-NOTICES.md NEEDLE-LICENSE.txt debug/
           (cd debug && zip -r "../Hash_${{ steps.version-check.outputs.version }}_debug.zip" .)
 
       - name: Upload Debug ZIP
@@ -260,8 +281,31 @@ jobs:
           name: Hash-debug
           path: "Hash_${{ steps.version-check.outputs.version }}_debug.zip"
 
-  release:
+  needle_smoke:
     needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Download the exact release package
+        uses: actions/download-artifact@v4
+        with:
+          name: Hash
+
+      - name: Run a real Needle inference through the native ABI
+        shell: pwsh
+        run: |
+          Expand-Archive -LiteralPath "Hash_${{ needs.build.outputs.version }}.zip" -DestinationPath smoke-package
+          dotnet run --project Tools/NeedleSmoke/NeedleSmoke.csproj --configuration Release -- smoke-package/Hash.Needle.bin
+
+  release:
+    needs: [build, needle_smoke]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -271,11 +315,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: Hash
-
-      - name: Extract DLL from ZIP
-        run: |
-          unzip -q "Hash_${{ needs.build.outputs.version }}.zip" -d release/
-          ls -la release/
 
       - name: Download Debug ZIP
         uses: actions/download-artifact@v4
@@ -287,12 +326,14 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            release/Hash.dll
+            Hash_${{ needs.build.outputs.version }}.zip
             Hash_${{ needs.build.outputs.version }}_debug.zip
           body: |
             ## Changes in ${{ needs.build.outputs.version }}
 
-            **Writing a mod that registers a console command?** `Hash_${{ needs.build.outputs.version }}_debug.zip` is the same version built in Debug. It adds `hashequip <slot>` and `hashhand`, which print and change what the game thinks is in the player's hand - the state that decides whether `packageproduct`, `setquality` and `setquantity` see anything at all. Players want `Hash.dll` above it.
+            Install `Hash_${{ needs.build.outputs.version }}.zip` as one package; it contains both `Hash.dll` and the pinned offline Needle engine.
+
+            **Writing a mod that registers a console command?** `Hash_${{ needs.build.outputs.version }}_debug.zip` is the same package built in Debug. It adds `hashequip <slot>` and `hashhand`, which print and change what the game thinks is in the player's hand - the state that decides whether `packageproduct`, `setquality` and `setquantity` see anything at all.
 
             ${{ needs.build.outputs.notes }}
         env:
@@ -360,7 +401,7 @@ jobs:
             && echo "announced $NAME $VERSION"
 
   thunderstore:
-    needs: build
+    needs: [build, needle_smoke]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -384,7 +425,7 @@ jobs:
           repo: thunderstore.io
           namespace: DooDesch
           name: Hash
-          description: One overlay and one key for every mod's HUD - and it auto-catches mods that grab function keys.
+          description: An in-game terminal with completion, output, history, and offline natural-language commands.
           version: ${{ needs.build.outputs.version }}
           path: thunderstore-package
           deps: |
@@ -393,7 +434,7 @@ jobs:
             Mods
 
   nexus:
-    needs: build
+    needs: [build, needle_smoke]
     runs-on: ubuntu-latest
     # Skipped until the Nexus mod page exists and both IDs are set as repo/org variables.
     if: ${{ vars.NEXUS_FILE_GROUP_ID != '' && vars.NEXUS_MOD_ID != '' }}

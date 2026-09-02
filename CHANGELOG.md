@@ -3,6 +3,23 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Start a line with `# ` to translate ordinary language into the console commands registered in the current game.
+  Cactus Needle runs locally on a background thread; requests at 80% confidence run automatically, requests from
+  50% through 79% wait for a bare `#` confirmation, and lower-confidence or off-topic requests are refused.
+- Release packages now include the pinned Windows x64 Needle 2.0.2 engine, its Apache-2.0 license, checksum
+  verification, and a Windows CI smoke test that performs a real native inference before publishing.
+- `NeedleKeepContext` optionally lets later requests refer to earlier Needle requests and command results. It is
+  off by default.
+
+### Safety
+
+- Every structured call and argument is validated against the live command catalogue before any part of a batch
+  runs. Closing the terminal, pressing `Ctrl+C`, or beginning another line invalidates pending work.
+
 ## [1.0.5] - 2026-08-10
 
 ### Added

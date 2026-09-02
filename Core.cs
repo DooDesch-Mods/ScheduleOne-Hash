@@ -28,10 +28,12 @@ namespace Hash
         internal static MelonLogger.Instance Log;
 
         private static MelonPreferences_Entry<bool> _hijack;
+        private static MelonPreferences_Entry<bool> _needleKeepContext;
 
         private AppHandle _app;
         private Session _session;
         private CommandIndex _index;
+        private ICommandCatalogue _naturalCatalogue;
         private ArgProviders _providers;
         private LogCapture _log;
         private CommandRunner _runner;
@@ -40,10 +42,10 @@ namespace Hash
         private Aliases _aliases;
         private Usage _usage;
         private WorldMarks _marks;
+        private NeedleCommandTranslator _needle;
 
-        /// <summary>Whether the terminal was on screen last frame - used ONLY to notice when it leaves, so the
-        /// session's history and aliases are written out. What the key does is decided by asking the game.</summary>
-        private bool _wasOnScreen;
+        /// <summary>One appearance, whether it began at the console key or at the live phone icon.</summary>
+        private readonly ScreenPresence _screen = new();
 
         private int _logsDrawnUpTo;
 
@@ -52,13 +54,15 @@ namespace Hash
 
         private float _iconCheckedAt;
 
+        /// <summary>Warm Needle after the live console catalogue has had a moment to receive late mod commands.</summary>
+        private const float NeedleWarmupDelay = 1f;
+
+        private bool _needleWarmupPending;
+        private float _needleWarmupAt;
+        private int _needleWarmupFailures;
+
         /// <summary>The frame the terminal last answered the console key on. See <see cref="Toggle"/>.</summary>
         private int _toggledOnFrame = -1;
-
-        /// <summary>Whether the console key took the phone out of the player's pocket for this session on screen, as
-        /// opposed to them already holding it and pressing the icon. Decides where right-click leaves them - see
-        /// <see cref="Back"/>. Cleared when the terminal leaves the screen, so an icon press always starts false.</summary>
-        private bool _raisedPhone;
 
         public override void OnInitializeMelon()
         {
@@ -70,6 +74,10 @@ namespace Hash
                 "ON (default): the key that opened the console now takes the phone out with hash on it. OFF: the "
                 + "vanilla console bar comes back and hash stays reachable only from code. Turn it off if another "
                 + "mod needs the vanilla bar.");
+            _needleKeepContext = category.CreateEntry(
+                "NeedleKeepContext", false, "Needle keeps conversation context",
+                "OFF (default): every '# <request>' is translated independently. ON: later requests may refer to "
+                + "earlier Needle commands and their results.");
 
             // Refuse rather than half-work. hash has no home-screen icon on purpose - the key is the only way in -
             // so a host that cannot raise the phone would leave the player with a mod that does nothing and no way
@@ -108,7 +116,10 @@ namespace Hash
 
             _marks = new WorldMarks();
             _runner = new CommandRunner(_log);
-            _session = new Session(_index, _runner, _usage, _history, _aliases, _marks);
+            _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
+            _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
+            _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
+                                   _naturalCatalogue);
 
             _runner.LogViewOpen = () => _session.Builtins.LogsOpen;
             _session.Builtins.UseFace(_store.Read(StoreScope.Global, "font"));
@@ -123,8 +134,20 @@ namespace Hash
                        .OnCall("nav", Nav)
                        .OnCall("run", Run)
                        .OnCall("drain", _ => Drain())
+                       .OnCall("cancel", _ => Cancel())
                        .OnCall("back", _ => Back())
                        .OnCall("close", _ => { Toggle(); return ""; });
+
+#if DEBUG
+            // Read-only live regression hook. It snapshots the same catalogue/providers as a real request but
+            // never enters Session or executes the resulting console line. The async pair additionally runs the
+            // real native path, but publishes its answer only into an isolated diagnostic slot.
+            _app.OnCall("needle-diagnose", DiagnoseNeedle)
+                .OnCall("needle-diagnose-start", DiagnoseNeedleStart)
+                .OnCall("needle-diagnose-refine-start", DiagnoseNeedleRefineStart)
+                .OnCall("needle-diagnose-schema", _ => DiagnoseNeedleSchema())
+                .OnCall("needle-diagnose-poll", _ => DiagnoseNeedlePoll());
+#endif
         }
 
         private void Patch()
@@ -135,6 +158,7 @@ namespace Hash
             {
                 DeclaredCommands.Apply();
                 _index.MarkDirty();
+                ScheduleNeedleWarmup();
             };
             ConsoleKeyPatch.OnOpen = Toggle;
             ConsoleKeyPatch.Enabled = _hijack.Value;
@@ -197,12 +221,9 @@ namespace Hash
                 return true;
             }
 
-            _index.MarkDirty();
-            _providers.Invalidate();
-
             // Read BEFORE Show, which is what raises it. This is the whole basis for where right-click leaves the
             // player: the key can be pressed with the phone already in their hand, and then it did not fetch it.
-            _raisedPhone = !PhoneScreen.IsRaised;
+            bool raisedPhone = !PhoneScreen.IsRaised;
 
             if (!_app.Show())
             {
@@ -212,34 +233,90 @@ namespace Hash
                 return false;
             }
 
-            _wasOnScreen = true;
-
-            // Tell the page it is on screen so it can put the caret back in the prompt.
-            //
-            // Needed because a reopen does not rebuild the page - the panel is simply shown again - so the startup
-            // code that focused the field the first time never runs a second time. On the very first open there is
-            // no page yet to hear this, which is fine: that is exactly the case the startup code covers.
-            _app.Emit("shown", "");
+            Entered(raisedPhone);
             return true;
         }
 
         public override void OnUpdate()
         {
+            WarmNeedle();
+
             // What # points at, sampled every frame - the game forgets its own hover the moment the phone comes up,
             // so there is nothing left to read at the point anyone would want to ask.
             _marks?.Tick();
 
             IconFollowsTheConsole();
 
-            // The terminal can leave the screen without the key: the back gesture, another app, Escape, the player
-            // putting the phone away. None of those are worth acting on except to write history and aliases out
-            // while the session is still healthy - the key itself asks the game what is on screen, so nothing here
-            // has to be kept in step with it.
-            if (!_wasOnScreen || _app == null) return;
+            if (_app == null) return;
 
-            if (_app.IsOpen && PhoneScreen.IsRaised) return;
+            bool onScreen = _app.IsOpen && PhoneScreen.IsRaised;
+            if (onScreen)
+            {
+                // Toggle calls Entered synchronously for the console key. Reaching this transition with no recorded
+                // appearance therefore means the player used the home-screen icon, which never passes Toggle.
+                Entered(false);
+            }
+            else if (_screen.OnScreen)
+                Left();
+        }
 
-            Left();
+        private void ScheduleNeedleWarmup()
+        {
+            _needleWarmupPending = true;
+            _needleWarmupAt = UnityEngine.Time.unscaledTime + NeedleWarmupDelay;
+            _needleWarmupFailures = 0;
+        }
+
+        private void WarmNeedle()
+        {
+            if (!_needleWarmupPending || _needle == null) return;
+
+            float now = UnityEngine.Time.unscaledTime;
+            if (now < _needleWarmupAt) return;
+
+            if (!_needle.Available)
+            {
+                _needleWarmupPending = false;
+                return;
+            }
+
+            try
+            {
+                // Capture the catalogue after the grace period, not at patch time: commands declared by another
+                // mod during the same scene startup are then part of the warmed fingerprint as well.
+                _providers.Invalidate();
+                _index.MarkDirty();
+
+                if (_needle.Warmup())
+                {
+                    _needleWarmupPending = false;
+#if DEBUG
+                    WriteNeedleSchemaSnapshot();
+#endif
+                }
+                else
+                    _needleWarmupAt = now + NeedleWarmupDelay;
+            }
+            catch (Exception e)
+            {
+                _needleWarmupFailures++;
+                _needleWarmupPending = _needleWarmupFailures < 3;
+                _needleWarmupAt = now + NeedleWarmupDelay;
+                Log.Warning("Hash warmup could not be queued: " + e.Message);
+            }
+        }
+
+        /// <summary>Start one visible appearance, from either of the app's two entry points.</summary>
+        private void Entered(bool raisedPhone)
+        {
+            if (!_screen.Enter(raisedPhone)) return;
+
+            _index.MarkDirty();
+            _providers.Invalidate();
+
+            // A reopen does not rebuild the page. This event restores the caret for both the key and icon paths;
+            // on the very first build no listener exists yet, and the page's startup focus covers that case.
+            _app?.Emit("shown", "");
         }
 
         /// <summary>
@@ -249,11 +326,9 @@ namespace Hash
         /// </summary>
         private void Left()
         {
-            _wasOnScreen = false;
+            if (!_screen.Leave()) return;
 
-            // The next appearance starts from "the player already had the phone" until the key says otherwise, and
-            // pressing the icon never runs Toggle - so a leftover true would decide the next right-click wrongly.
-            _raisedPhone = false;
+            _session?.CancelNatural();
 
             Persist();
         }
@@ -273,7 +348,7 @@ namespace Hash
         {
             // Read before the toggle: closing runs Left(), which clears the flag, so asking afterwards always
             // answers false and the page would let the host close the app a second time.
-            bool handled = _raisedPhone;
+            bool handled = _screen.RaisedPhone;
             if (handled) Toggle();
 
             var json = new Json();
@@ -305,6 +380,8 @@ namespace Hash
 
         public override void OnDeinitializeMelon()
         {
+            _session?.CancelNatural();
+            _needle?.Dispose();
             Persist();
             _log?.Dispose();
         }
@@ -344,6 +421,7 @@ namespace Hash
             json.Str("mark", Mark());
             json.Bool("locked", _session.Locked);
             json.Bool("live", _session.Builtins.LogsOpen);
+            json.Bool("pending", _session.NaturalPending);
             json.Str("font", _session.Builtins.Face);
             json.Raw("banner", Lines(_session.Transcript.Window()));
             return json.Done();
@@ -384,6 +462,7 @@ namespace Hash
             json.Str("mark", Mark());
             // Sent even though the page cannot place it yet - see NavResult.Ghost.
             json.Str("ghost", result.Ghost);
+            json.Bool("pending", _session.NaturalPending);
             return json.Done();
         }
 
@@ -398,12 +477,25 @@ namespace Hash
         {
             // A hidden page still has its timer. Answering with nothing keeps a terminal left open behind a closed
             // phone from rebuilding itself once a second for a screen nobody is looking at.
-            bool wanted = _wasOnScreen && _session.Builtins.LogsOpen;
+            bool wanted = _screen.OnScreen && _session.Builtins.LogsOpen;
+            RunResult natural = _screen.OnScreen ? _session.PollNatural() : new RunResult();
+            var lines = new List<OutputLine>(natural.Lines);
+            if (wanted) lines.AddRange(Fresh());
 
             var json = new Json();
-            json.Raw("lines", Lines(wanted ? Fresh() : Array.Empty<OutputLine>()));
+            json.Raw("lines", Lines(lines));
             json.Bool("live", _session.Builtins.LogsOpen);
+            json.Bool("pending", _session.NaturalPending);
             json.Str("font", _session.Builtins.Face);
+            return json.Done();
+        }
+
+        private string Cancel()
+        {
+            _session.CancelNatural();
+
+            var json = new Json();
+            json.Bool("pending", false);
             return json.Done();
         }
 
@@ -434,9 +526,161 @@ namespace Hash
             json.Bool("cleared", result.Cleared);
             json.Str("mark", Mark());
             json.Bool("live", _session.Builtins.LogsOpen);
+            json.Bool("pending", result.Pending);
             json.Str("font", _session.Builtins.Face);
             return json.Done();
         }
+
+#if DEBUG
+        private void WriteNeedleSchemaSnapshot()
+        {
+            try
+            {
+                string directory = System.IO.Path.GetDirectoryName(
+                    System.Reflection.Assembly.GetExecutingAssembly().Location) ?? AppContext.BaseDirectory;
+                string path = System.IO.Path.Combine(directory, "Hash.Needle.Schema.json");
+                System.IO.File.WriteAllText(path, DiagnoseNeedleSchema());
+                Log.Msg("Hash wrote the Needle training schema snapshot to " + path + ".");
+            }
+            catch (Exception e)
+            {
+                Log.Warning("Hash could not write the Needle training schema snapshot: " + e.Message);
+            }
+        }
+
+        private string DiagnoseNeedle(string query)
+        {
+            _providers.Invalidate();
+            _index.MarkDirty();
+
+            NeedleToolset tools = NeedleToolset.Build(_naturalCatalogue);
+            NeedleRequest request = tools.Prepare((query ?? "").Trim());
+
+            var json = new Json();
+            json.Bool("ready", request.Direct != null);
+            json.Num("tools", tools.Count);
+            json.Str("fingerprint", tools.Fingerprint);
+            json.Str("route", request.ExpectedToolName ?? "");
+            json.Raw("commands", System.Text.Json.JsonSerializer.Serialize(
+                request.Direct?.Commands ?? Array.Empty<string>()));
+            return json.Done();
+        }
+
+        private string DiagnoseNeedleStart(string query)
+        {
+            var json = new Json();
+            string text = (query ?? "").Trim();
+            if (text.Length == 0)
+                return json.Bool("started", false).Str("error", "query is empty").Done();
+
+            try
+            {
+                _providers.Invalidate();
+                _index.MarkDirty();
+                _needle.StartDiagnostic(text);
+                return json.Bool("started", true).Str("error", "").Done();
+            }
+            catch (Exception e)
+            {
+                return json.Bool("started", false).Str("error", e.Message).Done();
+            }
+        }
+
+        private string DiagnoseNeedleSchema()
+        {
+            _providers.Invalidate();
+            _index.MarkDirty();
+            NeedleToolset tools = NeedleToolset.Build(_naturalCatalogue);
+            var values = new Dictionary<string, List<List<string>>>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (CommandInfo command in _naturalCatalogue.Commands)
+            {
+                int slots = Math.Max(0, CommandLine.Tokenise(command.Signature).Count - 1);
+                var commandValues = new List<List<string>>(slots);
+                bool any = false;
+
+                for (int slot = 0; slot < slots; slot++)
+                {
+                    List<string> current = (_naturalCatalogue.ValuesFor(command.Word, slot)
+                        ?? Array.Empty<ArgValue>())
+                        .Select(value => value.Value)
+                        .Where(value => !string.IsNullOrWhiteSpace(value))
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .OrderBy(value => value, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    commandValues.Add(current);
+                    any |= current.Count > 0;
+                }
+
+                if (any) values[command.Word] = commandValues;
+            }
+
+            return new Json().Num("count", tools.Count).Str("fingerprint", tools.Fingerprint)
+                .Raw("schemas", tools.Json)
+                .Raw("commands", System.Text.Json.JsonSerializer.Serialize(
+                    _naturalCatalogue.Commands.Select(command => new
+                    {
+                        name = command.Word,
+                        description = command.Description,
+                        usage = command.Usage,
+                        signature = command.Signature,
+                        source = command.Source,
+                        vanilla = command.IsVanilla,
+                        marks = Enumerable.Range(0, Math.Max(0,
+                                CommandLine.Tokenise(command.Signature).Count - 1))
+                            .Select(slot => _naturalCatalogue.KindOf(command.Word, slot)
+                                .ToString().ToLowerInvariant())
+                            .ToArray(),
+                    })))
+                .Raw("values", System.Text.Json.JsonSerializer.Serialize(values)).Done();
+        }
+
+        private string DiagnoseNeedleRefineStart(string payload)
+        {
+            var json = new Json();
+            try
+            {
+                using System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(payload ?? "");
+                System.Text.Json.JsonElement root = document.RootElement;
+                string query = root.TryGetProperty("query", out System.Text.Json.JsonElement queryValue)
+                    ? queryValue.GetString()?.Trim() ?? "" : "";
+                string command = root.TryGetProperty("command", out System.Text.Json.JsonElement commandValue)
+                    ? commandValue.GetString()?.Trim() ?? "" : "";
+                bool strict = root.TryGetProperty("strict", out System.Text.Json.JsonElement strictValue)
+                              && strictValue.ValueKind == System.Text.Json.JsonValueKind.True;
+
+                if (query.Length == 0 || command.Length == 0)
+                    return json.Bool("started", false).Str("error", "query and command are required").Done();
+
+                _providers.Invalidate();
+                _index.MarkDirty();
+                _needle.StartDiagnosticRefinement(query, command, strict);
+                return json.Bool("started", true).Str("error", "").Done();
+            }
+            catch (Exception e)
+            {
+                return json.Bool("started", false).Str("error", e.Message).Done();
+            }
+        }
+
+        private string DiagnoseNeedlePoll()
+        {
+            var json = new Json();
+            if (!_needle.TryTakeDiagnostic(out NaturalCommandTranslation result))
+                return json.Bool("ready", false).Bool("pending", _needle.DiagnosticBusy).Done();
+
+            json.Bool("ready", true);
+            json.Bool("pending", false);
+            json.Raw("commands", System.Text.Json.JsonSerializer.Serialize(result.Commands));
+            json.Raw("confidence", System.Text.Json.JsonSerializer.Serialize(result.Confidence));
+            json.Str("error", result.Error);
+            json.Str("reasoning", result.Reasoning);
+            json.Raw("prefillTps", System.Text.Json.JsonSerializer.Serialize(result.PrefillTps));
+            json.Raw("decodeTps", System.Text.Json.JsonSerializer.Serialize(result.DecodeTps));
+            json.Raw("peakRamMb", System.Text.Json.JsonSerializer.Serialize(result.PeakRamMb));
+            return json.Done();
+        }
+#endif
 
         /// <summary>
         /// Add whatever the game logged on its own since the last look, when the log view is on.

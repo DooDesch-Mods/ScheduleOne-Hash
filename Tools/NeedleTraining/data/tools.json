@@ -1,0 +1,1861 @@
+[
+  {
+    "name": "addemployee",
+    "description": "Adds an employee of the specified type to the given property",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "type"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "property; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "addxp",
+    "description": "Adds the specified amount of experience points",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "alias",
+    "description": "make a short name for a command, or list them",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "name"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "command"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2salive",
+    "description": "the two dev strains while they grow: report, 'row [0",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sapp",
+    "description": "drive the Weedtimes app from the console",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sassign",
+    "description": "why a pot will or will not take a botanist, and what your aim reaches",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sbot",
+    "description": "what a botanist sees at the tent; 'setup' wires one up, 'ripen' finishes the growth",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sclaim",
+    "description": "put a name on every placed tent's plate",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2scross",
+    "description": "start a cross",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "arg2"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "b2sdonors",
+    "description": "every buildable the tent could be cloned from",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sdump",
+    "description": "strains with their effects; a word matches a name or an effect",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sdumpfx",
+    "description": "write vanilla and our particle textures to disk",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2segg",
+    "description": "the #166 easter egg: report, 'setup [dank]', 'fire', 'harvest', 'smoke', 'consume [funk|dank]'",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sexit",
+    "description": "who can still receive an Escape, and who is patching the way there",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sfem",
+    "description": "dump the feminizer, 'pot' to pour one in, 'card' for the nearest pot's dropdown, 'drop' to open",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sfoil",
+    "description": "the vial label's holofoil: report, 'card [effect|strain|off]', 'row', 'spin <deg>', 'fit <gain>",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sgen",
+    "description": "age a line by n propagations",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sgive",
+    "description": "give n seeds and n buds of a strain",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sglow",
+    "description": "the plants' tier crack glow: report, 'row [clear]', 'all', 'look [n]', 'fit <floor> <gain>', 'ma",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "arg2"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "b2sgoto",
+    "description": "stand in front of a placed tent",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sharvest",
+    "description": "tent seed check ('go' cuts), or 'pot' to cut an ordinary fertilized plant and count",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2shelp",
+    "description": "list the test kit",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2shover",
+    "description": "what the crosshair is on",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2shunt",
+    "description": "hunt a cross",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sicon",
+    "description": "write the tent's inventory icon to disk",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sicons",
+    "description": "which strains would draw as a blank tile in the product app",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sleaf",
+    "description": "the leaf colour: report, 'mode label|parent|olive|gradient' live, 'ramp [a b]', 'tex', 'shot [n]",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "arg2"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "b2smat",
+    "description": "materialization state, or dress one strain now",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sname",
+    "description": "name a discovered strain",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "arg2"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "b2snames",
+    "description": "what is named, what is bred but unnamed, what is still open",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2snext",
+    "description": "step to the next strain",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2snotice",
+    "description": "raise a real discovery notice",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2snotices",
+    "description": "what the app has been told this session",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2spair",
+    "description": "the #255 pair trigger: report, 'peek [n]', 'setup', 'fire', 'harvest', 'clear'",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2splace",
+    "description": "put a breeding tent down, with pots if asked",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sprev",
+    "description": "step to the previous strain",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sproducts",
+    "description": "open the game's own Products app; a term goes into its search box, or press a chip",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "arg2"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "b2spuff",
+    "description": "play the seed-vial puff, and list the strains that glow",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2sreset",
+    "description": "wipe this save's lines, tents, names and discoveries",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sseedcheck",
+    "description": "verify sowing consumes our seeds",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2ssheet",
+    "description": "write n labels and icons to disk with an index.html",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "value"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2sskip",
+    "description": "fast-forward running crosses, in minutes",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "value"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2ssmoke",
+    "description": "which strains smoke, and force the wisp onto the vial in your hand; 'off', 'sow', 'fit <size> [l",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2ssound",
+    "description": "when each tent moans, or play a clip now",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "b2ssow",
+    "description": "fill the tent's pots; a third number leaves the second one part-grown",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "arg2"
+        },
+        "arg3": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "b2sstatus",
+    "description": "running crosses and every line you own",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2stent",
+    "description": "what the placed tents see, and why a cross is refused",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "b2svial",
+    "description": "dump a strain's seed-vial prefab; no argument means the selected one",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "arg1"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "bind",
+    "description": "Binds the given key to the given command",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "key"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "command"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "changebalance",
+    "description": "Changes the player's online balance by the specified amount",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "changecash",
+    "description": "Changes the player's cash balance by the specified amount",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "clear",
+    "description": "empty the screen",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "clearbinds",
+    "description": "Clears ALL binds",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "clearinventory",
+    "description": "Clears the player's inventory",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "cleartrash",
+    "description": "Instantly removes all trash from the world",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "clearwanted",
+    "description": "Clears the player's wanted level",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "copy",
+    "description": "put a line on the system clipboard - the last one, unless you name it",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "text"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "destroynpcs",
+    "description": "Destroys all NPCs in the scene, including employees and dealers",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "disable",
+    "description": "Disables the specified GameObject",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "label"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "disableinstancing",
+    "description": "Disables instancing in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "disablenpcasset",
+    "description": "Disabled the given asset under all NPCs",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "asset all"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "disablenpcs",
+    "description": "Disables all NPCs in the scene (sets their GameObjects to inactive)",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "disableocclusionculling",
+    "description": "Disables occlusion culling in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "disablephysics",
+    "description": "Disables physics in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "disableterrain",
+    "description": "Disables terrain in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "enable",
+    "description": "Enables the specified GameObject",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "label"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "enableinstancing",
+    "description": "Enables instancing in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "enableocclusionculling",
+    "description": "Enables occlusion culling in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "enablephysics",
+    "description": "Enables physics in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "enableterrain",
+    "description": "Enables terrain in the game",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "endtutorial",
+    "description": "Forces the tutorial to end immediately (only if the player is actually in the tutorial)",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "font",
+    "description": "switch the typeface, or say which one is on",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "mono pixel"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "forcesleep",
+    "description": "Forces all players to immediately sleep",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "freecam",
+    "description": "Toggles free cam mode",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "give",
+    "description": "Gives the player the specified item. Optionally specify a quantity",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "item; #=current"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "quantity"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "grep",
+    "description": "show only the lines on screen containing something",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "text"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "growplants",
+    "description": "Sets ALL plants in the world fully grown",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "hashequip",
+    "description": "equip a hotbar slot, the way a number key would",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "value"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "hashhand",
+    "description": "what the game thinks is in the player's hand",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "help",
+    "description": "explain one command, list a topic, or search",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "word topic all"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "page"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "hidefps",
+    "description": "Hides FPS label",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "hideui",
+    "description": "Hides all on-screen UI",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "history",
+    "description": "what you have run before, oldest first",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "text"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "logs",
+    "description": "show what the game logs as it happens",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "filter off"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "lowerwanted",
+    "description": "Lowers the player's wanted level",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "npcworkbench",
+    "description": "Opens the local-only S1API NPC appearance editor and preview",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "packageproduct",
+    "description": "Packages the equipped product with the specified packaging",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "packaging; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "playcutscene",
+    "description": "Plays the cutscene with the given name",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "cutscene"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "presentationworkbench",
+    "description": "Open the local icon and equippable presentation authoring workbench",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "product item",
+          "enum": [
+            "product",
+            "item"
+          ]
+        },
+        "arg2": {
+          "type": "string",
+          "description": "id"
+        },
+        "arg3": {
+          "type": "string",
+          "description": " "
+        },
+        "arg4": {
+          "type": "string",
+          "description": "close"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "quit",
+    "description": "Immediately quits the game without saving progress",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "raisewanted",
+    "description": "Raises the player's wanted level",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "raw",
+    "description": "run the rest of the line as one command, semicolons and all",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "command"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "repeat",
+    "description": "run a command several times",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "count"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "command"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "save",
+    "description": "Forces a save",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "setdayduration",
+    "description": "Sets the (real life) duration of an in-game 24-hour cycle. Measured in real minutes",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "minutes"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setdiscovered",
+    "description": "Sets the specified product as discovered",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "product; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setemotion",
+    "description": "Sets the facial expression of the player's avatar",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "emotion"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setgravitymultiplier",
+    "description": "Sets the multiplier of the gravity strength",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "multiplier"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "sethealth",
+    "description": "Sets the player's health to the specified amount",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setjumpforce",
+    "description": "Sets the player's jump force multiplier",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "multiplier"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setlawintensity",
+    "description": "Sets the intensity of law enforcement activity on a scale of 0-10",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "intensity"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setmovespeed",
+    "description": "Sets the player's move speed multiplier",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "multiplier"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setowned",
+    "description": "Sets the specified property or business as owned",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "property business; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setpoliceignoreplayers",
+    "description": "Sets whether police ignore players",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "boolean",
+          "description": "true false"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setquality",
+    "description": "Sets the quality of the currently equipped item",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "quality"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setquantity",
+    "description": "Sets the quantity of the currently equipped item",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setquestentrystate",
+    "description": "Sets the state of the specified quest entry",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "quest"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "entry"
+        },
+        "arg3": {
+          "type": "string",
+          "description": "state"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2",
+        "arg3"
+      ]
+    }
+  },
+  {
+    "name": "setqueststate",
+    "description": "Sets the state of the specified quest",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "quest"
+        },
+        "arg2": {
+          "type": "string",
+          "description": "state"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "setregionunlocked",
+    "description": "Unlocks the given region",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "region"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setrelationship",
+    "description": "Sets the relationship scalar of the given NPC. Range is 0-5",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "npc; #=current"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "value"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "setstaminareserve",
+    "description": "Sets the player's stamina reserve (default 100) to the specified amount",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "amount"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "settime",
+    "description": "Sets the time of day to the specified 24-hour time",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "hhmm"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "settimescale",
+    "description": "Sets the time scale. Default 1",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "number",
+          "description": "scale"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setunlocked",
+    "description": "Unlocks the given NPC",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "npc; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "setvar",
+    "description": "Sets the value of the specified variable",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "variable"
+        },
+        "arg2": {
+          "type": "number",
+          "description": "value"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1",
+        "arg2"
+      ]
+    }
+  },
+  {
+    "name": "setweather",
+    "description": "Sets the weather to the specified type",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "weather"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "showfps",
+    "description": "Shows FPS label",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "spawnvehicle",
+    "description": "Spawns a vehicle at the player's location",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "vehicle; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "teleport",
+    "description": "Teleports the player to the specified location, property, or NPC",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "location property npc; #=current"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "triggerdistantthunder",
+    "description": "Triggers distant thunder",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "triggerlightning",
+    "description": "Triggers a lightning event",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "npc player"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    }
+  },
+  {
+    "name": "unalias",
+    "description": "remove an alias",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "name"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  },
+  {
+    "name": "unbind",
+    "description": "Removes the given bind",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "arg1": {
+          "type": "string",
+          "description": "key"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "arg1"
+      ]
+    }
+  }
+]

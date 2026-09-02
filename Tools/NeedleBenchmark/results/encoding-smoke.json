@@ -1,0 +1,59 @@
+﻿{
+    "schemaVersion":  1,
+    "generatedAtUtc":  "2026-08-21T01:43:15.6616894Z",
+    "bridge":  "http://127.0.0.1:6139",
+    "cases":  1,
+    "perfect":  0,
+    "passRate":  0,
+    "perfectOnBroad":  0,
+    "perfectAfterSelectedCommand":  0,
+    "perfectAfterRequiredArguments":  0,
+    "unresolved":  1,
+    "errors":  0,
+    "averageCaseMs":  1158,
+    "medianCaseMs":  1158,
+    "p95CaseMs":  1158,
+    "byLanguage":  [
+                       {
+                           "language":  "fr",
+                           "cases":  1,
+                           "perfect":  0,
+                           "passRate":  0
+                       }
+                   ],
+    "byCategory":  [
+                       {
+                           "category":  "teleport",
+                           "cases":  1,
+                           "perfect":  0,
+                           "passRate":  0
+                       }
+                   ],
+    "results":  [
+                    {
+                        "id":  "teleport-docks-fr-1",
+                        "language":  "fr",
+                        "category":  "teleport",
+                        "query":  "téléporte-moi aux docks",
+                        "expected":  "teleport docks",
+                        "selectedCommand":  "",
+                        "status":  "no-route",
+                        "firstPerfectIteration":  null,
+                        "totalMs":  1158,
+                        "stages":  [
+                                       {
+                                           "iteration":  1,
+                                           "kind":  "broad",
+                                           "result":  {
+                                                          "commands":  [
+
+                                                                       ],
+                                                          "confidence":  null,
+                                                          "error":  "b2shelp: Hash returned an unknown argument: b2shelp",
+                                                          "elapsedMs":  1133
+                                                      }
+                                       }
+                                   ]
+                    }
+                ]
+}

@@ -1,0 +1,1028 @@
+"""Generate validated multilingual Needle fine-tuning data from a live Hash catalogue.
+
+Qwen writes natural phrasings only. Tool names, arguments, splits, negatives and final answers are assembled and
+validated locally, so a teacher hallucination can never become training ground truth.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+from collections import Counter
+import hashlib
+import json
+import math
+import pathlib
+import random
+import re
+import shlex
+import time
+import urllib.error
+import urllib.request
+
+from needle.model.finetune import render_example
+from needle.model.tokenizer import get_tokenizer
+
+
+ROOT = pathlib.Path(__file__).resolve().parent
+LANGUAGES = {
+    "en": "English",
+    "de": "German",
+    "es": "Spanish",
+    "fr": "French",
+}
+WORD = re.compile(r"[a-z0-9]+")
+TOKEN_BUDGET = 256
+MAX_TEACHER_WORDS = 24
+MAX_ACCEPTED_TEACHER_WORDS = 32
+ROUTE_DESCRIPTION_CHARACTERS = 32
+FULL_DESCRIPTION_CHARACTERS = 0
+TEACHER_PROMPT_VERSION = 9
+MULTI_MODE_POLICY_VERSION = 1
+VARIATION_STYLES = (
+    "direct imperative starting with the action verb",
+    "polite request explicitly using the language's equivalent of please",
+    "first-person desire starting with the language's equivalent of I want",
+    "terse command fragment with no politeness or question",
+    "can-you question that ends as a question",
+    "indirect non-question starting with the language's equivalent of it would help if",
+)
+
+# Hash's context grammar, shared by every command. These are language features, not per-command synonyms: the
+# command catalogue says which argument kind is accepted and this table says what each context token means.
+MARK_MEANINGS = {
+    "#": "the exact thing the player is currently looking at",
+    "#hand": "the item currently equipped in the player's hand",
+    "#here": "the property where the player is currently standing",
+    "#last": "the last argument of the last console command that ran",
+    "#it": "the last identifier printed by the console",
+    "#car": "the vehicle the player is currently sitting in",
+    "#home": "the owned property the player most recently entered, meaning the player's home",
+    "#near": "the NPC nearest to the player",
+}
+MARKS_BY_KIND = {
+    "item": ("#", "#hand", "#last", "#it"),
+    "npc": ("#", "#near", "#last", "#it"),
+    "vehicle": ("#", "#car", "#last", "#it"),
+    "property": ("#", "#here", "#home", "#last", "#it"),
+    "any": tuple(MARK_MEANINGS),
+}
+FEATURE_SPLITS = ("train", "validation", "holdout")
+
+
+def normalized(text: str) -> str:
+    return " ".join(str(text).casefold().split())
+
+
+def console_tokens(line: str) -> list[str]:
+    try:
+        return shlex.split(line, posix=True)
+    except ValueError:
+        return line.split()
+
+
+def operation_tokens(tool: dict) -> set[str]:
+    text = tool.get("name", "") + " " + tool.get("description", "")
+    words = WORD.findall(text.casefold())
+    tokens = set(words)
+    compact = "_".join(words)
+    tokens.update(compact[i:i + 3] for i in range(max(0, len(compact) - 2)))
+    return tokens
+
+
+def nearest_tools(target: dict, tools: list[dict], count: int = 4) -> list[dict]:
+    target_tokens = operation_tokens(target)
+    scored = []
+    for candidate in tools:
+        if candidate["name"] == target["name"]:
+            continue
+        candidate_tokens = operation_tokens(candidate)
+        union = target_tokens | candidate_tokens
+        score = len(target_tokens & candidate_tokens) / max(1, len(union))
+        scored.append((score, candidate["name"], candidate))
+    scored.sort(key=lambda entry: (-entry[0], entry[1]))
+    return [entry[2] for entry in scored[:count]]
+
+
+def compact_description(tool: dict, limit: int) -> str:
+    description = str(tool.get("description", "")).strip().rstrip(".")
+    if len(description) > limit:
+        first = description.split(".", 1)[0].strip()
+        description = first if 0 < len(first) <= limit else description[:limit].rstrip(" ,;:")
+    return description
+
+
+def route_tool(tool: dict) -> dict:
+    return {"name": tool["name"],
+            "description": compact_description(tool, ROUTE_DESCRIPTION_CHARACTERS)}
+
+
+def refinement_tool(tool: dict, assignment: dict, live_values: dict) -> dict:
+    """Keep the argument contract compact; runtime supplies current dynamic enums during decoding."""
+    del assignment, live_values
+    projected = copy.deepcopy(tool)
+    projected["description"] = compact_description(tool, FULL_DESCRIPTION_CHARACTERS)
+    parameters = projected["parameters"]
+    parameters.pop("type", None)
+    parameters.pop("additionalProperties", None)
+    parameters.pop("required", None)
+    properties = parameters.get("properties", {})
+    for prop in properties.values():
+        prop.pop("description", None)
+        if prop.get("type") == "string":
+            prop.pop("type")
+    return projected
+
+
+def expected_assignments(cases_path: pathlib.Path, tools_by_name: dict[str, dict]):
+    cases = json.loads(cases_path.read_text(encoding="utf-8")).get("cases", [])
+    excluded_queries = {normalized(case.get("query", "")) for case in cases}
+    assignments: dict[str, list[dict]] = {}
+    for case in cases:
+        tokens = console_tokens(case.get("expected", ""))
+        if not tokens or tokens[0] not in tools_by_name:
+            continue
+        properties = list(tools_by_name[tokens[0]]["parameters"].get("properties", {}))
+        if not properties:
+            assignments.setdefault(tokens[0], []).append({})
+            continue
+        values = tokens[1:]
+        row = {}
+        for index, prop in enumerate(properties):
+            if index >= len(values):
+                break
+            row[prop] = " ".join(values[index:]) if index == len(properties) - 1 else values[index]
+        assignments.setdefault(tokens[0], []).append(row)
+    return assignments, excluded_queries
+
+
+def example_assignment(tool: dict, metadata: dict | None = None) -> dict:
+    properties = list(tool["parameters"].get("properties", {}))
+    if not properties:
+        return {}
+    usage = str((metadata or {}).get("usage", "")).strip()
+    if not usage:
+        match = re.search(r"(?:^|\s)Example:\s*([^.;]+)", tool.get("description", ""), re.IGNORECASE)
+        if not match:
+            return {}
+        usage = match.group(1)
+    tokens = console_tokens(re.split(r"[;,]", usage, maxsplit=1)[0])
+    if tokens and normalized(tokens[0]) == normalized(tool["name"]):
+        tokens = tokens[1:]
+    result = {}
+    for index, prop in enumerate(properties):
+        if index >= len(tokens):
+            break
+        value = " ".join(tokens[index:]) if index == len(properties) - 1 else tokens[index]
+        if any(marker in value for marker in "<>[]|"):
+            continue
+        result[prop] = value
+    return result
+
+
+def spread(values: list[str], count: int, offset: int) -> list[str]:
+    if not values:
+        return []
+    if len(values) <= count:
+        return values
+    step = len(values) / count
+    return [values[min(len(values) - 1, math.floor((index + 0.5) * step + offset) % len(values))]
+            for index in range(count)]
+
+
+def scalar(prop: dict, scenario: int):
+    enum = prop.get("enum")
+    if enum:
+        return enum[scenario % len(enum)]
+    kind = prop.get("type", "string")
+    if kind == "boolean":
+        return scenario % 2 == 0
+    if kind in ("integer", "number"):
+        candidates = [1, 4, 10, 25, 100, 1200]
+        value = candidates[scenario % len(candidates)]
+        if "minimum" in prop:
+            value = max(value, prop["minimum"])
+        if "maximum" in prop:
+            value = min(value, prop["maximum"])
+        return int(value) if kind == "integer" else float(value)
+    return f"sample{scenario + 1}"
+
+
+def coerce(prop: dict, value):
+    kind = prop.get("type", "string")
+    if kind == "integer" and isinstance(value, str):
+        return int(float(value))
+    if kind == "number" and isinstance(value, str):
+        return float(value)
+    if kind == "boolean" and isinstance(value, str):
+        if value.casefold() in ("true", "on", "yes", "1"):
+            return True
+        if value.casefold() in ("false", "off", "no", "0"):
+            return False
+    return value
+
+
+def coerce_assignment(tool: dict, assignment: dict) -> dict:
+    properties = tool["parameters"].get("properties", {})
+    return {name: coerce(properties[name], value) for name, value in assignment.items() if name in properties}
+
+
+def make_assignments(tool: dict, live_values: dict, gold: list[dict], count: int,
+                     metadata: dict | None = None) -> list[dict]:
+    properties = tool["parameters"].get("properties", {})
+    required = set(tool["parameters"].get("required", []))
+    slots = live_values.get(tool["name"], [])
+    example = example_assignment(tool, metadata)
+    rows = []
+
+    for raw_candidate in gold:
+        candidate = coerce_assignment(tool, raw_candidate)
+        try:
+            validate_arguments(tool, candidate)
+        except (TypeError, ValueError):
+            continue
+        if candidate not in rows:
+            rows.append(candidate)
+
+    scenario = 0
+    while len(rows) < count:
+        row = {}
+        for index, (name, prop) in enumerate(properties.items()):
+            if name not in required and scenario % 3 == 0:
+                continue
+            slot_values = slots[index] if index < len(slots) else []
+            candidates = spread(slot_values, count, index)
+            if candidates:
+                value = coerce(prop, candidates[scenario % len(candidates)])
+            elif name in example and not prop.get("enum") and not slot_values:
+                value = coerce(prop, example[name])
+            elif name in example and scenario == 0:
+                value = coerce(prop, example[name])
+            else:
+                value = scalar(prop, scenario + index)
+            row[name] = value
+        if row not in rows or not properties:
+            rows.append(row)
+        scenario += 1
+        if scenario > count * 8:
+            if not rows:
+                raise RuntimeError(f"could not construct any valid assignment for {tool['name']}")
+            finite = list(rows)
+            while len(rows) < count:
+                rows.append(copy.deepcopy(finite[len(rows) % len(finite)]))
+    return rows[:count]
+
+
+def mark_kinds(tool: dict, metadata: dict | None) -> list[str]:
+    """Return live catalogue kinds, with a compatibility fallback for pre-metadata snapshots."""
+    properties = list(tool["parameters"].get("properties", {}).values())
+    declared = list((metadata or {}).get("marks") or [])
+    if len(declared) == len(properties):
+        return [str(kind).casefold() for kind in declared]
+
+    inferred = []
+    for prop in properties:
+        description = str(prop.get("description", "")).casefold()
+        if "#=current" not in description:
+            inferred.append("none")
+        elif "location" in description:
+            inferred.append("any")
+        elif "npc" in description:
+            inferred.append("npc")
+        elif "vehicle" in description:
+            inferred.append("vehicle")
+        elif "property" in description or "business" in description:
+            inferred.append("property")
+        elif any(word in description for word in ("item", "product", "packaging")):
+            inferred.append("item")
+        else:
+            inferred.append("any")
+    return inferred
+
+
+def mark_feature_rows(tool: dict, metadata: dict, assignments: list[dict]) -> list[dict]:
+    properties = list(tool["parameters"].get("properties", {}))
+    rows = []
+    if not properties or not assignments:
+        return rows
+    for slot, kind in enumerate(mark_kinds(tool, metadata)):
+        if slot >= len(properties) or kind not in MARKS_BY_KIND:
+            continue
+        argument = properties[slot]
+        for mark_index, mark in enumerate(MARKS_BY_KIND[kind]):
+            for language_index, language in enumerate(LANGUAGES):
+                for split_index, split in enumerate(FEATURE_SPLITS):
+                    assignment = copy.deepcopy(
+                        assignments[(mark_index + language_index + split_index) % len(assignments)])
+                    assignment[argument] = mark
+                    try:
+                        validate_arguments(tool, assignment)
+                    except (TypeError, ValueError):
+                        continue
+                    rows.append({
+                        "id": (f"feature|{tool['name']}|{argument}|{mark[1:] or 'looked'}|"
+                               f"{language}|{split}|{split_index}"),
+                        "command": tool["name"], "language": language,
+                        "scenario": split_index, "split": split,
+                        "description": metadata.get("description") or tool.get("description", ""),
+                        "usage": metadata.get("usage", ""), "arguments": assignment,
+                        "argument_meanings": {argument: MARK_MEANINGS[mark]},
+                    })
+    return rows
+
+
+def validate_arguments(tool: dict, arguments: dict):
+    schema = tool["parameters"]
+    properties = schema.get("properties", {})
+    unknown = set(arguments) - set(properties)
+    missing = set(schema.get("required", [])) - set(arguments)
+    if unknown or missing:
+        raise ValueError(f"{tool['name']}: invalid keys unknown={unknown} missing={missing}")
+    for name, value in arguments.items():
+        prop = properties[name]
+        kind = prop.get("type", "string")
+        valid_type = ((kind == "string" and isinstance(value, str))
+                      or (kind == "boolean" and isinstance(value, bool))
+                      or (kind == "integer" and isinstance(value, int) and not isinstance(value, bool))
+                      or (kind == "number" and isinstance(value, (int, float)) and not isinstance(value, bool)))
+        if not valid_type:
+            raise ValueError(f"{tool['name']}.{name}: {value!r} is not {kind}")
+        if "enum" in prop and value not in prop["enum"]:
+            raise ValueError(f"{tool['name']}.{name}: {value!r} is outside enum")
+
+
+def grounding_reasoning(tool: dict, arguments: dict, meanings: dict | None = None) -> str:
+    """A compact, label-derived source explanation for Needle's target-only grounding loss."""
+    meanings = meanings or {}
+    properties = tool["parameters"].get("properties", {})
+    parts = []
+    for name, value in arguments.items():
+        label = str(properties.get(name, {}).get("description", name)).split(";", 1)[0].strip() or name
+        rendered = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+        if name in meanings:
+            parts.append(f"{label}={rendered} means {meanings[name]}")
+        else:
+            parts.append(f"{label}={rendered} from request")
+    return "; ".join(parts)
+
+
+TEACHER_SYSTEM_PROMPT = (
+    "You write precise natural-language console requests for supervised tool-calling data. "
+    "Follow every supplied operation and canonical argument exactly. Return only the requested JSON.")
+
+
+def teacher_json(args, prompt: str, output_schema: dict, seed: int, expected_items: int,
+                 model: str | None = None):
+    """One teacher call, routed to whichever local server is serving the model."""
+    model = model or args.model
+    if args.api == "ollama":
+        return ollama_json(args.base_url, model, prompt, output_schema, seed, expected_items)
+    return openai_json(args.base_url, model, prompt, seed, expected_items, args.api_key)
+
+
+def extract_json_object(text: str) -> dict:
+    """Recover the JSON object from a reply that a server could not constrain to a schema.
+
+    FreeToken and other OpenAI-compatible engines reject response_format json_schema because they have no
+    constrained decoding, so the reply is ordinary text that usually - not always - contains exactly the object
+    that was asked for. A fenced block, a leading sentence or a trailing note must not cost a whole batch.
+    """
+    stripped = text.strip()
+    try:
+        return json.loads(stripped)
+    except json.JSONDecodeError:
+        pass
+    fenced = re.search(r"```(?:json)?\s*(.+?)```", stripped, re.DOTALL)
+    if fenced:
+        try:
+            return json.loads(fenced.group(1).strip())
+        except json.JSONDecodeError:
+            pass
+    start = stripped.find("{")
+    while start != -1:
+        depth = 0
+        in_string = False
+        escaped = False
+        for index in range(start, len(stripped)):
+            character = stripped[index]
+            if in_string:
+                if escaped:
+                    escaped = False
+                elif character == "\\":
+                    escaped = True
+                elif character == '"':
+                    in_string = False
+                continue
+            if character == '"':
+                in_string = True
+            elif character == "{":
+                depth += 1
+            elif character == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        return json.loads(stripped[start:index + 1])
+                    except json.JSONDecodeError:
+                        break
+        start = stripped.find("{", start + 1)
+    raise json.JSONDecodeError("no JSON object in the teacher reply", stripped, 0)
+
+
+def openai_json(base: str, model: str, prompt: str, seed: int, expected_items: int,
+                api_key: str = ""):
+    """Teacher call against an OpenAI-compatible server without constrained decoding.
+
+    FreeToken answers response_format json_object/json_schema with an error, so the schema is stated in the
+    prompt and the reply is parsed defensively. A malformed reply raises JSONDecodeError, which teacher_batch
+    already treats as a retryable attempt.
+    """
+    output_tokens = max(512, min(8192, expected_items * 48 + 256))
+    instruction = (
+        "\n\nOUTPUT FORMAT: return one JSON object and nothing else - no prose, no explanation, no markdown "
+        "fence. The object has exactly one key \"items\", whose value is an array of objects with exactly the "
+        "keys \"id\" and \"query\", both strings. Return every input id exactly once.")
+    payload = json.dumps({
+        "model": model,
+        "stream": False,
+        "seed": seed,
+        "max_tokens": output_tokens,
+        "temperature": 0.72,
+        "messages": [
+            {"role": "system", "content": TEACHER_SYSTEM_PROMPT},
+            {"role": "user", "content": prompt + instruction},
+        ],
+    }).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = "Bearer " + api_key
+    request = urllib.request.Request(
+        base.rstrip("/") + "/v1/chat/completions", data=payload, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(request, timeout=600) as response:
+            envelope = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        body = error.read().decode("utf-8", errors="replace")
+        raise urllib.error.URLError(f"HTTP {error.code}: {body}") from error
+    choice = envelope["choices"][0]["message"]
+    content = choice.get("content")
+    if not content:
+        # A reasoning model can spend the whole budget in reasoning_content and answer with an empty string.
+        raise json.JSONDecodeError("the teacher returned no content", "", 0)
+    return extract_json_object(content)
+
+
+def ollama_json(base: str, model: str, prompt: str, output_schema: dict, seed: int,
+                expected_items: int):
+    output_tokens = max(512, min(4096, expected_items * 32 + 128))
+    payload = json.dumps({
+        "model": model,
+        "stream": False,
+        "think": False,
+        "keep_alive": -1,
+        "format": output_schema,
+        "messages": [
+            {"role": "system", "content": TEACHER_SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
+        "options": {"temperature": 0.72, "seed": seed, "num_ctx": 8192,
+                    "num_predict": output_tokens},
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        base.rstrip("/") + "/api/chat", data=payload,
+        headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(request, timeout=180) as response:
+            envelope = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        body = error.read().decode("utf-8", errors="replace")
+        raise urllib.error.URLError(f"HTTP {error.code}: {body}") from error
+    return json.loads(envelope["message"]["content"])
+
+
+OUTPUT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "items": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {"id": {"type": "string"}, "query": {"type": "string"}},
+                "required": ["id", "query"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    "required": ["items"],
+    "additionalProperties": False,
+}
+
+
+def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str,
+                  forbidden: set[str] | None = None, allow_alternatives: bool = True):
+    forbidden = forbidden or set()
+    off_topic = all(row.get("offtopic") for row in rows)
+    cache_input = {"prompt_version": TEACHER_PROMPT_VERSION, "model": args.model, "rows": rows}
+
+    def unselected_documented_modes(row: dict) -> list[str]:
+        """Find quoted subcommand choices which are not selected by this row's canonical arguments."""
+        phrases = re.findall(r"['\"]([^'\"]+)['\"]", str(row.get("description", "")))
+        modes = []
+        for phrase in phrases:
+            first = re.sub(r"[^\w-]", "", phrase.split(maxsplit=1)[0], flags=re.UNICODE).casefold()
+            if first and first not in modes:
+                modes.append(first)
+        if len(modes) < 2:
+            return []
+        selected = {normalized(str(value)) for value in row.get("arguments", {}).values()
+                    if isinstance(value, str)}
+        return [mode for mode in modes if normalized(mode) not in selected]
+
+    excluded_modes = {row["id"]: unselected_documented_modes(row) for row in rows}
+    excluded_modes = {key: value for key, value in excluded_modes.items() if value}
+    batch_languages = {row.get("language") for row in rows if row.get("language") in LANGUAGES}
+    required_language = next(iter(batch_languages)) if len(batch_languages) == 1 else None
+    language_guard = ""
+    if required_language:
+        language_name = LANGUAGES[required_language]
+        language_guard = (
+            f"MANDATORY OUTPUT LANGUAGE: {language_name}. Write every ordinary action and connective word in "
+            f"{language_name}; do not echo the English operation description. Only opaque game identifiers or "
+            "canonical subcommand tokens may remain untranslated.\n"
+        )
+    if excluded_modes:
+        cache_input["multi_mode_policy"] = MULTI_MODE_POLICY_VERSION
+    if forbidden:
+        cache_input["forbidden"] = sorted(forbidden)
+    cache_key = hashlib.sha256(json.dumps(cache_input, sort_keys=True, ensure_ascii=False)
+                               .encode("utf-8")).hexdigest()
+    cache_path = cache_dir / f"{batch_id}-{cache_key[:16]}.json"
+    expected_ids = {row["id"] for row in rows}
+    rows_by_id = {row["id"]: row for row in rows}
+
+    def grounds_literals(row: dict, query: str) -> bool:
+        requested = query.casefold()
+        required = []
+        for value in row.get("arguments", {}).values():
+            if isinstance(value, str) and re.fullmatch(r"sample\d+", value):
+                required.append(value.casefold())
+            elif isinstance(value, (int, float)) and not isinstance(value, bool):
+                required.append(format(value, "g"))
+        return all(re.search(rf"(?<![\d.]){re.escape(value)}(?![\d.])", requested)
+                   for value in required)
+
+    def valid(response: dict) -> bool:
+        found = {item.get("id"): item.get("query") for item in response.get("items", [])}
+        return (set(found) == expected_ids
+                and all(isinstance(query, str) and query.strip()
+                        and len(query.split()) <= MAX_ACCEPTED_TEACHER_WORDS
+                        for query in found.values())
+                and len({normalized(query) for query in found.values()}) == len(found)
+                and all(grounds_literals(rows_by_id[key], query)
+                        for key, query in found.items() if key in rows_by_id and isinstance(query, str))
+                and all(not (set(normalized(query).split()) & set(excluded_modes.get(key, [])))
+                        for key, query in found.items() if isinstance(query, str))
+                and not ({normalized(query) for query in found.values()}
+                         & {normalized(query) for query in forbidden}))
+
+    response = None
+    split_duplicate_batch = False
+    cache_candidates = [cache_path]
+    cache_candidates.extend(path for path in cache_dir.glob(f"*-{cache_key[:16]}.json")
+                            if path != cache_path)
+    for candidate in cache_candidates:
+        if not candidate.exists():
+            continue
+        cached = json.loads(candidate.read_text(encoding="utf-8"))
+        if valid(cached):
+            response = cached
+            break
+        if candidate == cache_path and not off_topic and len(rows) > len(LANGUAGES):
+            cached_queries = [normalized(item.get("query", "")) for item in cached.get("items", [])]
+            split_duplicate_batch = len(set(cached_queries)) < len(cached_queries)
+    if response is None:
+        if split_duplicate_batch:
+            result = {}
+            used = set(forbidden)
+            scenarios = sorted({row.get("scenario", 0) for row in rows})
+            for scenario in scenarios:
+                group = [row for row in rows if row.get("scenario", 0) == scenario]
+                generated_group = teacher_batch(
+                    group, args, cache_dir, f"{batch_id}-variation-{scenario}", used)
+                result.update(generated_group)
+                used.update(generated_group.values())
+            return result
+        if off_topic:
+            compact_rows = [{
+                "id": row["id"],
+                "language": LANGUAGES[row["language"]],
+                "variation_key": row["variation"],
+            } for row in rows]
+            prompt = language_guard + (
+                "For every input row, invent one distinct, ordinary user request unrelated to games, game consoles, "
+                "commands, software control, or the other rows. Write it in the named language. Use the opaque "
+                "variation_key only to force variety; never mention or translate the key. Do not copy these "
+                f"instructions. Use at most {MAX_TEACHER_WORDS} whitespace-separated words and return every id "
+                "exactly once."
+                + ("\nDo not repeat any of these prior requests:\n"
+                   + json.dumps(sorted(forbidden), ensure_ascii=False) if forbidden else "")
+                + "\nINPUT:\n" + json.dumps(compact_rows, ensure_ascii=False))
+        else:
+            compact_rows = [{
+                "id": row["id"],
+                "language": LANGUAGES[row["language"]],
+                "operation": row["description"],
+                "usage_example": row.get("usage", ""),
+                "canonical_arguments": row["arguments"],
+                "natural_argument_meanings": row.get("argument_meanings", {}),
+                "unselected_documented_modes": excluded_modes.get(row["id"], []),
+                "variation_key": row["id"].rsplit("|", 1)[-1],
+                "wording_style": VARIATION_STYLES[int(row["id"].rsplit("|", 1)[-1])
+                                                    % len(VARIATION_STYLES)],
+            } for row in rows]
+            prompt = language_guard + (
+                "Write exactly one distinct user request for every input row. The request must be in the named "
+                "language, express only that operation, and explicitly convey every canonical argument. Humanize "
+                "opaque game identifiers when natural (for example a joined item id may be written as normal "
+                "spaced words), but do not change their meaning. Follow wording_style naturally. Use variation_key "
+                "only to vary wording; never mention either metadata field. No two query strings may be identical, "
+                "When natural_argument_meanings supplies a meaning, express that meaning naturally instead of "
+                "copying its canonical context token. "
+                "If unselected_documented_modes is nonempty, the operation documents several subcommands: express "
+                "only the mode selected by canonical_arguments and usage_example, and never mention any unselected "
+                "mode. "
+                "even when operation and arguments repeat. Any canonical argument matching sample plus digits is "
+                "an opaque one-token value and must appear exactly unchanged in the request. Every numeric "
+                "canonical argument must appear exactly as digits in the request. "
+                f"Use at most {MAX_TEACHER_WORDS} whitespace-separated words per request. Do not include '#', JSON, "
+                "explanations, or invent extra intent. Return every id exactly once.\nINPUT:\n"
+                + json.dumps(compact_rows, ensure_ascii=False)
+                + ("\nDo not reuse any of these prior request strings:\n"
+                   + json.dumps(sorted(forbidden), ensure_ascii=False) if forbidden else ""))
+        retry_note = ""
+        rejected_duplicates: set[str] = set()
+        for attempt in range(3):
+            try:
+                teacher_model = args.fallback_model if attempt >= 2 and args.fallback_model else args.model
+                response = teacher_json(args, prompt + retry_note, OUTPUT_SCHEMA,
+                                        args.seed + int(cache_key[:8], 16) + attempt, len(rows),
+                                        teacher_model)
+                if valid(response):
+                    break
+                found = {item.get("id"): item.get("query") for item in response.get("items", [])}
+                normalized_queries = [normalized(query) for query in found.values()
+                                      if isinstance(query, str)]
+                duplicates = sorted(query for query, count in Counter(normalized_queries).items()
+                                    if count > 1)
+                blocked = sorted(set(normalized_queries) & {normalized(query) for query in forbidden})
+                blocked_ids = [key for key, query in found.items()
+                               if isinstance(query, str) and normalized(query) in set(blocked)]
+                rejected_duplicates.update(duplicates)
+                rejected_duplicates.update(blocked)
+                overlong = [key for key, query in found.items()
+                            if isinstance(query, str)
+                            and len(query.split()) > MAX_ACCEPTED_TEACHER_WORDS]
+                ungrounded = [key for key, query in found.items()
+                              if key in rows_by_id and isinstance(query, str)
+                              and not grounds_literals(rows_by_id[key], query)]
+                wrong_modes = {key: sorted(set(normalized(query).split())
+                                           & set(excluded_modes.get(key, [])))
+                               for key, query in found.items() if isinstance(query, str)}
+                wrong_modes = {key: value for key, value in wrong_modes.items() if value}
+                retry_note = (
+                    "\nCORRECTION FOR THIS RETRY: Return the complete list again. Do not use any of these exact "
+                    f"duplicate strings: {json.dumps(sorted(rejected_duplicates), ensure_ascii=False)}. Make these IDs shorter: "
+                    f"{json.dumps(overlong, ensure_ascii=False)}. Copy every sample+digits argument exactly for "
+                    f"these IDs: {json.dumps(ungrounded, ensure_ascii=False)}. Copy their numeric arguments as "
+                    f"digits too. Remove these unselected documented modes: "
+                    f"{json.dumps(wrong_modes, ensure_ascii=False)}. "
+                    + (f"For these repeated IDs, ignore their original wording_style and use a clearly different "
+                       f"grammatical construction, voice, and word order: "
+                       f"{json.dumps(blocked_ids, ensure_ascii=False)}. " if blocked_ids else "")
+                    + (f"Rewrite ordinary wording in {LANGUAGES[required_language]}; do not copy the English "
+                       "operation description. " if required_language else "")
+                    + "Preserve all other requirements."
+                )
+            except (OSError, urllib.error.URLError, json.JSONDecodeError, KeyError):
+                if attempt == 2:
+                    raise
+                time.sleep(2)
+        else:
+            found = {item.get("id"): item.get("query") for item in response.get("items", [])}
+            normalized_queries = [normalized(query) for query in found.values() if isinstance(query, str)]
+            duplicates = sorted(query for query, count in Counter(normalized_queries).items() if count > 1)
+            if not off_topic and len(rows) > len(LANGUAGES):
+                result = {}
+                used = set(forbidden)
+                scenarios = sorted({row.get("scenario", 0) for row in rows})
+                for scenario in scenarios:
+                    group = [row for row in rows if row.get("scenario", 0) == scenario]
+                    generated_group = teacher_batch(
+                        group, args, cache_dir, f"{batch_id}-variation-{scenario}", used)
+                    result.update(generated_group)
+                    used.update(generated_group.values())
+                return result
+            if not off_topic and len(rows) > 1:
+                result = {}
+                used = set(forbidden)
+                for row in rows:
+                    generated_row = teacher_batch(
+                        [row], args, cache_dir, f"{batch_id}-language-{row['language']}", used)
+                    result.update(generated_row)
+                    used.update(generated_row.values())
+                return result
+            if not off_topic and len(rows) == 1 and allow_alternatives:
+                original = rows[0]
+                candidates = []
+                for variation in range(len(VARIATION_STYLES)):
+                    candidate = copy.deepcopy(original)
+                    candidate["id"] = original["id"].rsplit("|", 1)[0] + f"|{variation + 6}"
+                    candidate["scenario"] = variation + 6
+                    candidates.append(candidate)
+                alternatives = teacher_batch(
+                    candidates, args, cache_dir, f"{batch_id}-alternatives", forbidden,
+                    allow_alternatives=False)
+                return {original["id"]: next(iter(alternatives.values()))}
+            raise RuntimeError(
+                f"teacher rejected for {batch_id}: missing={sorted(expected_ids - set(found))[:5]} "
+                f"extra={sorted(set(found) - expected_ids)[:5]} duplicates={duplicates[:5]} "
+                f"blocked={sorted(set(normalized_queries) & {normalized(query) for query in forbidden})[:5]} "
+                f"wrong_modes={wrong_modes} "
+                f"overlong={[key for key, query in found.items() if isinstance(query, str) and len(query.split()) > MAX_ACCEPTED_TEACHER_WORDS][:5]} "
+                f"ungrounded={[key for key, query in found.items() if key in rows_by_id and isinstance(query, str) and not grounds_literals(rows_by_id[key], query)][:5]}")
+        cache_path.write_text(json.dumps(response, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return {item["id"]: item["query"].strip() for item in response["items"]}
+
+
+def write_jsonl(path: pathlib.Path, rows: list[dict]):
+    path.write_text("".join(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n" for row in rows),
+                    encoding="utf-8")
+
+
+def rendered_tokens(row: dict, tokenizer) -> int:
+    prompt, target = render_example(row)
+    return len(tokenizer.encode(prompt)) + len(tokenizer.encode(target)) + 2
+
+
+def fit_route_budget(row: dict, tokenizer) -> dict:
+    gold = row["answers"][0]["name"] if row["answers"] else None
+    while rendered_tokens(row, tokenizer) > TOKEN_BUDGET and len(row["tools"]) > 1:
+        removable = next((index for index in range(len(row["tools"]) - 1, -1, -1)
+                          if row["tools"][index]["name"] != gold), None)
+        if removable is None:
+            break
+        row["tools"].pop(removable)
+    return row
+
+
+def validate_dataset(rows: list[dict], tools_by_name: dict[str, dict], excluded: set[str], tokenizer):
+    seen = set()
+    coverage = set()
+    for row in rows:
+        query = normalized(row["query"])
+        if not query or query in excluded:
+            raise ValueError(f"empty/leaked benchmark query: {row['query']!r}")
+        identity = (query, row["phase"])
+        if identity in seen:
+            raise ValueError(f"duplicate query: {row['query']!r}")
+        seen.add(identity)
+        answers = row["answers"]
+        if answers:
+            answer = answers[0]
+            tool = tools_by_name[answer["name"]]
+            if row["phase"] == "route":
+                if answer["arguments"] != {}:
+                    raise ValueError("route answers must not ground arguments")
+            else:
+                validate_arguments(tool, answer["arguments"])
+            coverage.add((answer["name"], row["language"], row["phase"]))
+        if len(row["tools"]) > 5:
+            raise ValueError("training rows must stay outside Needle's >5-tool retrieval path")
+        if row["phase"] == "route":
+            if any("parameters" in tool for tool in row["tools"]):
+                raise ValueError("route rows must use compact parameterless tools")
+        elif row["phase"] == "refine":
+            if len(row["tools"]) != 1 or "parameters" not in row["tools"][0]:
+                raise ValueError("refinement rows must contain exactly one full tool")
+        else:
+            raise ValueError(f"unknown phase: {row['phase']}")
+
+        token_count = rendered_tokens(row, tokenizer)
+        if token_count > TOKEN_BUDGET:
+            raise ValueError(
+                f"{row['id']}: {token_count} tokens exceed {TOKEN_BUDGET}; "
+                f"query={row['query']!r} tools={json.dumps(row['tools'], ensure_ascii=False)}")
+    return coverage
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tools", type=pathlib.Path, default=ROOT / "data" / "tools.json")
+    parser.add_argument("--values", type=pathlib.Path, default=ROOT / "data" / "values.json")
+    parser.add_argument("--commands", type=pathlib.Path, default=ROOT / "data" / "commands.json")
+    parser.add_argument("--cases", type=pathlib.Path, default=ROOT.parent / "NeedleBenchmark" / "cases.json")
+    parser.add_argument("--out", type=pathlib.Path, default=ROOT / "data")
+    parser.add_argument("--cache", type=pathlib.Path, default=None,
+                        help="teacher response cache (default: <out>/teacher-cache)")
+    parser.add_argument("--api", choices=("ollama", "openai"), default="ollama",
+                        help="teacher transport: Ollama's /api/chat with a hard JSON schema, or an "
+                             "OpenAI-compatible /v1/chat/completions (FreeToken, vLLM, llama.cpp)")
+    parser.add_argument("--base-url", default="",
+                        help="teacher server root (default: http://127.0.0.1:11434 for ollama, "
+                             "http://127.0.0.1:1919 for openai)")
+    parser.add_argument("--ollama", dest="base_url", help=argparse.SUPPRESS)
+    parser.add_argument("--api-key", default="",
+                        help="bearer token for the OpenAI-compatible server; local servers need none")
+    parser.add_argument("--model", default="qwen3:8b")
+    parser.add_argument("--fallback-model", default="",
+                        help="stronger local teacher used only after three rejected attempts")
+    parser.add_argument("--per-language", type=int, default=6)
+    parser.add_argument("--eval-per-language", type=int, default=1,
+                        help="number of variants per language reserved for each of validation and holdout")
+    parser.add_argument("--batch-tools", type=int, default=1)
+    parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--exclude-external-dev-sources", action="store_true",
+                        help="exclude commands from third-party development builds while retaining all Hash commands")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="skip Ollama and use deterministic structural-test queries")
+    parser.add_argument("--seed", type=int, default=1701)
+    args = parser.parse_args()
+
+    if not args.base_url:
+        args.base_url = ("http://127.0.0.1:11434" if args.api == "ollama"
+                         else "http://127.0.0.1:1919")
+
+    if args.eval_per_language < 1 or args.per_language <= 2 * args.eval_per_language:
+        parser.error("--per-language must leave at least one training variant after both eval splits")
+    args.out.mkdir(parents=True, exist_ok=True)
+    tools = json.loads(args.tools.read_text(encoding="utf-8"))
+    values = json.loads(args.values.read_text(encoding="utf-8"))
+    command_metadata = ({entry["name"]: entry for entry in
+                         json.loads(args.commands.read_text(encoding="utf-8"))}
+                        if args.commands.exists() else {})
+    if args.exclude_external_dev_sources:
+        tools = [tool for tool in tools
+                 if not ("-dev" in str(command_metadata.get(tool["name"], {}).get("source", "")).casefold()
+                         and not str(command_metadata.get(tool["name"], {}).get("source", ""))
+                         .casefold().startswith("hash"))]
+    if args.limit:
+        tools = tools[:args.limit]
+    tools_by_name = {tool["name"]: tool for tool in tools}
+    gold, excluded = expected_assignments(args.cases, tools_by_name)
+    cache = args.cache or args.out / "teacher-cache"
+    cache.mkdir(parents=True, exist_ok=True)
+    rng = random.Random(args.seed)
+    tokenizer = get_tokenizer()
+
+    pending = []
+    feature_pending = []
+    context_by_command = {}
+    for tool in tools:
+        metadata = command_metadata.get(tool["name"], {})
+        assignments = make_assignments(tool, values, gold.get(tool["name"], []), args.per_language,
+                                       metadata)
+        context = [route_tool(tool)] + [route_tool(candidate) for candidate in nearest_tools(tool, tools)]
+        rng.shuffle(context)
+        context_by_command[tool["name"]] = context
+        for language in LANGUAGES:
+            for scenario, assignment in enumerate(assignments):
+                validate_arguments(tool, assignment)
+                pending.append({
+                    "id": f"{tool['name']}|{language}|{scenario}",
+                    "command": tool["name"], "language": language, "scenario": scenario,
+                    "description": metadata.get("description") or tool.get("description", ""),
+                    "usage": metadata.get("usage", ""), "arguments": assignment,
+                })
+        feature_pending.extend(mark_feature_rows(tool, metadata, assignments))
+
+    if args.dry_run:
+        generated = {
+            row["id"]: (f"test {index} {row['description'][:48]} "
+                        f"with {json.dumps(row['arguments'], ensure_ascii=False)}")
+            for index, row in enumerate(pending + feature_pending)
+        }
+    else:
+        generated = {}
+        rows_per_batch = max(1, args.batch_tools) * len(LANGUAGES) * args.per_language
+        for offset in range(0, len(pending), rows_per_batch):
+            batch = pending[offset:offset + rows_per_batch]
+            print(f"teacher {offset // rows_per_batch + 1}/{math.ceil(len(pending) / rows_per_batch)} "
+                  f"({len(batch)} phrasings)...", flush=True)
+            generated.update(teacher_batch(batch, args, cache, f"commands-{offset // rows_per_batch:03d}"))
+        for offset in range(0, len(feature_pending), rows_per_batch):
+            batch = feature_pending[offset:offset + rows_per_batch]
+            print(f"teacher Hash features {offset // rows_per_batch + 1}/"
+                  f"{math.ceil(len(feature_pending) / rows_per_batch)} ({len(batch)} phrasings)...", flush=True)
+            generated.update(teacher_batch(batch, args, cache,
+                                           f"features-{offset // rows_per_batch:03d}", excluded))
+
+    pending.extend(feature_pending)
+
+    splits = {"train": [], "validation": [], "holdout": []}
+    positive_seen: dict[tuple[str, str], str] = {}
+    for row in pending:
+        query = generated[row["id"]]
+        if "split" in row:
+            split = row["split"]
+        elif row["scenario"] < args.per_language - 2 * args.eval_per_language:
+            split = "train"
+        elif row["scenario"] < args.per_language - args.eval_per_language:
+            split = "validation"
+        else:
+            split = "holdout"
+        identity = (split, normalized(query))
+        signature = json.dumps([row["command"], row["arguments"]], sort_keys=True, ensure_ascii=False)
+        if identity in positive_seen:
+            if positive_seen[identity] != signature:
+                raise ValueError(
+                    f"ambiguous duplicate teacher query: id={row['id']} query={query!r} "
+                    f"existing={positive_seen[identity]} current={signature}")
+            continue
+        positive_seen[identity] = signature
+        common = {"command": row["command"], "language": row["language"], "split": split,
+            "query": query,
+            "reasoning": ""}
+        route = {**common,
+            "id": row["id"] + "|route", "phase": "route",
+            "tools": list(context_by_command[row["command"]]),
+            "answers": [{"name": row["command"], "arguments": {}}],
+        }
+        splits[split].append(fit_route_budget(route, tokenizer))
+        refine = {**common,
+            "id": row["id"] + "|refine", "phase": "refine",
+            "tools": [refinement_tool(tools_by_name[row["command"]], row["arguments"], values)],
+            "reasoning": grounding_reasoning(tools_by_name[row["command"]], row["arguments"],
+                                               row.get("argument_meanings")),
+            "answers": [{"name": row["command"], "arguments": row["arguments"]}],
+        }
+        # A derivation is valuable only when it does not truncate the actual call in Needle's 256-token window.
+        if rendered_tokens(refine, tokenizer) > TOKEN_BUDGET:
+            refine["reasoning"] = ""
+        splits[split].append(refine)
+
+    # Off-topic negatives are generated by the same teacher without hand-authored topic lists.
+    off_topic_seen: set[str] = set()
+    for split, per_language in (("train", max(1, math.ceil(len(splits["train"]) / 2 / 8 / 4))),
+                                ("validation", 8), ("holdout", 8)):
+        off_rows = [{
+            "id": f"offtopic|{split}|{language}|{index}", "language": language, "arguments": {},
+            "offtopic": True, "variation": f"{split}-{language}-{index}",
+            "description": "A request unrelated to game console operations; it must not match any supplied tool.",
+        } for language in LANGUAGES for index in range(per_language)]
+        if args.dry_run:
+            off = {item["id"]: f"[{item['language']} {split} {index}] discuss an unrelated topic"
+                   for index, item in enumerate(off_rows)}
+        else:
+            off = {}
+            for offset in range(0, len(off_rows), 32):
+                chunk = off_rows[offset:offset + 32]
+                print(f"teacher off-topic {split} {offset // 32 + 1}/{math.ceil(len(off_rows) / 32)} "
+                      f"({len(chunk)} phrasings)...", flush=True)
+                generated_chunk = teacher_batch(
+                    chunk, args, cache, f"offtopic-{split}-{offset // 32:02d}", off_topic_seen)
+                off.update(generated_chunk)
+                off_topic_seen.update(generated_chunk.values())
+        for item in off_rows:
+            context = [route_tool(tool) for tool in rng.sample(tools, min(5, len(tools)))]
+            negative = {
+                "id": item["id"], "command": "", "language": item["language"], "split": split,
+                "phase": "route",
+                "query": off[item["id"]], "tools": context,
+                "reasoning": "", "answers": [],
+            }
+            splits[split].append(fit_route_budget(negative, tokenizer))
+
+    expected_coverage = {(tool["name"], language, phase) for tool in tools for language in LANGUAGES
+                         for phase in ("route", "refine")}
+    split_queries = {name: {normalized(row["query"]) for row in rows}
+                     for name, rows in splits.items()}
+    for left, right in (("train", "validation"), ("train", "holdout"),
+                        ("validation", "holdout")):
+        overlap = split_queries[left] & split_queries[right]
+        if overlap:
+            raise ValueError(f"query leakage between {left} and {right}: {sorted(overlap)[:3]}")
+    manifest = {"model": "dry-run" if args.dry_run else args.model,
+                "fallbackModel": None if args.dry_run else args.fallback_model,
+                "seed": args.seed, "perLanguage": args.per_language,
+                "evalPerLanguage": args.eval_per_language,
+                "excludeExternalDevSources": args.exclude_external_dev_sources,
+                "commands": len(tools), "languages": list(LANGUAGES), "splits": {}}
+    for split, rows in splits.items():
+        rng.shuffle(rows)
+        coverage = validate_dataset(rows, tools_by_name, excluded, tokenizer)
+        if split != "train" and coverage != expected_coverage:
+            raise ValueError(f"{split} does not cover every command/language")
+        path = args.out / f"{split}.jsonl"
+        write_jsonl(path, rows)
+        manifest["splits"][split] = {
+            "rows": len(rows),
+            "positive": sum(bool(row["answers"]) for row in rows),
+            "negative": sum(not row["answers"] for row in rows),
+            "route": sum(row["phase"] == "route" for row in rows),
+            "refine": sum(row["phase"] == "refine" for row in rows),
+        }
+        print(f"{split}: {len(rows)} validated rows -> {path}")
+    (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

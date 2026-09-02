@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hash Needle Benchmark</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0d1411; --panel:#15201b; --line:#2b4237; --text:#e8f4ed; --muted:#91aa9d; --good:#55d68b; --bad:#ff7d78; --warn:#f6c66b; --accent:#84bfa1; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { width:min(1600px,calc(100% - 32px)); margin:28px auto 60px; }
+    h1 { margin:0; font-size:28px; letter-spacing:-.02em; }
+    .sub { color:var(--muted); margin:5px 0 24px; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:10px; margin-bottom:18px; }
+    .card,.panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; }
+    .card { padding:14px 16px; }
+    .card span { color:var(--muted); display:block; font-size:12px; text-transform:uppercase; letter-spacing:.07em; }
+    .card strong { display:block; font-size:25px; margin-top:4px; }
+    .good { color:var(--good); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+    .breakdowns { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:10px; margin-bottom:18px; }
+    .panel { padding:14px 16px; overflow:hidden; }
+    .panel h2 { font-size:14px; margin:0 0 10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .bar-row { display:grid; grid-template-columns:minmax(90px,1fr) 3fr 60px; gap:10px; align-items:center; margin:7px 0; }
+    .bar { height:8px; background:#26392f; border-radius:99px; overflow:hidden; }
+    .bar i { display:block; height:100%; background:var(--good); }
+    .bar-row b { text-align:right; font-variant-numeric:tabular-nums; }
+    .filters { display:grid; grid-template-columns:minmax(220px,2fr) repeat(3,minmax(130px,1fr)); gap:10px; margin-bottom:10px; }
+    input,select { width:100%; color:var(--text); background:#101a15; border:1px solid var(--line); border-radius:7px; padding:9px 10px; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:10px; }
+    table { width:100%; border-collapse:collapse; min-width:1100px; background:var(--panel); }
+    th { color:var(--muted); background:#101a15; position:sticky; top:0; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+    th,td { padding:10px 11px; border-bottom:1px solid #22342b; vertical-align:top; }
+    tr:last-child td { border-bottom:0; }
+    code { color:#d5f0df; background:#0f1814; padding:2px 5px; border-radius:4px; white-space:pre-wrap; }
+    .pill { display:inline-block; border:1px solid currentColor; border-radius:99px; padding:1px 7px; font-size:12px; }
+    details { min-width:280px; } summary { color:var(--accent); cursor:pointer; }
+    .stage { margin:7px 0 0 12px; color:var(--muted); }
+    .empty { padding:28px; color:var(--muted); text-align:center; }
+    footer { color:var(--muted); margin-top:12px; font-size:12px; }
+    @media (max-width:800px) { main { width:min(100% - 18px,1600px); } .filters { grid-template-columns:1fr 1fr; } }
+  </style>
+</head>
+<body><main>
+  <h1>Hash Needle Benchmark</h1>
+  <p class="sub" id="meta"></p>
+  <section class="cards" id="cards"></section>
+  <section class="breakdowns"><div class="panel"><h2>Nach Sprache</h2><div id="languages"></div></div><div class="panel"><h2>Nach Kategorie</h2><div id="categories"></div></div></section>
+  <section class="filters">
+    <input id="search" type="search" placeholder="ID, Eingabe, Soll- oder Ist-Command filtern">
+    <select id="status"><option value="">Alle Ergebnisse</option><option value="perfect">Perfekt</option><option value="unresolved">Nicht gelÃ¶st</option><option value="no-route">Keine Route</option><option value="error">Fehler</option></select>
+    <select id="language"><option value="">Alle Sprachen</option></select>
+    <select id="category"><option value="">Alle Kategorien</option></select>
+  </section>
+  <div class="table-wrap"><table><thead><tr><th>ID</th><th>Sprache</th><th>Kategorie</th><th>Eingabe</th><th>Erwartet</th><th>Ergebnis</th><th>Passes</th><th>Gesamt</th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="empty" hidden>Keine passenden FÃ¤lle.</div></div>
+  <footer>Read-only Diagnose: Kein vorgeschlagener Konsolen-Command wurde ausgefÃ¼hrt. Erfolg bedeutet exakt normalisierte Ãœbereinstimmung mit dem Gold-Command.</footer>
+</main>
+<script>
+const report = {"schemaVersion":1,"generatedAtUtc":"2026-08-21T01:37:16.9077877Z","bridge":"http://127.0.0.1:6139","cases":1,"perfect":1,"passRate":1,"perfectOnBroad":1,"perfectAfterSelectedCommand":0,"perfectAfterRequiredArguments":0,"unresolved":0,"errors":0,"averageCaseMs":92,"medianCaseMs":92,"p95CaseMs":92,"byLanguage":[{"language":"","cases":1,"perfect":1,"passRate":1}],"byCategory":[{"category":"","cases":1,"perfect":1,"passRate":1}],"results":[{"id":"give-speedgrow-en-1","language":"en","category":"give","query":"give me 10 speed grow","expected":"give speedgrow 10","selectedCommand":"","status":"perfect","firstPerfectIteration":1,"totalMs":92,"stages":[{"iteration":1,"kind":"broad","result":{"commands":["give speedgrow 10"],"confidence":1,"error":"","elapsedMs":69}}]}]};
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct = value => `${(Number(value || 0) * 100).toLocaleString('de-DE',{maximumFractionDigits:1})}%`;
+const results = report.results || [];
+const stagesText = item => (item.stages || []).flatMap(s => (s.result?.commands || [])).join(' ');
+const group = key => Object.values(results.reduce((all,item) => { const name=item[key] || 'â€“'; all[name] ||= {name,total:0,perfect:0}; all[name].total++; if(item.status==='perfect') all[name].perfect++; return all; },{})).sort((a,b) => a.name.localeCompare(b.name));
+const bars = values => values.map(x => `<div class="bar-row"><span>${esc(x.name)}</span><div class="bar"><i style="width:${100*x.perfect/Math.max(1,x.total)}%"></i></div><b>${x.perfect}/${x.total}</b></div>`).join('');
+document.getElementById('meta').textContent = `${new Date(report.generatedAtUtc).toLocaleString('de-DE')} Â· ${report.bridge} Â· ${report.cases} FÃ¤lle`;
+document.getElementById('cards').innerHTML = [
+  ['Exakt perfekt',`${report.perfect}/${report.cases}`,report.passRate === 1 ? 'good' : 'warn'],
+  ['Trefferquote',pct(report.passRate),report.passRate === 1 ? 'good' : 'warn'],
+  ['Direkt in Pass 1',report.perfectOnBroad,''],
+  ['Perfekt nach Pass 2',report.perfectAfterSelectedCommand,''],
+  ['Perfekt nach Pass 3',report.perfectAfterRequiredArguments,''],
+  ['Nicht gelÃ¶st',report.unresolved,report.unresolved ? 'bad' : 'good'],
+  ['Fehler',report.errors,report.errors ? 'bad' : 'good'],
+  ['Median pro Fall',`${report.medianCaseMs} ms`,''],
+  ['P95 pro Fall',`${report.p95CaseMs} ms`,'']
+].map(([label,value,klass]) => `<div class="card"><span>${label}</span><strong class="${klass}">${value}</strong></div>`).join('');
+document.getElementById('languages').innerHTML = bars(group('language'));
+document.getElementById('categories').innerHTML = bars(group('category'));
+for (const [id,key] of [['language','language'],['category','category']]) {
+  const select=document.getElementById(id);
+  for (const x of group(key)) select.insertAdjacentHTML('beforeend',`<option value="${esc(x.name)}">${esc(x.name)}</option>`);
+}
+const stageHtml = item => (item.stages || []).map(stage => {
+  const commands=stage.result?.commands || [];
+  const actual=commands.length ? commands.join(' | ') : 'âˆ…';
+  const confidence=stage.result?.confidence;
+  const confidenceText=confidence === null || confidence === undefined ? 'â€“' : pct(confidence);
+  const error=stage.error || stage.result?.error || '';
+  return `<div class="stage"><b>${stage.iteration}. ${esc(stage.kind)}</b>: <code>${esc(actual)}</code> Â· Konf. ${confidenceText} Â· ${stage.result?.elapsedMs ?? 'â€“'} ms${error ? ` Â· <span class="bad">${esc(error)}</span>` : ''}</div>`;
+}).join('');
+function render() {
+  const needle=document.getElementById('search').value.trim().toLowerCase();
+  const wantedStatus=document.getElementById('status').value;
+  const wantedLanguage=document.getElementById('language').value;
+  const wantedCategory=document.getElementById('category').value;
+  const shown=results.filter(item => (!wantedStatus || item.status===wantedStatus) && (!wantedLanguage || item.language===wantedLanguage) && (!wantedCategory || item.category===wantedCategory) && (!needle || `${item.id} ${item.query} ${item.expected} ${stagesText(item)}`.toLowerCase().includes(needle)));
+  document.getElementById('rows').innerHTML=shown.map(item => {
+    const perfect=item.status==='perfect';
+    const pass=item.firstPerfectIteration ?? 'nie';
+    return `<tr><td>${esc(item.id)}</td><td>${esc(item.language)}</td><td>${esc(item.category)}</td><td>${esc(item.query)}</td><td><code>${esc(item.expected || 'âˆ…')}</code></td><td><span class="pill ${perfect?'good':'bad'}">${esc(item.status)}</span> Â· Pass ${pass}</td><td><details><summary>${item.stages?.length || 0} anzeigen</summary>${stageHtml(item)}</details></td><td>${item.totalMs} ms</td></tr>`;
+  }).join('');
+  document.getElementById('empty').hidden=shown.length !== 0;
+}
+for (const id of ['search','status','language','category']) document.getElementById(id).addEventListener(id==='search'?'input':'change',render);
+render();
+</script></body></html>

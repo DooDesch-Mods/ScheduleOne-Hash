@@ -194,6 +194,9 @@ namespace Hash.Terminal
         /// </summary>
         private void Brief(List<OutputLine> lines)
         {
+            lines.Add(OutputLine.Dim("# <request> translates natural language; type # alone to confirm a proposal."));
+            lines.Add(OutputLine.Out(""));
+
             foreach (string word in HelpTopics.Common)
             {
                 CommandInfo command = _suggestions.Find(word);
