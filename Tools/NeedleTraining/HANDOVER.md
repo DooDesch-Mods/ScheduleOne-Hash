@@ -20,8 +20,10 @@ The untuned base model was benchmarked against the live command catalogue on 202
 | exact matches | 7 |
 | pass rate | **10.8 %** |
 
-`Tools/NeedleBenchmark/results/latest.json`. The pipeline's release gate is 99 %. The gap between those
-two numbers is this task.
+`Tools/NeedleBenchmark/results/latest.json`. That run needed a running game; the pipeline's own gate is a
+different, offline measurement - exact match on the generated holdout split, and it demands **99 %**. The
+two numbers are not directly comparable, but a base model that routes one request in ten is the reason
+this work exists.
 
 ## The shape of the work
 
@@ -119,10 +121,13 @@ Get-Content Tools/NeedleTraining/artifacts/pipeline/state.json | ConvertFrom-Jso
 
 ### Cost, measured not guessed
 
-- **Data.** 123 commands x 4 languages x 17 variants, batched one command per teacher call: about 123 calls
-  for the commands plus feature and off-topic batches, each asking for 68 phrasings. Replies are cached by
-  content hash under `data-smoke8/teacher-cache`, so a re-run after a crash resumes rather than repeats.
-  The cache key includes the teacher model name: changing the model invalidates every entry.
+- **Data.** The snapshot holds 123 commands, of which `--exclude-external-dev-sources` (the pipeline's
+  default) keeps **78** - it drops the 45 commands that came from an unreleased BreedToSeed dev build, so
+  the adapter is not taught commands no player has. 78 commands x 4 languages x 17 variants, batched one
+  command per teacher call, is 78 calls of 68 phrasings each, plus the feature and off-topic batches, and
+  yields roughly 9,400 training rows. Replies are cached by content hash under
+  `data-smoke8/teacher-cache`, so a re-run after a crash resumes rather than repeats. The cache key
+  includes the teacher model name: changing the model invalidates every entry.
 - **Training.** JAX runs on the **CPU** in this environment (`jax.default_backend()` is `cpu`). A measured
   probe on a Ryzen 9 7900X took 340 s for 166 rows over one epoch, most of it JIT compilation; the compiled
   kernels persist in `artifacts/jax-cache`, so later epochs are far cheaper than that first number suggests.
