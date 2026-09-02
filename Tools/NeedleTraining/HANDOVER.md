@@ -48,16 +48,33 @@ why a mid-sized local model is good enough here.
 pwsh -File Tools/NeedleTraining/bootstrap.ps1
 ```
 
-Creates `.venv`, installs `cactus-needle==2.0.2` plus its JAX stack, downloads the 86 MB `needle2.pkl`
-base checkpoint and the tokenizer, and fetches `Native/Hash.Needle.bin`. Idempotent; `-Force` rebuilds.
+Creates `.venv`, installs `cactus-needle==2.0.3` plus its JAX stack, downloads the 86 MB `needle2.pkl`
+base checkpoint and the tokenizer, fetches `Native/Hash.Needle.bin`, and checks that the exporter and the
+engine agree on the `.cact` format. Idempotent; `-Force` rebuilds.
 
 You also need the **.NET 8 SDK** for the benchmark stage (`dotnet --version`).
 
-> **Do not install the Hugging Face wheel into `.venv`.** `Tools/fetch-needle.ps1` downloads
-> `cactus_needle-2.0.2-py3-none-win_amd64.whl` from Hugging Face, and despite the identical version number
-> that wheel is the slim engine build: no `finetune`, no `build`, no `tokenizer` module. Installing it over
-> the PyPI package removes the training code and every import then fails with `unknown location`. The
-> Hugging Face wheel is only ever unzipped for `libneedle.dll`, which is what `fetch-needle.ps1` does.
+### Two traps around the version number
+
+Both were hit while preparing this branch. `bootstrap.ps1` now guards against both, but they explain the
+pins and the checks it performs.
+
+**The training package is `cactus-needle==2.0.3`, not 2.0.2.** The exporter writes a four-byte format tag
+into every `.cact`. PyPI 2.0.0 through 2.0.2 write `0x05E12A82`; 2.0.3 and later write `0x05E12A83`, and
+`0x05E12A83` is the only one of the two that appears anywhere in the shipped `Native/Hash.Needle.bin`.
+An adapter exported by 2.0.2 therefore dies at load with `needle_load failed with code -1`, hours after the
+training that produced it. The checkpoint format is 2 across every release, so `needle2.pkl` is unaffected
+by the bump. `bootstrap.ps1` proves the agreement by scanning the engine for the exporter's tag before you
+start; if that check ever fails, either pin a version whose `needle/model/export.py` `TAG` matches, or move
+the engine forward in `Tools/fetch-needle.ps1`.
+
+**Do not install the Hugging Face wheel into `.venv`.** `Tools/fetch-needle.ps1` downloads
+`cactus_needle-2.0.2-py3-none-win_amd64.whl` from Hugging Face, and that wheel is not the PyPI package of
+the same version: it is the slim engine build, with no `finetune`, no `build` and no `tokenizer` module.
+Installing it over the PyPI package removes the training code and every import then fails with
+`unknown location`. The Hugging Face wheel is only ever unzipped for `libneedle.dll`, which is exactly what
+`fetch-needle.ps1` does - and that `libneedle.dll` is newer than PyPI 2.0.2 despite the shared version
+number, which is the root of the trap above.
 
 ## Step 2 - pick the teacher
 
@@ -128,10 +145,12 @@ Get-Content Tools/NeedleTraining/artifacts/pipeline/state.json | ConvertFrom-Jso
   yields roughly 9,400 training rows. Replies are cached by content hash under
   `data-smoke8/teacher-cache`, so a re-run after a crash resumes rather than repeats. The cache key
   includes the teacher model name: changing the model invalidates every entry.
-- **Training.** JAX runs on the **CPU** in this environment (`jax.default_backend()` is `cpu`). A measured
-  probe on a Ryzen 9 7900X took 340 s for 166 rows over one epoch, most of it JIT compilation; the compiled
-  kernels persist in `artifacts/jax-cache`, so later epochs are far cheaper than that first number suggests.
-  Expect hours, not minutes, and plan for an overnight run.
+- **Training.** JAX runs on the **CPU** in this environment (`jax.default_backend()` is `cpu`). Measured on
+  a Ryzen 9 7900X with a warm `artifacts/jax-cache`: **640 rows, one epoch, 440 s - 0.69 s per row.** At
+  9,400 rows that is about 1 h 50 per epoch, so the default three epochs land near **5.5 hours on a
+  12-core desktop**. A laptop CPU will be slower; plan an overnight run and start it detached.
+  The very first run pays JIT compilation on top (the first probe here spent most of 340 s on 166 rows
+  compiling); those kernels persist in `artifacts/jax-cache` and are not paid again.
 
 If the full corpus turns out to be too slow on your machine, lower `-PerLanguage` (17 -> 10) before you
 lower `-Epochs`. Fewer phrasings per command costs coverage linearly; fewer epochs can leave the adapter
@@ -148,6 +167,8 @@ undertrained and is harder to diagnose.
 - `response_format json_object/json_schema is not supported` - you are pointing `--api ollama` at FreeToken.
 - `ambiguous duplicate teacher query` - two rows in the same split got identical phrasings with different
   arguments. Delete the offending cache entry under `data-smoke8/teacher-cache` and re-run the data stage.
+- `needle_load failed with code -1` - the exporter and the engine disagree on the `.cact` format. Re-run
+  `bootstrap.ps1`; its export-format check names the mismatch.
 - Accuracy below the gate - the pipeline writes `artifacts/pipeline/state.json` with
   `status: needs-iteration` and keeps the HTML report. Read
   `Tools/NeedleBenchmark/results/latest.html`; it lists every failed case with the proposed command.
