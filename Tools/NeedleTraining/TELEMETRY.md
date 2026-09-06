@@ -21,12 +21,17 @@ wrongly: a player who turns sharing on has nothing to share, because the recordi
 a player who leaves it off never sees what they would have been sending.
 
 `Game/UsageReport.cs` is the only thing that moves the file, and only while `NeedleShareUsage` (default `false`)
-is on. It uploads to `POST https://sidehustle.doodesch.de/api/telemetry` when the terminal closes and clears what
-the server confirmed - a 503, a timeout or a broken connection leaves the file exactly where it was. While sharing
-is off the file is still trimmed to the newest 5,000 records, because a file nobody sends must not grow forever.
+is on. It uploads to `POST https://hash.doomods.com/api/telemetry` when the terminal closes and clears what the
+server confirmed - a 503, a timeout or a broken connection leaves the file exactly where it was. While sharing is
+off the file is still trimmed to the newest 5,000 records, because a file nobody sends must not grow forever.
 
-Records land on the server as `hash-<version>-<day>.jsonl` on a volume, with the mod, mod version and game version
-added and nothing else. One line looks like:
+The player is asked once, the first time they use `# `, and answers with `share on` or `share off` in the terminal
+(`Terminal/UsageCapture.cs` remembers that the question was put, in `UserData/Hash/share-asked`). The setting
+itself stays in `MelonPreferences.cfg`, so a consent given in the terminal can be withdrawn without opening it.
+
+The service is `DooDesch-Mods/ScheduleOne-HashTelemetry`, Dokploy project **Hash**, records on the `/data` volume
+as `records/hash-<version>-<day>.jsonl`. `https://hash.doomods.com` shows the counts, the outcome split and the
+correction pairs - command words only, never what a player typed. One line looks like:
 
 ```json
 {"query":"gib mir 10 og kush","commands":["give ogkush 10"],"confidence":0.98,"proven":true,

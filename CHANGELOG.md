@@ -3,6 +3,21 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-09-06
+
+### Added
+
+- The first time you use `# `, hash says it keeps your requests in a file and asks. `share on` sends them so the
+  model can learn from real ones, `share off` leaves them alone, and it asks once.
+- `share` on its own says where it stands. `NeedleShareUsage` in `MelonPreferences.cfg` is the same switch.
+- What players send is counted in the open at https://hash.doomods.com - how often hash was right, and which
+  commands it gets wrong.
+
+### Fixed
+
+- Building hash from source left the bundled model out, so you got the untuned one: right about one request in
+  ten instead of four in five. The log now says which one loaded.
+
 ## [1.1.0] - 2026-09-06
 
 ### Added

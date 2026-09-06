@@ -26,11 +26,42 @@ namespace Hash.Terminal
     {
         public const string FileName = "queries.jsonl";
 
+        /// <summary>Remembers that the question was put, so it is asked once and never nagged.</summary>
+        private const string AskedFile = "share-asked";
+
         private readonly IStore _store;
+        private readonly IUsageSharing _sharing;
 
         private Record _open;
 
-        public UsageCapture(IStore store) => _store = store;
+        public UsageCapture(IStore store, IUsageSharing sharing = null)
+        {
+            _store = store;
+            _sharing = sharing;
+        }
+
+        /// <summary>Whether the log is being uploaded. False whenever there is nowhere to read the answer from.</summary>
+        public bool Sharing
+        {
+            get => _sharing?.Enabled == true;
+            set
+            {
+                if (_sharing != null) _sharing.Enabled = value;
+                Remember();
+            }
+        }
+
+        /// <summary>
+        /// True until the player has been asked once.
+        ///
+        /// The marker is a file rather than a second setting: what a player decided belongs in
+        /// MelonPreferences.cfg, but whether they have seen the question is bookkeeping, and a config file full
+        /// of bookkeeping is one nobody reads.
+        /// </summary>
+        public bool Unasked => _store != null && _store.Read(StoreScope.Global, AskedFile) == null;
+
+        /// <summary>Note that the question has been put, whatever the answer was - including no answer at all.</summary>
+        public void Remember() => _store?.Write(StoreScope.Global, AskedFile, "asked");
 
         /// <summary>
         /// The player submitted a request.
@@ -97,10 +128,15 @@ namespace Hash.Terminal
         /// This is the correction signal. After an answer that ran, the line they typed instead is what the request
         /// should have produced; after one that failed, it is the answer the failure was missing. Either way it is
         /// recorded, and either way the record closes here.
+        ///
+        /// <para>A null line closes the record without claiming anything: the player did something this terminal
+        /// answered itself, which is not the console command the request should have produced.</para>
         /// </summary>
         public void PlayerRan(string line)
         {
             if (_open == null) return;
+
+            if (string.IsNullOrEmpty(line)) { Flush(null, null); return; }
 
             Flush(_open.Failed ? "rejected" : "corrected", line);
         }

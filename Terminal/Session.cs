@@ -112,7 +112,7 @@ namespace Hash.Terminal
 
             _transcript = new Transcript();
             _suggestions = new Suggestions(catalogue, usage, history, aliases, _marks);
-            _builtins = new Builtins(_suggestions, catalogue, history, aliases, _transcript);
+            _builtins = new Builtins(_suggestions, catalogue, history, aliases, _transcript, capture);
         }
 
         public Transcript Transcript => _transcript;
@@ -425,7 +425,12 @@ namespace Hash.Terminal
 
             // Whatever Hash last answered is closed by this line. After a command that ran, typing one by hand
             // is the correction signal the record exists for; after one that failed, it is the missing answer.
-            _capture?.PlayerRan(typed);
+            //
+            // A word this terminal answers itself is not either of those. `help`, `logs` and above all `share` -
+            // the answer to the question the request just triggered - are not the console command Hash should
+            // have produced, and recording them as one would teach the model to answer "give me five" with
+            // `share`. The record still closes: leaving it open would hand the correction to the next line.
+            _capture?.PlayerRan(IsOwnWord(typed) ? null : typed);
 
             foreach (string command in ready) RunOne(command, lines);
 
@@ -496,6 +501,26 @@ namespace Hash.Terminal
         }
 
         /// <summary>
+        /// Put the sharing question, once, the first time anyone uses this.
+        ///
+        /// After the request rather than instead of it: the answer is worth having, the request is what the
+        /// player came for, and a feature that opens with a consent form is one they stop using. It is asked
+        /// once and never again - a prompt that returns every session is not a question, it is nagging.
+        /// </summary>
+        private void AskAboutSharing(List<OutputLine> lines)
+        {
+            if (_capture == null || !_capture.Unasked) return;
+
+            _capture.Remember();
+
+            Emit(OutputLine.Warn("hash keeps what you type here in UserData/Hash/" + UsageCapture.FileName
+                                 + " so the model can be taught with real requests."), lines);
+            Emit(OutputLine.Dim("Plain text, no name, no save, no timestamp - open it and read it. Nothing is "
+                                + "sent unless you say so."), lines);
+            Emit(OutputLine.Dim("Type 'share on' to send it, or 'share off' to be left alone."), lines);
+        }
+
+        /// <summary>
         /// Close the usage record still open, if the player switched capture on.
         ///
         /// Separate from <see cref="CancelNatural"/> because the two answer different questions. Cancelling happens
@@ -549,6 +574,7 @@ namespace Hash.Terminal
                     _natural.Start(query);
                     _capture?.Asked(query);
                     Emit(OutputLine.Dim("Hash: translating..."), lines);
+                    AskAboutSharing(lines);
                 }
                 catch (Exception e)
                 {
@@ -739,6 +765,16 @@ namespace Hash.Terminal
 
             line = found;
             return true;
+        }
+
+        /// <summary>Whether a submitted line starts with a word this terminal answers rather than the game.</summary>
+        private static bool IsOwnWord(string line)
+        {
+            List<string> tokens = CommandLine.Tokenise(line);
+            if (tokens.Count == 0) return false;
+
+            string word = tokens[0].ToLowerInvariant();
+            return Array.IndexOf(Builtins.Words, word) >= 0;
         }
 
         private void RunOne(string command, List<OutputLine> lines)

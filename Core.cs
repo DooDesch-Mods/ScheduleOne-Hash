@@ -127,13 +127,36 @@ namespace Hash
             _runner = new CommandRunner(_log);
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
-            _capture = new UsageCapture(_store);
-            _report = new UsageReport(_store, () => _needleShareUsage.Value);
+            var sharing = new PreferenceSharing();
+            _capture = new UsageCapture(_store, sharing);
+            _report = new UsageReport(_store, sharing);
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
                                    _naturalCatalogue, _capture);
 
             _runner.LogViewOpen = () => _session.Builtins.LogsOpen;
             _session.Builtins.UseFace(_store.Read(StoreScope.Global, "font"));
+        }
+
+        /// <summary>
+        /// The sharing answer, kept where every other setting is.
+        ///
+        /// Written from the terminal by `share on`, and readable and changeable in MelonPreferences.cfg by a
+        /// player who never opens hash - a consent that can only be withdrawn from inside the thing collecting
+        /// is not one.
+        /// </summary>
+        private sealed class PreferenceSharing : Hash.Terminal.IUsageSharing
+        {
+            public bool Enabled
+            {
+                get => _needleShareUsage?.Value == true;
+                set
+                {
+                    if (_needleShareUsage == null) return;
+
+                    _needleShareUsage.Value = value;
+                    MelonPreferences.Save();
+                }
+            }
         }
 
         private void RegisterApp()

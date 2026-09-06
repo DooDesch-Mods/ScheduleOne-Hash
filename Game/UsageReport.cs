@@ -20,7 +20,7 @@ namespace Hash.Game
     internal sealed class UsageReport
     {
         /// <summary>The ingest. One constant: a setting here would be a URL players could be talked into changing.</summary>
-        private const string Endpoint = "https://sidehustle.doodesch.de/api/telemetry";
+        private const string Endpoint = "https://hash.doomods.com/api/telemetry";
 
         /// <summary>Records per upload. The server refuses more, and a bigger batch only risks a bigger failure.</summary>
         private const int BatchLimit = 2000;
@@ -29,16 +29,16 @@ namespace Hash.Game
         private const int KeepWhileOff = 5000;
 
         private readonly IStore _store;
-        private readonly Func<bool> _allowed;
+        private readonly IUsageSharing _sharing;
 
         // Written on the upload thread, read on the game thread. Not volatile would let the game thread keep
         // seeing a stale "true" and never upload again - a wedge with no error anywhere.
         private volatile bool _running;
 
-        internal UsageReport(IStore store, Func<bool> allowed)
+        internal UsageReport(IStore store, IUsageSharing sharing)
         {
             _store = store;
-            _allowed = allowed ?? (() => false);
+            _sharing = sharing;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Hash.Game
 
             if (pending.Count == 0) return;
 
-            if (!_allowed())
+            if (_sharing?.Enabled != true)
             {
                 Trim(pending);
                 return;

@@ -113,6 +113,17 @@ namespace Hash.Terminal
         Global,
     }
 
+    /// <summary>
+    /// Whether the player has agreed to share their request log, and a way to change that answer.
+    ///
+    /// A port rather than a field because the answer lives in <c>MelonPreferences.cfg</c> beside every other
+    /// setting, where a player can find and change it without the terminal. The shell only reads and writes it.
+    /// </summary>
+    public interface IUsageSharing
+    {
+        bool Enabled { get; set; }
+    }
+
     /// <summary>A clock the tests can stand still. Only the log view needs one.</summary>
     public interface IClock
     {
