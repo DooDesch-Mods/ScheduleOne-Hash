@@ -9,3 +9,7 @@ data/teacher-cache/
 data-smoke*/
 data-dry*/
 data-production*/
+
+# What players shared. It never goes in a public repository: they agreed to send it to whoever trains the
+# model, and a git history is neither that nor revocable.
+data-shared/

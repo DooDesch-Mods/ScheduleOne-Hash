@@ -31,13 +31,20 @@ namespace Hash.Terminal
 
         private readonly IStore _store;
         private readonly IUsageSharing _sharing;
+        private readonly string _locale;
 
         private Record _open;
 
-        public UsageCapture(IStore store, IUsageSharing sharing = null)
+        /// <param name="locale">
+        /// The locale the engine is told about, so a shared record can be replayed against the same system
+        /// block the player got. It also answers a question nothing else can: which languages people actually
+        /// type in, and therefore whether the four the corpus covers are the right four.
+        /// </param>
+        public UsageCapture(IStore store, IUsageSharing sharing = null, string locale = null)
         {
             _store = store;
             _sharing = sharing;
+            _locale = locale ?? "";
         }
 
         /// <summary>Whether the log is being uploaded. False whenever there is nowhere to read the answer from.</summary>
@@ -158,6 +165,7 @@ namespace Hash.Terminal
             json.Bool("proven", record.Proven);
             json.Bool("constrained", record.Constrained);
             json.Str("error", record.Error);
+            json.Str("locale", _locale);
             json.Str("outcome", outcome ?? record.Outcome);
             if (!string.IsNullOrEmpty(actual)) json.Str("actual", actual);
 

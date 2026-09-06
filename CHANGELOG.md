@@ -3,6 +3,13 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2026-09-06
+
+### Changed
+
+- A shared request now records which language your game is in, so a request you typed in German is judged
+  against the German model rather than the English one. Still no name and no save.
+
 ## [1.2.0] - 2026-09-06
 
 ### Added

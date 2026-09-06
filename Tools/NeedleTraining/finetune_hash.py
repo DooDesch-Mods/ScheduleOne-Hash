@@ -7,11 +7,13 @@ checkpoint loader and adapter format required by Hash's bundled native engine.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
 import pathlib
 import pickle
+import subprocess
 import time
 
 import numpy as np
@@ -122,6 +124,45 @@ def cosine_learning_rate(step: int, total_steps: int, warmup: int, peak: float) 
         return np.float32(peak * step / max(1, warmup))
     progress = min(1.0, (step - warmup) / max(1, total_steps - warmup))
     return np.float32(peak * 0.5 * (1.0 + math.cos(math.pi * progress)))
+
+
+def digest(path: pathlib.Path) -> str:
+    """A short content hash, so two runs can be told apart by what went into them rather than by a path."""
+    if not path.exists():
+        return ""
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+
+
+def provenance(args) -> dict:
+    """What this adapter was made from.
+
+    RESULTS.md compares runs by hand, and every comparison rests on remembering which corpus and which
+    benchmark each one used. Six months later nobody does. These four values make a row in that table
+    checkable instead of trusted: the same corpus digest means the same rows, a different commit means the
+    renderer or the grounding rule may have moved underneath it.
+    """
+    cases = pathlib.Path(__file__).resolve().parent.parent / "NeedleBenchmark" / "cases.json"
+    root = pathlib.Path(__file__).resolve().parents[2]
+
+    commit = ""
+    dirty = None
+    try:
+        commit = subprocess.run(["git", "-C", str(root), "rev-parse", "--short", "HEAD"],
+                                capture_output=True, text=True, timeout=10).stdout.strip()
+        status = subprocess.run(["git", "-C", str(root), "status", "--porcelain"],
+                                capture_output=True, text=True, timeout=10).stdout
+        dirty = bool(status.strip())
+    except (OSError, subprocess.SubprocessError) as error:
+        print(f"provenance: could not read the commit ({error}); the report will not name one", flush=True)
+
+    return {
+        "commit": commit,
+        "workingTreeDirty": dirty,
+        "trainDigest": digest(args.train),
+        "validationDigest": digest(args.validation),
+        "casesDigest": digest(cases),
+        "checkpointDigest": digest(args.checkpoint),
+    }
 
 
 def main() -> None:
@@ -316,6 +357,7 @@ def main() -> None:
         "learningRate": args.lr, "maxEpochs": args.epochs, "patience": args.patience,
         "bestValidationLoss": best_val, "history": history,
         "seconds": time.perf_counter() - started,
+        "provenance": provenance(args),
     }
     if args.log:
         args.log.parent.mkdir(parents=True, exist_ok=True)

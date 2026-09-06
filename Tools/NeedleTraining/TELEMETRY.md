@@ -58,19 +58,91 @@ wanted. That is why `actual` is always written: the judgement belongs to whoever
 No player id, no session id, no save name, no timestamp. The file is in order, which is all the model
 needs, and every field that is not needed is a field that has to be explained before someone hands it over.
 
-## How it feeds back
+## How the loop turns
 
-Two consumers, and the first matters more:
+Four commands. Each one is a script in this folder, and each says what it dropped and why.
 
-**Benchmark.** `NeedleBenchmark/cases.json` currently holds 79 hand-written cases. Corrected and rejected
-lines are cases with a known right answer; append them. At a few hundred, differences that are currently
-noise become measurable, and `benchmark_human_cases.py` needs no change - it reads that file.
+```powershell
+$env:HASH_TELEMETRY_TOKEN = "<EXPORT_TOKEN from the Dokploy app 'hash-telemetry'>"
 
-**Corpus.** Accepted queries are phrasings players actually use, which is exactly what
-`generate_data.py` cannot invent. They can join the training rows directly, with the same
-`route_tool`/`refinement_tool` rendering everything else uses. `grounds_literals` no longer demands that
-every argument appear verbatim, so a real phrasing is admissible as it stands - but it is still checked
-against the enum ranking the mod uses, and a query whose argument nothing resolves is still dropped.
+python pull_records.py                  # -> data-shared/records.jsonl, appends only what is new
+python cases_from_records.py            # what it would add to the benchmark, and why the rest was dropped
+python cases_from_records.py --write    # append them to NeedleBenchmark/cases.json
+python benchmark_human_cases.py         # re-render the scorable set - REQUIRED after any case change
+pwsh -File run_pipeline.ps1 -ForceData  # rebuild the corpus, train, export, score
+```
+
+`-ForceData` is not optional after cases change. A new case removes its phrasing from training, and the
+corpus on disk still contains it until it is rebuilt.
+
+### Why a case is worth more than a query
+
+A raw request has no ground truth and would have to be labelled by hand. Three kinds of record carry one
+already, and `cases_from_records.py` takes exactly those:
+
+| record | the case it makes |
+|---|---|
+| `corrected` | the request, answered by the line the player typed instead |
+| `rejected` with `actual` | the same, after a failure - the answer that was missing |
+| `accepted` with one command | a request that demonstrably worked |
+
+Everything else is dropped and counted: an ambiguous multi-command answer, a rejection nobody followed up,
+a phrasing already in the benchmark. The count of `unknown command` is the useful one - it means players
+are on a newer game or carry mods the snapshot in `data/` has never seen, and `pull_schema.py` is due.
+
+### The guard that makes this safe to repeat
+
+Adding a case removes its phrasing from training, mechanically. `expected_assignments` builds
+`excluded_queries` from every case in `cases.json` and `validate_dataset` drops any row that collides,
+with a reason. Without it the benchmark would measure memorisation a little more with every cycle, and the
+numbers would climb while the model got worse - which is exactly what the pipeline's own 99 % gate already
+does, and why `RESULTS.md` tells you to ignore it.
+
+That guard is the reason cases go into `cases.json` rather than into a second file. Anything that collects
+evaluation data somewhere the corpus builder cannot see is a leak waiting to happen.
+
+### Comparing two runs a year apart
+
+`finetune_hash.py` writes a `provenance` block into its report: the commit, whether the tree was dirty, and
+content digests of the train split, the validation split, the base checkpoint and `cases.json`. A row in
+`RESULTS.md` is checkable against it - same `casesDigest` means the two runs were scored on the same
+benchmark, and a different `commit` means the renderer or the grounding rule may have moved underneath the
+comparison. Runs 1, 2 and 4 are absent from that table because nobody could reconstruct what they measured.
+
+### Rolling back
+
+The adapter is one file in a release. A run that scores worse than the shipped one is not published:
+`Hash.Needle.cact` stays at the previous version and the reports go in `RESULTS.md` as a negative result.
+Four of the first eight runs were exactly that.
+
+### What is not built yet
+
+**Turning observed failures into training rows.** Cases fix the measurement; they do not by themselves fix
+the model, because 79 - or 300 - rows are too few to train on. The step after this one is to feed the
+observed failure *patterns* back as teacher seeds, the way the published flywheel work does: group the
+corrections, and have the teacher write many phrasings around each real one. `augment_train.py` is the
+place that already appends derived rows to a finished corpus.
+
+**A regression gate.** `run_pipeline.ps1` gates on the generated holdout, which `RESULTS.md` shows is the
+wrong number. It should gate on the hand-written and shared cases instead, and refuse to export weights
+that score below the shipped adapter.
+
+## Practices this follows, and where they come from
+
+Checked against the published work in September 2026 rather than assumed:
+
+- **Implicit signals beat explicit feedback.** The adaptive-flywheel study got 26 usable routing errors out
+  of 495 thumbs-down samples ([arXiv:2510.27051](https://arxiv.org/abs/2510.27051)). Our `corrected` and
+  `retried` outcomes need no button, and `actual` carries the correct answer rather than only a complaint.
+- **Keep the evaluation set out of the training data, mechanically.** Contamination audits put leakage at
+  1-45 % across popular benchmarks and 29 % for MMLU, worth 13 points on a clean re-test. A guard that a
+  person has to remember is a guard that fails.
+- **Hold the benchmark fixed while comparing, and record which version each run used.** Otherwise a
+  growing case set makes every historical number incomparable.
+- **Parameter-efficient tuning for frequent updates.** LoRA on a 45M base is already the cheapest possible
+  version of this - one epoch, hours on a CPU, a 23 MB artefact.
+- **Staged rollout with a rollback path.** Ours is coarse but real: the adapter ships in a versioned release
+  and the previous one is a file away.
 
 ## Boundaries
 

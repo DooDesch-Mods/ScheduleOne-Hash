@@ -128,7 +128,7 @@ namespace Hash
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
             var sharing = new PreferenceSharing();
-            _capture = new UsageCapture(_store, sharing);
+            _capture = new UsageCapture(_store, sharing, System.Globalization.CultureInfo.CurrentUICulture.Name);
             _report = new UsageReport(_store, sharing);
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
                                    _naturalCatalogue, _capture);
