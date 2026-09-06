@@ -1,5 +1,35 @@
 # Training Needle for hash - handover
 
+## Status after the first full pass (2026-09-06)
+
+An adapter is trained and shipped. `Hash.Needle.cact` is a build artefact and is gitignored the way
+`Native/Hash.Needle.bin` is; it is handed over beside the reports rather than committed.
+
+Measured on the 79 hand-written cases in `NeedleBenchmark/cases.json`, scored the way the mod resolves
+values (`score_as_mod.py`, mirroring `NeedleArgument.TryResolveText`):
+
+| | end-to-end | route | arguments |
+|---|---|---|---|
+| no adapter | 10/79 | 7.6 % | 27/73 |
+| shipped adapter | **23/79** | **78.5 %** | 28/73 |
+
+The gate on the generated holdout is 73.5 % (`results/latest.json`) and does **not** reach the 99 % this
+pipeline asks for. Do not read that gate as an in-game figure either way: it scores phrasings written by
+the same teacher that wrote the training rows, and it kept climbing (59.5 -> 75.8 %) across runs whose
+in-game accuracy did not.
+
+Three things below turned out to be wrong and are corrected in place: the note about the desktop run
+stopping because "the machine was busy" (it was unbounded recursion), the assumption that the corpus
+renders what the engine reads (it did not, in three ways), and the 99 % gate as a goal.
+
+What is left is the argument phase, where the adapter (28/73) is barely ahead of the untuned base
+(27/73). Fine-tuning buys routing and costs extraction. The corpus is the reason: `grounds_literals`
+forces every numeric argument to appear as digits and every value to appear verbatim, so of 877 numeric
+training arguments not one was ever written as a word, while 49 of the 73 benchmark cases with arguments
+need exactly that. Fixing it means relaxing that rule and re-running the teacher.
+
+---
+
 You are picking up an unfinished job. hash already ships the natural-language `# ` prefix and the
 Cactus Needle 2.0.2 engine; what is missing is the fine-tuned adapter that makes it accurate. Everything
 needed to produce that adapter is in this branch. The game is **not** required at any point.
@@ -158,15 +188,19 @@ undertrained and is harder to diagnose.
 
 ### If it stops
 
-`artifacts/pipeline/state.json` names the stage and the error. The last run on the desktop stopped in the
-`data` stage on 2026-08-21 with `status: running` - the machine was busy, not the code.
+`artifacts/pipeline/state.json` names the stage and the error. The desktop run that appeared to stop in
+the `data` stage with `status: running` was not a busy machine: `teacher_batch` set `allow_alternatives`
+but never passed it through its two split branches, so a single row cycled through
+`-alternatives-variation-N` forever. A Windows path limit ended it; on Linux nothing would have. Fixed,
+with `test_teacher_parsing.py::test_recursion_terminates` pinning it.
 
 - `Required pipeline input is missing` - run `bootstrap.ps1`.
 - The data stage hangs - the teacher server is not answering. Check `curl <base-url>/v1/models` or
   `ollama ps`.
 - `response_format json_object/json_schema is not supported` - you are pointing `--api ollama` at FreeToken.
-- `ambiguous duplicate teacher query` - two rows in the same split got identical phrasings with different
-  arguments. Delete the offending cache entry under `data-smoke8/teacher-cache` and re-run the data stage.
+- `ambiguous duplicate teacher query` - no longer fatal. "Please enable terrain" is a real collision
+  between `enable terrain` and `enableterrain`; the first mapping wins, the later row is dropped and
+  counted. One occurrence in the whole corpus.
 - `needle_load failed with code -1` - the exporter and the engine disagree on the `.cact` format. Re-run
   `bootstrap.ps1`; its export-format check names the mismatch.
 - Accuracy below the gate - the pipeline writes `artifacts/pipeline/state.json` with
