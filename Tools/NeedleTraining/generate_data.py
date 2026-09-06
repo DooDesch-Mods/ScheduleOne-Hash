@@ -871,10 +871,15 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                        "operation description. " if required_language else "")
                     + "Preserve all other requirements."
                 )
-            except (OSError, urllib.error.URLError, json.JSONDecodeError, KeyError) as failure:
-                # A prompt that does not fit the teacher's context will not fit on a retry either. Letting
-                # the attempts run out reaches the split below, which asks the same rows in small batches
-                # that do fit - the behaviour the code already has for a batch the teacher cannot answer.
+            except (json.JSONDecodeError, KeyError):
+                # An unparseable or empty reply is this request's problem, not the run's. Letting the
+                # attempts run out reaches the split below, which asks the same rows in smaller batches.
+                # One empty reply used to end the run - it did, at command 65 of 78, seven hours in.
+                continue
+            except (OSError, urllib.error.URLError) as failure:
+                # A prompt too long for the teacher will not fit on a retry either, so it splits too. Any
+                # other transport error means the server itself is gone, and quietly dropping nine thousand
+                # rows over that would be worse than stopping.
                 if "context_length_exceeded" in str(failure):
                     continue
                 if attempt == 2:
