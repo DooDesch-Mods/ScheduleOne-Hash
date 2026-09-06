@@ -1,10 +1,11 @@
 # What the runs measured
 
-Eight training runs, 2026-09-02 to 2026-09-06, on a Ryzen 5 5600H (CPU, ~5 h for three epochs). Teacher
+Nine training runs, 2026-09-02 to 2026-09-06, on a Ryzen 5 5600H (CPU, ~5 h for three epochs). Teacher
 was FreeToken serving `Qwen3.6-35B-A3B-NVFP4`; it is only needed to build the corpus, not to train.
 
-This file exists so the negative results are not repeated. Four of the six things tried made the adapter
-worse, and none of that is visible from the pipeline's own gate.
+This file exists so the negative results are not repeated, and so the guesses that were corrected stay
+corrected. Most of what was tried made the adapter worse, and none of that is visible from the pipeline's
+own gate.
 
 ## The two numbers, and why they disagree
 
@@ -76,9 +77,8 @@ which normalisation genuinely cannot reach: "zehn" never becomes 10.
 untuned base fills arguments as well as any adapter. It does not work - a LoRA drifts the phase it never
 sees (arguments 20/73, worse than base's 27/73) and routing suffers from the smaller corpus.
 
-**Two models.** Adapter routes, base fills arguments: 24/79 against 23/79. One case, and `needle_init`
-and `needle_load` are global functions with no context handle, so it would mean reloading 23 MB per
-query. Not worth it.
+**Two models.** Adapter routes, base fills arguments: 24/79 against 23/79. One case. The reload it would
+need is cheap - see below, 3 ms - so the reason not to build it is the single case, not the cost.
 
 ## The two phases pull against each other
 
