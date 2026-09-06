@@ -3,6 +3,17 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.3] - 2026-09-06
+
+### Fixed
+
+- A request that does not start with a command word comes back with its arguments. "make it noon" was
+  answered `settime` and nothing else, which the console then refused.
+- hash understands the time you mean. "make it noon" and `# settime noon` set the clock; before, only a
+  bare 1200 worked.
+- "make it sunny" reaches clear weather. Only values matching a word you typed were offered, so one of the
+  three answers was never on the list.
+
 ## [1.2.2] - 2026-09-06
 
 ### Fixed
