@@ -274,7 +274,7 @@ namespace Hash.Game
                                 NaturalCommandTranslation result = Translate(
                                     native, work, ref activeFingerprint, out long inferenceMs, out bool constrained);
                                 Core.Log?.Msg("Hash translated in " + inferenceMs + " ms"
-                                              + (constrained ? " (constrained retry)." : "."));
+                                              + (constrained ? " (refined against one command)." : "."));
 #if DEBUG
                                 Core.Log?.Msg("Hash Needle event " + JsonSerializer.Serialize(new
                                 {
@@ -298,7 +298,7 @@ namespace Hash.Game
                                     native, work, ref activeFingerprint, out long diagnosticMs,
                                     out bool diagnosticConstrained);
                                 Core.Log?.Msg("Hash diagnostic translated in " + diagnosticMs + " ms"
-                                              + (diagnosticConstrained ? " (constrained retry)." : "."));
+                                              + (diagnosticConstrained ? " (refined against one command)." : "."));
                                 PublishDiagnostic(work.Generation, diagnostic, native);
                                 if (work.RestoreTools != null)
                                     Restore(native, work.RestoreTools, ref activeFingerprint);

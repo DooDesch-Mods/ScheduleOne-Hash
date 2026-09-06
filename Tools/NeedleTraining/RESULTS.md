@@ -78,6 +78,42 @@ sees (arguments 20/73, worse than base's 27/73) and routing suffers from the sma
 and `needle_load` are global functions with no context handle, so it would mean reloading 23 MB per
 query. Not worth it.
 
+## What a review of the engine's own documentation changed (2026-09-06)
+
+Four claims in this file and in the mod were checked against the Needle package and the shipped archive.
+Two survived, two did not, and one defect turned up that had been costing every run since.
+
+**The two-pass flow is ours, not Needle's.** The engine documents one call over the whole catalogue: it
+embeds the schemas, retrieves the top few itself, and generates a complete call. Comments in
+`NeedleProtocol.cs` describing the split as "recommended by Needle" were unsupported and are corrected.
+Keeping the split is still defensible - one call over all 78 full schemas scored 20/79 on the untuned base
+and 19/79 on the tuned archive, well short of 78.5 % routing - but it is our design and has to earn its
+keep as one.
+
+**"Constrained retry" never turned anything on.** Both passes call the same native function; only the
+toolset differs. The `--no-constrained` flag in the Python CLI is not read by the path it belongs to and
+says nothing about this engine call. The log line said otherwise and is reworded.
+
+**Fine-tuning did not remove the confidence head.** Both heads are present in the shipped archive; the mod
+nulls the score itself in `WithoutConfidence()`. Preserved is not calibrated - upstream now suppresses
+tuned confidence for that reason - but "the gate runs on nothing" is wrong: auto-run needs `Proven` plus
+80 %, and every native prediction still needs a `#`.
+
+**The base is understated here.** The 7.6 % routing figure requires matching an empty argument object.
+Counting correct tool names and refusals over the committed responses gives 13/79, or 16.5 %.
+
+### The defect that had been costing every run
+
+`generate_data.py` built every refinement training row **without passing the query**, so `enum_choices`
+ranked nothing and the enum came out **empty** - while the benchmark and the runtime both send a list
+ranked against what the player typed, with the answer usually first. The corpus taught the model to fill an
+argument from no candidates and then handed it candidates at inference.
+
+This is the same failure the "query-relevant enums" entry above claims to have fixed. It was fixed in
+`refinement_tool`, in the benchmark and in `refresh_enums.py` - and never in the one path that builds the
+training rows, which is why that repair script exists and why the pipeline never calls it. Fixed now; the
+next corpus is the first one to carry it.
+
 ## What is left
 
 The argument phase. The adapter (28/73) is barely ahead of the untuned base (27/73): fine-tuning buys

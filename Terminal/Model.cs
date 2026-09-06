@@ -146,7 +146,13 @@ namespace Hash.Terminal
 
         public double? PeakRamMb { get; }
 
-        /// <summary>True when the first answer was unusable and the grammar-constrained retry produced this one.</summary>
+        /// <summary>
+        /// True when this answer came from the second pass, against a single command's full schema.
+        ///
+        /// The name is historical and was misleading: both passes call the same engine function, and neither
+        /// turns decoding constraints on or off. What changes is the toolset - one command with its argument
+        /// schema and live values instead of the whole catalogue with none.
+        /// </summary>
         public bool Constrained { get; }
     }
 

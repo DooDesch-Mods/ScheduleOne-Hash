@@ -65,9 +65,15 @@ namespace Hash.Terminal
         }
 
         /// <summary>
-        /// First half of Needle's large-catalogue two-pass flow. Every live command keeps its real description,
-        /// but has an empty argument object so this pass can only choose a route. The selected command is then
-        /// re-declared alone with its complete schema and current provider values.
+        /// First half of OUR two-pass flow - not Needle's. The engine documents one call over the whole
+        /// catalogue: it embeds the schemas, retrieves the top few for the query itself, and generates a
+        /// complete call. Splitting that into a route and a refinement is a choice this mod made, and the
+        /// routing declaration is thinner than the engine ever intended - a real description, no argument
+        /// object at all, so the pass can only choose a name.
+        ///
+        /// It is measured, not assumed: the tuned adapter reaches 78.5 % routing this way, while one call
+        /// over all 78 full schemas scored 20/79 on the untuned base and 19/79 on the tuned archive. Keeping
+        /// it therefore has evidence behind it; calling it Needle's recommendation did not.
         /// </summary>
         internal NeedleToolset ForRouting()
         {
@@ -221,9 +227,9 @@ namespace Hash.Terminal
         }
 
         /// <summary>
-        /// Build the second-pass schema recommended by Needle for large catalogues. It contains only the command
-        /// selected by the first pass and, unlike the broad retrieval index, embeds every value currently supplied
-        /// for its arguments. Nothing here is command-specific: mod commands and late provider values take the same
+        /// Build the second-pass schema. It contains only the command selected by the first pass and, unlike
+        /// the broad retrieval index, embeds every value currently supplied for its arguments - which the
+        /// engine's own retrieval cannot do, because it never sees the live item ids we do not declare. Nothing here is command-specific: mod commands and late provider values take the same
         /// path. Strict mode is diagnostic only and makes optional arguments mandatory so a later pass can measure
         /// whether omission, rather than routing, caused a miss.
         /// </summary>

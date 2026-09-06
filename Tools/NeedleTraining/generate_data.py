@@ -1105,7 +1105,10 @@ def validate_dataset(rows: list[dict], tools_by_name: dict[str, dict], excluded:
 
         token_count = rendered_tokens(row, tokenizer)
         if token_count > TOKEN_BUDGET:
-            # Needle would truncate the call itself, so the row would teach a half-written answer.
+            # OUR budget, not the engine's. The archive records kv_window 256 and max_seq_len 2048, and the
+            # documented window slides with the tools pinned as KV sinks - it is not a 256-token cap on a
+            # serialised example. Keeping the cap is defensible; it was used once to justify stripping the
+            # schemas, and that cost 24 points of routing before anyone checked what the number meant.
             rejected.append((f"{token_count} tokens over the {TOKEN_BUDGET} budget", row["query"]))
             continue
         kept.append(row)
@@ -1259,7 +1262,12 @@ def main():
         splits[split].append(fit_route_budget(route, tokenizer))
         refine = {**common,
             "id": row["id"] + "|refine", "phase": "refine",
-            "tools": [refinement_tool(tools_by_name[row["command"]], row["arguments"], values)],
+            # The query is not optional here. Without it enum_choices ranks nothing and the enum comes out
+            # EMPTY, so the corpus taught the model to fill an argument with no candidates while the runtime
+            # hands it a ranked list - the exact failure enum_choices was written to prevent, left in the one
+            # path that builds the training rows. refresh_enums.py repairs rows after the fact and the
+            # pipeline never calls it.
+            "tools": [refinement_tool(tools_by_name[row["command"]], row["arguments"], values, query)],
             "reasoning": grounding_reasoning(tools_by_name[row["command"]], row["arguments"],
                                                row.get("argument_meanings")),
             "answers": [{"name": row["command"], "arguments": row["arguments"]}],
