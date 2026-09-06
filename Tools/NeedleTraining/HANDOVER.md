@@ -22,6 +22,8 @@ Three things below turned out to be wrong and are corrected in place: the note a
 stopping because "the machine was busy" (it was unbounded recursion), the assumption that the corpus
 renders what the engine reads (it did not, in three ways), and the 99 % gate as a goal.
 
+`RESULTS.md` has the run-by-run record, including the four changes that made it worse.
+
 What is left is the argument phase, where the adapter (28/73) is barely ahead of the untuned base
 (27/73). Fine-tuning buys routing and costs extraction. The corpus is the reason: `grounds_literals`
 forces every numeric argument to appear as digits and every value to appear verbatim, so of 877 numeric
