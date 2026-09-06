@@ -13,6 +13,7 @@ import pathlib
 import sys
 
 import generate_data as g
+import time_words
 
 ROOT = pathlib.Path(__file__).resolve().parent
 RESULTS = ROOT.parent / "NeedleBenchmark" / "results"
@@ -26,6 +27,11 @@ def resolve(command: str, index: int, produced) -> str:
     if produced is None:
         return None
     text = str(produced)
+    properties = list(TOOLS.get(command, {}).get("parameters", {}).get("properties", {}).values())
+    if index < len(properties) and time_words.owns(properties[index].get("description", "")):
+        # The mod converts a word or a bare hour to the console's own reading, so scoring the raw answer
+        # counts two right answers wrong: "noon", and the 8 the model correctly reads out of "8am".
+        return time_words.token(text) or text
     slots = VALUES.get(command, [])
     if index >= len(slots) or not slots[index]:
         return text
