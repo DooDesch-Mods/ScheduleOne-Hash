@@ -366,3 +366,53 @@ def test_grounding_accepts_what_the_runtime_can_resolve():
 
 test_grounding_accepts_what_the_runtime_can_resolve()
 print("grounding rule ok")
+
+
+def test_an_unreadable_reply_costs_the_batch_not_the_run():
+    """One empty reply from the teacher ended a seven-hour run at command 65 of 78.
+
+    An unparseable answer is a property of that one request; the batch splits and the smaller asks
+    usually succeed. A transport error is different - the server is gone - and that still stops the run,
+    because dropping nine thousand rows one at a time would be the worse failure.
+    """
+    import json
+    import pathlib
+    import tempfile
+    import types
+    import urllib.error
+
+    import generate_data as g
+
+    args = types.SimpleNamespace(model="fake", fallback_model="", seed=1)
+    rows = [{"id": f"give|{language}|0", "language": language, "scenario": 0,
+             "arguments": {}, "description": "give an item"} for language in g.LANGUAGES]
+
+    def empty_reply(*_):
+        raise json.JSONDecodeError("no JSON object in the teacher reply", "", 0)
+
+    def server_gone(*_):
+        raise urllib.error.URLError("[WinError 10061] connection refused")
+
+    original, unsatisfied = g.teacher_json, list(g.UNSATISFIED_ROWS)
+    try:
+        g.teacher_json = empty_reply
+        g.UNSATISFIED_ROWS.clear()
+        with tempfile.TemporaryDirectory() as tmp:
+            assert g.teacher_batch(rows, args, pathlib.Path(tmp), "t", set()) == {}
+        assert len(g.UNSATISFIED_ROWS) == len(rows), g.UNSATISFIED_ROWS
+
+        g.teacher_json = server_gone
+        g.UNSATISFIED_ROWS.clear()
+        with tempfile.TemporaryDirectory() as tmp:
+            try:
+                g.teacher_batch(rows, args, pathlib.Path(tmp), "t", set())
+                raise AssertionError("an unreachable server must stop the run")
+            except urllib.error.URLError:
+                pass
+    finally:
+        g.teacher_json = original
+        g.UNSATISFIED_ROWS[:] = unsatisfied
+
+
+test_an_unreadable_reply_costs_the_batch_not_the_run()
+print("unreadable reply splits, dead server stops ok")

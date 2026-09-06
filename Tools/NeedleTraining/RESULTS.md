@@ -1,10 +1,11 @@
 # What the runs measured
 
-Eight training runs, 2026-09-02 to 2026-09-06, on a Ryzen 5 5600H (CPU, ~5 h for three epochs). Teacher
+Nine training runs, 2026-09-02 to 2026-09-06, on a Ryzen 5 5600H (CPU, ~5 h for three epochs). Teacher
 was FreeToken serving `Qwen3.6-35B-A3B-NVFP4`; it is only needed to build the corpus, not to train.
 
-This file exists so the negative results are not repeated. Four of the six things tried made the adapter
-worse, and none of that is visible from the pipeline's own gate.
+This file exists so the negative results are not repeated, and so the guesses that were corrected stay
+corrected. Most of what was tried made the adapter worse, and none of that is visible from the pipeline's
+own gate.
 
 ## The two numbers, and why they disagree
 
@@ -36,6 +37,8 @@ filled the arguments.
 | run 7, 1 epoch | + enums, number words | 18/79 | 63.3 % | 27/73 |
 | run 6, 1 epoch | + spacing variants | 17/79 | 57.0 % | 26/73 |
 | run 8, 1 epoch | route rows only | 15/79 | 55.7 % | 20/73 |
+| run 9, 1 epoch | + grounding relaxed | 18/79 | 63.3 % | **30/73** |
+| run 9, 3 epochs | same corpus | 20/79 | 75.9 % | 26/73 |
 
 Runs 1, 2 and 4 are not in the table: they were measured against a stale `human-cases.jsonl` that still
 carried the old stripped schemas, so their refine numbers are not comparable. That mistake is the reason
@@ -74,9 +77,25 @@ which normalisation genuinely cannot reach: "zehn" never becomes 10.
 untuned base fills arguments as well as any adapter. It does not work - a LoRA drifts the phase it never
 sees (arguments 20/73, worse than base's 27/73) and routing suffers from the smaller corpus.
 
-**Two models.** Adapter routes, base fills arguments: 24/79 against 23/79. One case, and `needle_init`
-and `needle_load` are global functions with no context handle, so it would mean reloading 23 MB per
-query. Not worth it.
+**Two models.** Adapter routes, base fills arguments: 24/79 against 23/79. One case. The reload it would
+need is cheap - see below, 3 ms - so the reason not to build it is the single case, not the cost.
+
+## The two phases pull against each other
+
+Run 9 relaxed `grounds_literals` so the teacher could write "gib mir zehn og kush" instead of being forced
+to spell every number as digits. It worked, exactly where it was aimed: 30 of 73 argument cases after one
+epoch, the best any adapter has managed and the first time one beat the untuned base. Routing fell to
+63.3 % in the same run, and after three epochs the two swapped - routing back to 75.9 %, arguments down to
+26. Three runs now show the same shape: whenever one phase improves, the other gives way.
+
+So the phases want different adapters, which was dismissed earlier on the grounds that `needle_init` and
+`needle_load` are global functions and the mod would have to reload 23 MB between the two phases of every
+query. That was a guess, and it was wrong: `probe_load_cost.py` measures one `needle_load` at **3 ms**,
+against roughly 100 ms of inference per phase. The design is cheap.
+
+It is also not worth building. Best router with best refiner reaches 24/79 against 23/79 for the shipped
+adapter alone - one case. The mod's own value resolution already recovers most of what a second adapter
+would add, so the complexity buys nothing.
 
 ## What a review of the engine's own documentation changed (2026-09-06)
 
@@ -213,11 +232,12 @@ Same measurement, four renderings:
 
 `Terminal/TimeWords.cs` holds the table and the reader, `Tools/NeedleTraining/time_words.py` mirrors it line
 for line, and both were checked against the same 26 values and 5 queries. Two consequences beyond the
-benchmark: typing `settime noon` at the prompt is now answered without asking the model at all, and the
-corpus builder's grounding rule no longer demands that the digits appear in the request - which had excluded
-every natural phrasing of the one command whose value nobody speaks as a number. The teacher is told it may
-write a time as a time; `TIME_PHRASING_VERSION` makes the batches that carry a time slot, and only those,
-pay for the new wording.
+benchmark: `# settime noon` is answered without asking the model at all, by the same local path that already
+handled `# settime 1200`, and the corpus builder's grounding rule no longer demands that the digits appear
+in the request - which had excluded every natural phrasing of the one command whose value nobody speaks as a
+number. The teacher is told it may write a time as a time; `TIME_PHRASING_VERSION` makes the batches that
+carry a time slot, and only those, pay for the new wording. Run 9 was built before that rule, so its corpus
+still carries no natural `settime` phrasing at all.
 
 ### Two changes that came out of it
 
@@ -248,6 +268,14 @@ exactly as digits in the request" and `grounds_literals` enforces it, so of 877 
 **not one** was ever written as a word. 49 of the 73 benchmark cases with arguments need exactly that
 kind of mapping. The model never saw the problem it is being asked to solve.
 
-Fixing it means relaxing `grounds_literals`, letting the teacher phrase arguments the way players do, and
-re-running the data stage - roughly seven hours of teacher time. That is a data problem, not a training
-one, and no amount of further training will reach it.
+That was the reason to relax `grounds_literals`, and run 9 did it: arguments reached 30/73. It did not
+carry through to more end-to-end cases, because routing paid for it.
+
+Nine runs in, the honest read is that this corpus and this 45M model sit at roughly 23-24 of 79, and the
+benchmark cannot see smaller differences than that - runs scoring 20, 23 and 24 are not distinguishable
+on 79 cases. Further tuning against it is fitting noise.
+
+`TELEMETRY.md` is the unblocking step, and it is a measurement problem before it is a training one. A few
+hundred real queries make the differences visible; the corrected ones are training rows no teacher can
+invent. Until then the ceiling is not a model limit anyone has demonstrated - it is the resolution of the
+ruler.
