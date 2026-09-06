@@ -18,9 +18,12 @@ namespace Hash.Terminal
     /// thing they wanted. That is why <c>actual</c> is always written beside it - whoever reads the file decides,
     /// and can decide only if the evidence is there.</para>
     ///
-    /// <para>Off unless the player turns it on, written locally, never sent anywhere. Nothing identifies the player
-    /// or the save, and there is no timestamp: the file is in order, which is all the model needs, and a clock is
-    /// one more thing to have to explain before someone hands the file over.</para>
+    /// <para>Always written, locally, and sent only once the player has said so - <see cref="IUsageSharing"/> gates
+    /// the sending and nothing else. Recording and sharing used to be one setting, which answered both wrongly: a
+    /// player who switched it on had nothing to share, and a player who left it off never saw what they would have
+    /// been sending. Nothing identifies the player or the save, and there is no timestamp: the file is in order,
+    /// which is all the model needs, and a clock is one more thing to have to explain before someone hands it
+    /// over.</para>
     /// </summary>
     public sealed class UsageCapture
     {

@@ -542,6 +542,7 @@ namespace Hash.Terminal
         private readonly IReadOnlyList<string> _values;
         private readonly IReadOnlyList<string> _schemaValues;
         private readonly string _jsonType;
+        private readonly bool _time;
 
         internal NeedleArgument(int position, string label, bool required, bool owned, MarkKind markKind,
                                 IReadOnlyList<string> values, string exampleToken)
@@ -553,6 +554,7 @@ namespace Hash.Terminal
             _markKind = markKind;
             _values = values ?? Array.Empty<string>();
             _schemaValues = Literals(exampleToken);
+            _time = TimeWords.Owns(Label);
             _jsonType = TypeOf(Label);
         }
 
@@ -570,13 +572,14 @@ namespace Hash.Terminal
             writer.WriteStartObject();
             writer.WriteString("type", _jsonType);
 
-            string description = Label.Replace('|', ' ');
+            // "hhmm" beside a list of words would ask for two different answers at once.
+            string description = _time ? "time of day" : Label.Replace('|', ' ');
             if (_markKind != MarkKind.None)
                 description += "; #=current";
             writer.WriteString("description", description);
 
-            IReadOnlyList<string> choices = includeLiveValues && _values.Count > 0
-                ? RelevantValues(query)
+            IReadOnlyList<string> choices = _time ? TimeWords.Choices(query)
+                : includeLiveValues && _values.Count > 0 ? RelevantValues(query)
                 : _schemaValues;
             if (_jsonType == "string" && choices.Count > 0)
             {
@@ -660,6 +663,8 @@ namespace Hash.Terminal
         {
             resolved = null;
             string value = (token ?? "").Trim();
+
+            if (_time) return TimeWords.TryToken(value, out resolved);
 
             if (_jsonType == "number")
             {
@@ -756,6 +761,13 @@ namespace Hash.Terminal
 
             if (Marks.IsWord(resolved)) return true; // MarkExpansion performs the kind and existence checks later.
 
+            if (_time)
+            {
+                if (TimeWords.TryToken(resolved, out string reading)) { resolved = reading; return true; }
+                error = Label + ": '" + resolved + "' is not a time";
+                return false;
+            }
+
             if (_values.Count == 0)
             {
                 if (_owned)
@@ -822,6 +834,8 @@ namespace Hash.Terminal
 
         private static string TypeOf(string label)
         {
+            if (TimeWords.Owns(label)) return "string";
+
             string one = label.ToLowerInvariant();
             if (one == "true|false" || one == "false|true") return "boolean";
 

@@ -153,12 +153,8 @@ number and the answer carries none, and is not something another corpus will tea
 **N and O are dead ends.** Renaming the parameters cost seven routed cases; removing "Optionally" cost three
 and gained nothing.
 
-### About a fifth of this benchmark cannot be won
+### Four cases in this benchmark cannot be won
 
-- **settime: 0 of 11 correct in every condition** - base, D, E and the tuned adapter alike. "noon" is 1200
-  and "eight" is 800, and no wording reaches it. The declaration is already honest ("24-hour time", `hhmm`),
-  the usage example did not help, and E made routing worse. This is not a model to train; it is a value
-  provider the mod should own, the way it already resolves item names.
 - **The granddaddy cases: 4, and the answer is not on the list.** For "give me 4 grandaddy seed" the ranked
   enum is `cocaseed, addy, ogkushseed, ...` and `granddaddypurpleseed` is absent. Every model scores these
   wrong by construction.
@@ -170,8 +166,43 @@ and gained nothing.
   bug players ever hit, and the fix removes the divergence. Removing `addy` does not make
   `granddaddypurpleseed` appear - it still scores zero - so these four cases remain unwinnable.
 
-Fifteen of 79 cases therefore measure our own value handling rather than the model. Any headline number
-from this set has that ceiling built into it.
+Four of 79 cases therefore measure our own value handling rather than the model. Any headline number from
+this set has that ceiling built into it.
+
+### The time family was ours to lose, and we were losing it
+
+The eleven `settime` cases scored 0 of 11 in every condition, which read as a ceiling. It was not one. That
+number was measured on the raw model output, and the mod does not run the raw model output - it resolves it.
+Two things were missing, and both belong to the mod:
+
+- **The hour was already there.** For "set the time to 8am" the base answers `8`, correctly, and the game
+  wants `800`. Converting a bare hour to a full reading is arithmetic, not language, and doing it takes the
+  same base run from 1 of 11 to **5 of 11** with no vocabulary and no training.
+- **noon is a value, not a phrasing.** Nothing in the request says 1200, so the model answers 0 whatever it
+  is told. Declaring the slot as a word it can pick, the way item and weather slots already work, gets noon
+  in English, German and French and both `day` cases: **6 of 11**.
+
+Offering only words then cost the hour cases - handed midnight and dawn and nothing numeric, "set the time
+to 8am" is answered midnight. So the clock reading the player wrote goes on the list first, ahead of the
+words. **8 of 11**, and the whole set at **31 of 79 exact and 46 routed**, against 25 and 43 for the same
+base model on the same cases.
+
+Same measurement, four renderings:
+
+| Rendering | settime | exact | routed |
+|---|---|---|---|
+| number, `hhmm`, no enum | 1/11 | 25/79 | 43/79 |
+| the enum fill, still a number | 5/11 | 28/79 | 43/79 |
+| words only | 6/11 | 29/79 | 46/79 |
+| the player's own reading first, then words | **8/11** | **31/79** | 46/79 |
+
+`Terminal/TimeWords.cs` holds the table and the reader, `Tools/NeedleTraining/time_words.py` mirrors it line
+for line, and both were checked against the same 26 values and 5 queries. Two consequences beyond the
+benchmark: typing `settime noon` at the prompt is now answered without asking the model at all, and the
+corpus builder's grounding rule no longer demands that the digits appear in the request - which had excluded
+every natural phrasing of the one command whose value nobody speaks as a number. The teacher is told it may
+write a time as a time; `TIME_PHRASING_VERSION` makes the batches that carry a time slot, and only those,
+pay for the new wording.
 
 ### Two changes that came out of it
 
