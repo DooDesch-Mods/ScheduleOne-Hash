@@ -232,11 +232,12 @@ Same measurement, four renderings:
 
 `Terminal/TimeWords.cs` holds the table and the reader, `Tools/NeedleTraining/time_words.py` mirrors it line
 for line, and both were checked against the same 26 values and 5 queries. Two consequences beyond the
-benchmark: typing `settime noon` at the prompt is now answered without asking the model at all, and the
-corpus builder's grounding rule no longer demands that the digits appear in the request - which had excluded
-every natural phrasing of the one command whose value nobody speaks as a number. The teacher is told it may
-write a time as a time; `TIME_PHRASING_VERSION` makes the batches that carry a time slot, and only those,
-pay for the new wording.
+benchmark: `# settime noon` is answered without asking the model at all, by the same local path that already
+handled `# settime 1200`, and the corpus builder's grounding rule no longer demands that the digits appear
+in the request - which had excluded every natural phrasing of the one command whose value nobody speaks as a
+number. The teacher is told it may write a time as a time; `TIME_PHRASING_VERSION` makes the batches that
+carry a time slot, and only those, pay for the new wording. Run 9 was built before that rule, so its corpus
+still carries no natural `settime` phrasing at all.
 
 ### Two changes that came out of it
 
