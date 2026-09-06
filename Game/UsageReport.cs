@@ -31,7 +31,9 @@ namespace Hash.Game
         private readonly IStore _store;
         private readonly Func<bool> _allowed;
 
-        private bool _running;
+        // Written on the upload thread, read on the game thread. Not volatile would let the game thread keep
+        // seeing a stale "true" and never upload again - a wedge with no error anywhere.
+        private volatile bool _running;
 
         internal UsageReport(IStore store, Func<bool> allowed)
         {
