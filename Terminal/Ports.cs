@@ -92,6 +92,16 @@ namespace Hash.Terminal
 
         /// <summary>Write a file. Never throws.</summary>
         void Write(StoreScope scope, string name, string content);
+
+        /// <summary>
+        /// Add one line to the end of a file, creating it when it is not there. Never throws.
+        ///
+        /// Separate from <see cref="Write"/> because the two have opposite failure modes. A whole-file write is
+        /// atomic so a crash costs the newest state and keeps the old; an append must not rewrite what is already
+        /// there, because the file it is for grows for as long as the player keeps it and rewriting it would mean
+        /// reading megabytes back for every line.
+        /// </summary>
+        void Append(StoreScope scope, string name, string line);
     }
 
     public enum StoreScope
@@ -101,6 +111,17 @@ namespace Hash.Terminal
 
         /// <summary>Beside the mod, once per machine.</summary>
         Global,
+    }
+
+    /// <summary>
+    /// Whether the player has agreed to share their request log, and a way to change that answer.
+    ///
+    /// A port rather than a field because the answer lives in <c>MelonPreferences.cfg</c> beside every other
+    /// setting, where a player can find and change it without the terminal. The shell only reads and writes it.
+    /// </summary>
+    public interface IUsageSharing
+    {
+        bool Enabled { get; set; }
     }
 
     /// <summary>A clock the tests can stand still. Only the log view needs one.</summary>

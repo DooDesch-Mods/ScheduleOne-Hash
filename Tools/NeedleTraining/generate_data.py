@@ -23,6 +23,8 @@ import urllib.request
 from needle.model.finetune import render_example
 from needle.model.tokenizer import get_tokenizer
 
+import time_words
+
 
 ROOT = pathlib.Path(__file__).resolve().parent
 LANGUAGES = {
@@ -44,6 +46,10 @@ MAX_ENUM_VALUES = 32
 MAX_ENUM_CHARACTERS = 80
 TEACHER_PROMPT_VERSION = 10
 MULTI_MODE_POLICY_VERSION = 1
+# Bumped when the teacher is told something new about phrasing a time of day. The prompt is not part of the
+# cache key, so without this a batch cached under the old wording - which forbade "noon" and demanded the
+# digits - would be replayed for ever, and only batches that actually carry a time slot pay for the change.
+TIME_PHRASING_VERSION = 1
 # Phrasings the teacher could not write under the uniqueness and grounding constraints, reported at the
 # end of the run so a thin corpus is visible rather than silent.
 UNSATISFIED_ROWS: list[tuple[str, str]] = []
@@ -174,7 +180,12 @@ def candidate_score(candidate: str, phrase: str) -> int:
     # A two-letter phrase like "me" is inside meth, megabean and horsesemen; the runtime's matcher rejects
     # those for the same reason its comment gives - they match far too much of a thousand-item list - and
     # letting them through here spent the whole 80-character budget before the right value was reached.
-    if len(phrase) >= 4 and (phrase in normalized or normalized in phrase):
+    if len(phrase) >= 4 and phrase in normalized:
+        return 4000 - abs(len(normalized) - len(phrase))
+    # The other direction - a catalogue value hiding inside a longer word the player typed - only counts
+    # when the value is most of that word. `addy` sits inside "grandaddy" and scored 3995, one notch under
+    # an exact match, which is how "give me 4 grandaddy seed" came back as addy.
+    if len(phrase) >= 4 and normalized in phrase and len(normalized) * 2 >= len(phrase):
         return 4000 - abs(len(normalized) - len(phrase))
     if len(phrase) >= 6 and abs(len(normalized) - len(phrase)) <= 1             and edit_distance_at_most_one(normalized, phrase):
         return 3500
@@ -183,6 +194,38 @@ def candidate_score(candidate: str, phrase: str) -> int:
         if all(character in iterator for character in phrase):
             return 2500 - min(len(normalized) - len(phrase), 499)
     return 0
+
+
+# (command, argument) pairs whose value is a time of day, filled from the catalogue before any row is
+# built. A time slot is the one argument the runtime resolves from words instead of digits, and neither the
+# grounding check nor the training target is handed the schema it would need to notice that on its own.
+TIME_SLOTS: set[tuple[str, str]] = set()
+
+
+def register_time_slots(tools: list[dict]) -> None:
+    TIME_SLOTS.clear()
+    for tool in tools:
+        for name, prop in tool["parameters"].get("properties", {}).items():
+            if time_words.owns(prop.get("description", "")):
+                TIME_SLOTS.add((tool["name"], name))
+
+
+def time_target(command: str, arguments: dict, query: str) -> dict:
+    """Answer a time slot the way the schema asks for it: the player's own word, else the console reading.
+
+    The enum offers words and the console takes hhmm, so a target of 1200 beside a list containing "noon"
+    trains the model against the very choice it is being offered. Converting here also repairs the teacher's
+    own arithmetic - it writes 8 for "8am", which the mod would read as eight hundred hours.
+    """
+    out = dict(arguments)
+    for name, value in arguments.items():
+        if (command, name) not in TIME_SLOTS:
+            continue
+        reading = time_words.token(value)
+        if reading is None:
+            continue
+        out[name] = time_words.word_for(query, reading) or reading
+    return out
 
 
 def grounds_literals(row: dict, query: str) -> bool:
@@ -199,6 +242,14 @@ def grounds_literals(row: dict, query: str) -> bool:
     requested = query.casefold()
     for name, value in row.get("arguments", {}).items():
         if isinstance(value, bool):
+            continue
+        if (row.get("command"), name) in TIME_SLOTS:
+            # A time is grounded when the runtime could reach it from these words, which is what the digit
+            # rule below was reaching for. Demanding the digits themselves excluded every natural phrasing
+            # of the one command whose value is never spoken as a number: nobody types "settime 1200" and
+            # means it, they say noon.
+            if not time_words.recoverable(query, time_words.token(value)):
+                return False
             continue
         if isinstance(value, str) and re.fullmatch(r"sample\d+", value):
             if not re.search(rf"(?<![\d.]){re.escape(value.casefold())}(?![\d.])", requested):
@@ -235,14 +286,31 @@ def enum_choices(values: list[str], query: str) -> list[str]:
             if phrase and not phrase.isdigit():
                 phrases.add(phrase)
     ranked = []
+    unmatched = []
     for value in values:
         score = max((candidate_score(value, phrase) for phrase in phrases), default=0)
         if score > 0:
             ranked.append((-score, len(value), value.casefold(), value))
+        else:
+            unmatched.append(value)
     ranked.sort()
+
+    # A slot whose whole vocabulary fits is not a ranking problem. Offering only what matched a word in the
+    # query left the enum short and sometimes empty - "make it sunny" got heavyrain and lightrain, and
+    # `clear`, one of setweather's three possible values, was not offered at all. Eight benchmark cases
+    # failed exactly there.
+    #
+    # The fill stops where the ranking starts to matter. Padding a thousand-item catalogue with whatever
+    # sorts first would put back the original bug, which is how the enum for `give` came to read
+    # "acid, acunit, addy, airpot" and never contained ogkush.
+    everything = sum(len(value) for value in values)
+    order = [value for _, _, _, value in ranked]
+    if everything <= MAX_ENUM_CHARACTERS and len(values) <= MAX_ENUM_VALUES:
+        order += unmatched
+
     chosen: list[str] = []
     characters = 0
-    for _, _, _, value in ranked:
+    for value in order:
         if chosen and characters + len(value) > MAX_ENUM_CHARACTERS:
             continue
         chosen.append(value)
@@ -270,6 +338,14 @@ def refinement_tool(tool: dict, assignment: dict, live_values: dict, query: str 
     parameters["additionalProperties"] = False
     slots = live_values.get(tool["name"], [])
     for index, prop in enumerate(parameters.get("properties", {}).values()):
+        # A time of day is a word the model picks, not a number it has to invent. Terminal/TimeWords.cs
+        # carries the reasoning; both sides render the slot the same way or the measurement is about the
+        # mismatch instead of about the model.
+        if time_words.owns(prop.get("description", "")):
+            prop["type"] = "string"
+            prop["description"] = time_words.DESCRIPTION
+            prop["enum"] = time_words.choices(query)
+            continue
         if prop.get("type") == "string" and index < len(slots):
             choices = enum_choices(slots[index], query)
             if choices:
@@ -721,6 +797,9 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
         )
     if excluded_modes:
         cache_input["multi_mode_policy"] = MULTI_MODE_POLICY_VERSION
+    if any((row.get("command"), name) in TIME_SLOTS
+           for row in rows for name in (row.get("arguments") or {})):
+        cache_input["time_phrasing"] = TIME_PHRASING_VERSION
     if forbidden:
         cache_input["forbidden"] = sorted(forbidden)
     cache_key = hashlib.sha256(json.dumps(cache_input, sort_keys=True, ensure_ascii=False)
@@ -817,7 +896,9 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                 "even when operation and arguments repeat. Any canonical argument matching sample plus digits is "
                 "an opaque one-token value and must appear exactly unchanged in the request. A numeric "
                 "canonical argument may be written as digits or spelled out as a word in the request "
-                "language, whichever a player would actually say. Any other canonical argument may be "
+                "language, whichever a player would actually say. A canonical argument that is a time of "
+                "day may be expressed the way a player says a time - noon, midnight, 8am, 20:00 - as long "
+                "as it means that exact time. Any other canonical argument may be "
                 "written the natural way a player would say it rather than as the exact identifier. "
                 f"Use at most {MAX_TEACHER_WORDS} whitespace-separated words per request. Do not include '#', JSON, "
                 "explanations, or invent extra intent. Return every id exactly once.\nINPUT:\n"
@@ -1110,7 +1191,10 @@ def validate_dataset(rows: list[dict], tools_by_name: dict[str, dict], excluded:
 
         token_count = rendered_tokens(row, tokenizer)
         if token_count > TOKEN_BUDGET:
-            # Needle would truncate the call itself, so the row would teach a half-written answer.
+            # OUR budget, not the engine's. The archive records kv_window 256 and max_seq_len 2048, and the
+            # documented window slides with the tools pinned as KV sinks - it is not a 256-token cap on a
+            # serialised example. Keeping the cap is defensible; it was used once to justify stripping the
+            # schemas, and that cost 24 points of routing before anyone checked what the number meant.
             rejected.append((f"{token_count} tokens over the {TOKEN_BUDGET} budget", row["query"]))
             continue
         kept.append(row)
@@ -1173,6 +1257,7 @@ def main():
     if args.limit:
         tools = tools[:args.limit]
     tools_by_name = {tool["name"]: tool for tool in tools}
+    register_time_slots(tools)
     gold, excluded = expected_assignments(args.cases, tools_by_name)
     cache = args.cache or args.out / "teacher-cache"
     cache.mkdir(parents=True, exist_ok=True)
@@ -1264,10 +1349,16 @@ def main():
         splits[split].append(fit_route_budget(route, tokenizer))
         refine = {**common,
             "id": row["id"] + "|refine", "phase": "refine",
-            "tools": [refinement_tool(tools_by_name[row["command"]], row["arguments"], values)],
+            # The query is not optional here. Without it enum_choices ranks nothing and the enum comes out
+            # EMPTY, so the corpus taught the model to fill an argument with no candidates while the runtime
+            # hands it a ranked list - the exact failure enum_choices was written to prevent, left in the one
+            # path that builds the training rows. refresh_enums.py repairs rows after the fact and the
+            # pipeline never calls it.
+            "tools": [refinement_tool(tools_by_name[row["command"]], row["arguments"], values, query)],
             "reasoning": grounding_reasoning(tools_by_name[row["command"]], row["arguments"],
                                                row.get("argument_meanings")),
-            "answers": [{"name": row["command"], "arguments": row["arguments"]}],
+            "answers": [{"name": row["command"],
+                         "arguments": time_target(row["command"], row["arguments"], query)}],
         }
         # A derivation is valuable only when it does not truncate the actual call in Needle's 256-token window.
         if rendered_tokens(refine, tokenizer) > TOKEN_BUDGET:

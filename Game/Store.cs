@@ -60,6 +60,31 @@ namespace Hash.Game
             }
         }
 
+        /// <summary>
+        /// Append one line, without the temporary file.
+        ///
+        /// The atomic rename that protects <see cref="Write"/> would mean copying the whole file for every line,
+        /// and this one only grows. A crash mid-append costs the last line of a log the player may never send;
+        /// a crash mid-rewrite would cost all of them.
+        /// </summary>
+        public void Append(StoreScope scope, string name, string line)
+        {
+            if (string.IsNullOrEmpty(line)) return;
+
+            try
+            {
+                string path = PathFor(scope, name);
+                if (path == null) return;
+
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                File.AppendAllText(path, line + Environment.NewLine);
+            }
+            catch (Exception e)
+            {
+                Core.Log?.Warning($"could not append to {name}: {e.Message}");
+            }
+        }
+
         private static string PathFor(StoreScope scope, string name)
         {
             if (string.IsNullOrEmpty(name)) return null;

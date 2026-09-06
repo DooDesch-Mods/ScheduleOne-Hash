@@ -95,8 +95,32 @@ while the game's console is switched on, and goes away when it is not.
   back, for a player who prefers it or a mod that needs it.
 - `NeedleKeepContext` (default `false`) - let a later `# ` request refer to earlier Needle requests and their
   command results. The default resets context after every request so each line stands alone.
+- `NeedleShareUsage` (default `false`) - upload the `# ` request log so it can improve the model. `share on`
+  in the terminal sets the same thing. See below.
 
 Your history and aliases live in `UserData/Hash/`. Which commands you use most is remembered per save, beside it.
+
+## Helping the model get better
+
+hash writes one line per `# ` request to `UserData/Hash/queries.jsonl`: what you typed, the commands it produced,
+whether they worked, and which language your game is in. The last part is the useful one - a request that ran and
+was right teaches nothing, a request you had to type out by hand afterwards teaches exactly what was missing.
+
+The line is written when the request is finished, so the very last one before a crash can be missing.
+
+**That file never leaves your machine unless you say so.** The first time you use `# `, hash says the file exists
+and how to answer: `share on` sends it, `share off` leaves it alone. It asks once. `share` on its own says where
+it stands, and `NeedleShareUsage` in `MelonPreferences.cfg` is the same switch for anyone who would rather not
+open the terminal to change their mind.
+
+The file is plain text and holds no name, no save and no timestamp, so you can read every line before you decide.
+Deleting it is fine at any time; it starts again empty. With sharing on, hash uploads it when you close the
+terminal and clears it once the server has it. What arrives is counted in the open at
+[hash.doomods.com](https://hash.doomods.com).
+
+The model shipped with hash was trained on requests a language model was asked to invent, which is why it
+understands "give me five OG Kush" better than whatever you would actually have typed. Real requests are the only
+way past that.
 
 ## Multiplayer
 

@@ -29,9 +29,12 @@ namespace Hash
 
         private static MelonPreferences_Entry<bool> _hijack;
         private static MelonPreferences_Entry<bool> _needleKeepContext;
+        private static MelonPreferences_Entry<bool> _needleShareUsage;
 
         private AppHandle _app;
         private Session _session;
+        private UsageCapture _capture;
+        private UsageReport _report;
         private CommandIndex _index;
         private ICommandCatalogue _naturalCatalogue;
         private ArgProviders _providers;
@@ -78,6 +81,12 @@ namespace Hash
                 "NeedleKeepContext", false, "Needle keeps conversation context",
                 "OFF (default): every '# <request>' is translated independently. ON: later requests may refer to "
                 + "earlier Needle commands and their results.");
+            _needleShareUsage = category.CreateEntry(
+                "NeedleShareUsage", false, "Share the '# ' request log",
+                "OFF (default): nothing leaves this machine. hash always writes each '# <request>', the commands "
+                + "it produced and whether they worked to UserData/Hash/queries.jsonl - open it and read it. ON: "
+                + "that file is uploaded so the requests can be used to make the model better, and cleared once "
+                + "the server has it. It holds no name, no save and no timestamp.");
 
             // Refuse rather than half-work. hash has no home-screen icon on purpose - the key is the only way in -
             // so a host that cannot raise the phone would leave the player with a mod that does nothing and no way
@@ -118,11 +127,44 @@ namespace Hash
             _runner = new CommandRunner(_log);
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
+            var sharing = new PreferenceSharing();
+            _capture = new UsageCapture(_store, sharing, System.Globalization.CultureInfo.CurrentUICulture.Name)
+            {
+                // Which model answered decides what a record is evidence about: the fallback routes one
+                // request in ten against the tuned model's four in five, and mod version cannot tell them
+                // apart - the weights file can be missing at any version.
+                Model = _needle.ModelName,
+            };
+            _report = new UsageReport(_store, sharing);
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
-                                   _naturalCatalogue);
+                                   _naturalCatalogue, _capture);
 
             _runner.LogViewOpen = () => _session.Builtins.LogsOpen;
             _session.Builtins.UseFace(_store.Read(StoreScope.Global, "font"));
+        }
+
+        /// <summary>
+        /// The sharing answer, kept where every other setting is.
+        ///
+        /// Written from the terminal by `share on`, and readable and changeable in MelonPreferences.cfg by a
+        /// player who never opens hash - a consent that can only be withdrawn from inside the thing collecting
+        /// is not one.
+        /// </summary>
+        private sealed class PreferenceSharing : Hash.Terminal.IUsageSharing
+        {
+            public bool Enabled
+            {
+                get => _needleShareUsage?.Value == true;
+                set
+                {
+                    // Set, do not save. MelonPreferences.Save() writes every mod's preferences and runs every
+                    // mod's listeners: two test sessions died within 250 ms of `share on`, with another mod
+                    // reacting to the save by re-syncing and broadcasting to all players from inside a callback
+                    // on the game thread. The value takes effect immediately either way, and MelonLoader writes
+                    // it out at shutdown like every other setting a player changes.
+                    if (_needleShareUsage != null) _needleShareUsage.Value = value;
+                }
+            }
         }
 
         private void RegisterApp()
@@ -388,6 +430,12 @@ namespace Hash
 
         private void Persist()
         {
+            // Before the rest: the open usage record is the only state here that a later line could still change,
+            // and every path that reaches Persist is a path where no later line is coming. Sharing looks at the
+            // finished file straight after, so a request made seconds ago is in the upload rather than the next one.
+            _session?.CloseCapture();
+            _report?.Pump();
+
             _history.Save(_store);
             _aliases.Save(_store);
             _usage.Save(_store);

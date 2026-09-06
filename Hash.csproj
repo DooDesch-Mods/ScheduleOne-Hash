@@ -143,6 +143,10 @@
   <Target Name="PostBuild" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Condition="Exists('$(ModsDirectory)')" Command="cmd /c if exist &quot;$(ModsDirectory)&quot; copy /Y &quot;$(TargetPath)&quot; &quot;$(ModsDirectory)&quot;" ContinueOnError="true" />
     <Exec Condition="Exists('Native/Hash.Needle.bin') And Exists('$(ModsDirectory)')" Command="cmd /c copy /Y &quot;$(MSBuildProjectDirectory)\Native\Hash.Needle.bin&quot; &quot;$(ModsDirectory)&quot;" ContinueOnError="true" />
+    <!-- The tuned adapter, beside the engine. Without it the mod silently falls back to the untuned base model,
+         which routes one request in ten - the release archives already carry it, and a build that does not is a
+         test of something nobody ships. -->
+    <Exec Condition="Exists('Hash.Needle.cact') And Exists('$(ModsDirectory)')" Command="cmd /c copy /Y &quot;$(MSBuildProjectDirectory)\Hash.Needle.cact&quot; &quot;$(ModsDirectory)&quot;" ContinueOnError="true" />
   </Target>
 
 </Project>

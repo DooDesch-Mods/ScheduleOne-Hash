@@ -4,11 +4,15 @@ using System.Text;
 namespace Hash
 {
     /// <summary>
-    /// Just enough JSON to talk to the page.
+    /// Just enough JSON to talk to the page, and to write one usage record per line.
     ///
     /// A serializer would be a dependency shipped in every install for four field types, and the message shapes here
     /// are fixed by the two ends agreeing rather than by anything discovered at runtime. Writing is a StringBuilder;
     /// reading is one field at a time, because the page never sends anything nested.
+    ///
+    /// <para>It sits in <c>Terminal/</c> rather than <c>Game/</c> because it touches nothing from the engine and the
+    /// shell needs it too - <see cref="Hash.Terminal.UsageCapture"/> writes a record with the same escaping the page
+    /// messages use, and a second copy of that escape is exactly the bug it exists to prevent.</para>
     /// </summary>
     internal sealed class Json
     {
@@ -17,6 +21,23 @@ namespace Hash
         internal Json Str(string name, string value) => Put(name, Quote(value));
 
         internal Json Num(string name, int value) => Put(name, value.ToString(CultureInfo.InvariantCulture));
+
+        /// <summary>A number that may be absent. Confidence is null whenever Hash derived the answer itself.</summary>
+        internal Json Num(string name, double? value) =>
+            Put(name, value.HasValue ? value.Value.ToString("0.####", CultureInfo.InvariantCulture) : "null");
+
+        internal Json Strings(string name, IReadOnlyList<string> values)
+        {
+            var sb = new StringBuilder("[");
+
+            for (int i = 0; i < (values?.Count ?? 0); i++)
+            {
+                if (i > 0) sb.Append(',');
+                sb.Append(Quote(values[i]));
+            }
+
+            return Put(name, sb.Append(']').ToString());
+        }
 
         internal Json Bool(string name, bool value) => Put(name, value ? "true" : "false");
 
@@ -55,6 +76,14 @@ namespace Hash
                     case '\n': sb.Append("\\n"); break;
                     case '\r': sb.Append("\\r"); break;
                     case '\t': sb.Append("\\t"); break;
+                    // Legal inside a JSON string, and a line break to most readers: Python's splitlines()
+                    // cuts on all three - inside the string - and turns one record into two fragments that
+                    // parse as neither. Escaped, they survive as themselves and the line stays one line.
+                    case '\u0085':
+                    case '\u2028':
+                    case '\u2029':
+                        sb.Append("\\u").Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+                        break;
                     default:
                         if (c < ' ') sb.Append("\\u").Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
                         else sb.Append(c);

@@ -3,22 +3,66 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.3] - 2026-09-06
+
+### Fixed
+
+- A request that does not start with a command word comes back with its arguments. "make it noon" was
+  answered `settime` and nothing else, which the console then refused.
+- hash understands the time you mean. "make it noon" and `# settime noon` set the clock; before, only a
+  bare 1200 worked.
+- "make it sunny" reaches clear weather. Only values matching a word you typed were offered, so one of the
+  three answers was never on the list.
+
+## [1.2.2] - 2026-09-06
+
+### Fixed
+
+- A request hash refused before it started - on a client, or with the engine missing - is written to the log
+  too. Those never appeared, so the most broken installs were the ones nobody could see.
+- A command you typed that the console itself refused is no longer recorded as the answer hash should have
+  given. It was teaching the model lines the game rejects.
+- Sharing could drop a request you made while an upload was still running.
+
+## [1.2.1] - 2026-09-06
+
+### Changed
+
+- A shared request now records which language your game is in, so a request you typed in German is judged
+  against the German model rather than the English one. Still no name and no save.
+
+## [1.2.0] - 2026-09-06
 
 ### Added
 
-- Start a line with `# ` to translate ordinary language into the console commands registered in the current game.
-  Cactus Needle runs locally on a background thread; requests at 80% confidence run automatically, requests from
-  50% through 79% wait for a bare `#` confirmation, and lower-confidence or off-topic requests are refused.
-- Release packages now include the pinned Windows x64 Needle 2.0.2 engine, its Apache-2.0 license, checksum
-  verification, and a Windows CI smoke test that performs a real native inference before publishing.
-- `NeedleKeepContext` optionally lets later requests refer to earlier Needle requests and command results. It is
-  off by default.
+- The first time you use `# `, hash says it keeps your requests in a file and asks. `share on` sends them so the
+  model can learn from real ones, `share off` leaves them alone, and it asks once.
+- `share` on its own says where it stands. `NeedleShareUsage` in `MelonPreferences.cfg` is the same switch.
+- What players send is counted in the open at https://hash.doomods.com - how often hash was right, and which
+  commands it gets wrong.
 
-### Safety
+### Fixed
 
-- Every structured call and argument is validated against the live command catalogue before any part of a batch
-  runs. Closing the terminal, pressing `Ctrl+C`, or beginning another line invalidates pending work.
+- Building hash from source left the bundled model out, so you got the untuned one: right about one request in
+  ten instead of four in five. The log now says which one loaded.
+
+## [1.1.0] - 2026-09-06
+
+### Added
+
+- Type `# give me five OG Kush` and hash runs `give ogkush 5`. It reads the commands your game actually has, and
+  it works offline with no account and no key.
+- English, German, Spanish and French all work, and so does a request that needs two commands at once.
+- A request hash is sure about runs straight away. Between 50% and 79% it shows you the command and waits for a
+  bare `#`; below that it says no rather than guessing.
+- Every request you type this way is kept in `UserData/Hash/queries.jsonl` so the next model can learn from what players actually
+  type. Switch on `NeedleShareUsage` to send it; it stays on your machine until you do.
+- `NeedleKeepContext` lets a later request refer to the one before it. Off by default, so each line stands alone.
+
+### Fixed
+
+- Every command and every argument is checked against your game before any of them runs, so a request that maps
+  onto something that is not there is refused instead of half-run.
 
 ## [1.0.5] - 2026-08-10
 

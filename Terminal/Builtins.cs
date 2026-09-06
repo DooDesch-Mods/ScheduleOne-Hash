@@ -18,15 +18,18 @@ namespace Hash.Terminal
         private readonly History _history;
         private readonly Aliases _aliases;
         private readonly Transcript _transcript;
+        private readonly UsageCapture _capture;
 
         public Builtins(Suggestions suggestions, ICommandCatalogue catalogue,
-                        History history, Aliases aliases, Transcript transcript)
+                        History history, Aliases aliases, Transcript transcript,
+                        UsageCapture capture = null)
         {
             _suggestions = suggestions;
             _catalogue = catalogue;
             _history = history;
             _aliases = aliases;
             _transcript = transcript;
+            _capture = capture;
         }
 
         /// <summary>The label in the right-hand column of a row for one of these.</summary>
@@ -56,6 +59,8 @@ namespace Hash.Terminal
                 "raw bind t 'settime 1200'"),
             Own("repeat", "repeat <count> <command>", "run a command several times", "repeat 5 give ogkush 1"),
             Own("font", "font [mono|pixel]", "switch the typeface, or say which one is on", "font pixel"),
+            Own("share", "share [on|off]", "send your '# ' requests so the model can learn from them, or stop",
+                "share on"),
         };
 
         /// <summary>Words this terminal answers, for the `help` grid and the shadowing check.</summary>
@@ -132,6 +137,7 @@ namespace Hash.Terminal
                 case "copy": Copy(rest, lines); break;
                 case "logs": Logs(rest, lines); break;
                 case "font": Typeface(rest, lines); break;
+                case "share": Share(rest, lines); break;
 
                 // Both are handled by the parser before anything gets here. Reaching this point means the parser let
                 // a bare word through, so say what it needs rather than "command not found".
@@ -422,6 +428,47 @@ namespace Hash.Terminal
                 text = char.ToLowerInvariant(text[0]) + text.Substring(1);
 
             return text;
+        }
+
+        /// <summary>
+        /// Turn sharing on or off, or say where it stands.
+        ///
+        /// Reachable from the terminal because that is where the request log is made, and because a setting a
+        /// player has to find in a config file to answer a question the terminal asked is not an answer.
+        /// </summary>
+        private void Share(string rest, List<OutputLine> lines)
+        {
+            string want = rest.Trim().ToLowerInvariant();
+
+            if (want.Length == 0)
+            {
+                lines.Add(OutputLine.Out(_capture?.Sharing == true
+                    ? "share: on. Your '# ' requests are sent so the model can learn from them."
+                    : "share: off. Your '# ' requests stay on this machine."));
+                lines.Add(OutputLine.Dim("They are written to UserData/Hash/" + UsageCapture.FileName
+                                         + " either way - plain text, no name, no save, no timestamp."));
+                UsageLine("share", lines);
+                return;
+            }
+
+            if (want != "on" && want != "off")
+            {
+                lines.Add(OutputLine.Error("share: say on or off"));
+                UsageLine("share", lines);
+                return;
+            }
+
+            if (_capture == null)
+            {
+                lines.Add(OutputLine.Error("share: this build cannot change the setting."));
+                return;
+            }
+
+            _capture.Sharing = want == "on";
+
+            lines.Add(OutputLine.Out(want == "on"
+                ? "share: on. Thank you - what you type is what the next model learns from."
+                : "share: off. Nothing leaves this machine."));
         }
 
         private static void Detail(CommandInfo command, List<OutputLine> lines)

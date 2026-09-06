@@ -62,6 +62,9 @@ namespace Hash.Terminal
 
         private NaturalCommandTranslation _naturalProposal;
 
+        /// <summary>Opt-in record of what each request produced. Null unless the player switched it on.</summary>
+        private readonly UsageCapture _capture;
+
         private const double NaturalAutoConfidence = 0.80;
         private const double NaturalConfirmConfidence = 0.50;
 
@@ -92,7 +95,8 @@ namespace Hash.Terminal
 
         public Session(ICommandCatalogue catalogue, ICommandRunner runner, Usage usage,
                        History history, Aliases aliases, IMarks marks = null,
-                       INaturalCommandTranslator natural = null, ICommandCatalogue naturalCatalogue = null)
+                       INaturalCommandTranslator natural = null, ICommandCatalogue naturalCatalogue = null,
+                       UsageCapture capture = null)
         {
             _catalogue = catalogue;
             _naturalCatalogue = naturalCatalogue ?? catalogue;
@@ -101,13 +105,14 @@ namespace Hash.Terminal
             _history = history;
             _aliases = aliases;
             _natural = natural;
+            _capture = capture;
 
             _marks = new Marks(marks);
             _expansion = new MarkExpansion(_marks, catalogue);
 
             _transcript = new Transcript();
             _suggestions = new Suggestions(catalogue, usage, history, aliases, _marks);
-            _builtins = new Builtins(_suggestions, catalogue, history, aliases, _transcript);
+            _builtins = new Builtins(_suggestions, catalogue, history, aliases, _transcript, capture);
         }
 
         public Transcript Transcript => _transcript;
@@ -418,7 +423,17 @@ namespace Hash.Terminal
 
             _marks.Ran(typed);
 
+            int beforeManual = lines.Count;
             foreach (string command in ready) RunOne(command, lines);
+
+            // Closed AFTER the line ran, and only when it worked. Before, a command the console itself
+            // refused still became "what Hash should have produced" - teaching the model an answer the game
+            // rejects. A word this terminal answers itself is not a correction either: `help`, `logs` and
+            // above all `share`, the answer to the question the request just triggered, would otherwise be
+            // recorded as the console command that was wanted. The record still closes on any of them,
+            // because leaving it open hands the label to the next line instead.
+            bool manualWorked = !lines.Skip(beforeManual).Any(line => line.Kind == LineKind.Error);
+            _capture?.PlayerRan(IsOwnWord(typed) || !manualWorked ? null : typed);
 
             // The transcript shrinking across a run can only mean `clear`, which is the one thing the page cannot
             // work out for itself - it holds its own copy of the drawn window.
@@ -443,20 +458,25 @@ namespace Hash.Terminal
 
             result.Pending = NaturalPending;
 
+            _capture?.Answered(translated);
+
             if (!string.IsNullOrEmpty(translated.Error))
             {
                 Emit(OutputLine.Error("Hash: " + translated.Error), lines);
+                _capture?.Refused(translated.Error);
                 _natural.Cancel();
             }
             else if (translated.Commands.Count == 0)
             {
                 Emit(OutputLine.Warn("Hash: could not map that request to a console command."), lines);
+                _capture?.Refused("no command matched the request");
                 _natural.Cancel();
             }
             else if (translated.Confidence.HasValue && translated.Confidence.Value < NaturalConfirmConfidence)
             {
                 string score = Confidence(translated.Confidence.Value);
                 Emit(OutputLine.Warn("Hash: not confident enough (" + score + "). Please be more specific."), lines);
+                _capture?.Refused("below the confidence to run (" + score + ")");
                 _natural.Cancel();
             }
             else
@@ -480,6 +500,35 @@ namespace Hash.Terminal
             result.Pending = NaturalPending;
             return result;
         }
+
+        /// <summary>
+        /// Put the sharing question, once, the first time anyone uses this.
+        ///
+        /// After the request rather than instead of it: the answer is worth having, the request is what the
+        /// player came for, and a feature that opens with a consent form is one they stop using. It is asked
+        /// once and never again - a prompt that returns every session is not a question, it is nagging.
+        /// </summary>
+        private void AskAboutSharing(List<OutputLine> lines)
+        {
+            if (_capture == null || !_capture.Unasked) return;
+
+            _capture.Remember();
+
+            Emit(OutputLine.Warn("hash keeps what you type here in UserData/Hash/" + UsageCapture.FileName
+                                 + " so the model can be taught with real requests."), lines);
+            Emit(OutputLine.Dim("Plain text, no name, no save, no timestamp - open it and read it. Nothing is "
+                                + "sent unless you say so."), lines);
+            Emit(OutputLine.Dim("Type 'share on' to send it, or 'share off' to be left alone."), lines);
+        }
+
+        /// <summary>
+        /// Close the usage record still open, if the player switched capture on.
+        ///
+        /// Separate from <see cref="CancelNatural"/> because the two answer different questions. Cancelling happens
+        /// on every new line and must not end the record - the line IS what the record was waiting for. This runs
+        /// when the terminal goes off screen or the game goes down, where nothing further can be observed.
+        /// </summary>
+        public void CloseCapture() => _capture?.Close();
 
         /// <summary>Invalidate a running translation or a proposal waiting for confirmation.</summary>
         public void CancelNatural()
@@ -515,20 +564,34 @@ namespace Hash.Terminal
             Echo(typed, lines);
             _history.Add(typed);
 
+            // Opened before the checks below, not after Start succeeds. A request refused because this is a
+            // client, or because the engine is missing, is still a request somebody typed - and those were
+            // invisible while the record only existed once inference had begun.
+            _capture?.Asked(query);
+
             if (Locked)
+            {
                 Emit(OutputLine.Error(_runner.RefusalReason), lines);
+                _capture?.Refused(_runner.RefusalReason);
+            }
             else if (_natural == null || !_natural.Available)
-                Emit(OutputLine.Error(_natural?.UnavailableReason ?? "Hash is unavailable: Needle is not installed."), lines);
+            {
+                string reason = _natural?.UnavailableReason ?? "Hash is unavailable: Needle is not installed.";
+                Emit(OutputLine.Error(reason), lines);
+                _capture?.Refused(reason);
+            }
             else
             {
                 try
                 {
                     _natural.Start(query);
                     Emit(OutputLine.Dim("Hash: translating..."), lines);
+                    AskAboutSharing(lines);
                 }
                 catch (Exception e)
                 {
                     Emit(OutputLine.Error("Hash: " + e.Message), lines);
+                    _capture?.Refused(e.Message);
                     _natural.Cancel();
                 }
             }
@@ -555,6 +618,7 @@ namespace Hash.Terminal
             if (Locked)
             {
                 Emit(OutputLine.Error(_runner.RefusalReason), lines);
+                _capture?.Refused(_runner.RefusalReason);
                 _natural?.Complete(new[] { new NaturalCommandExecution("", false, _runner.RefusalReason) });
                 return;
             }
@@ -572,6 +636,7 @@ namespace Hash.Terminal
                 {
                     string error = "Hash returned an unavailable command: " + (word.Length == 0 ? "(empty)" : word);
                     Emit(OutputLine.Error(error), lines);
+                    _capture?.Refused(error);
                     _natural?.Complete(new[] { new NaturalCommandExecution(command, false, error) });
                     return;
                 }
@@ -579,6 +644,7 @@ namespace Hash.Terminal
                 if (!ValidateNaturalArguments(current, tokens, out string validationError))
                 {
                     Emit(OutputLine.Error(validationError), lines);
+                    _capture?.Refused(validationError);
                     _natural?.Complete(new[] { new NaturalCommandExecution(command, false, validationError) });
                     return;
                 }
@@ -587,6 +653,7 @@ namespace Hash.Terminal
                 if (expanded.Failed)
                 {
                     foreach (string part in expanded.Error.Split('\n')) Emit(OutputLine.Error(part), lines);
+                    _capture?.Refused(expanded.Error);
                     _natural?.Complete(new[] { new NaturalCommandExecution(command, false, expanded.Error) });
                     return;
                 }
@@ -607,6 +674,7 @@ namespace Hash.Terminal
                     string.Join("\n", output.Select(line => line.Text))));
             }
 
+            _capture?.Ran(executions);
             _natural?.Complete(executions);
         }
 
@@ -710,6 +778,16 @@ namespace Hash.Terminal
 
             line = found;
             return true;
+        }
+
+        /// <summary>Whether a submitted line starts with a word this terminal answers rather than the game.</summary>
+        private static bool IsOwnWord(string line)
+        {
+            List<string> tokens = CommandLine.Tokenise(line);
+            if (tokens.Count == 0) return false;
+
+            string word = tokens[0].ToLowerInvariant();
+            return Array.IndexOf(Builtins.Words, word) >= 0;
         }
 
         private void RunOne(string command, List<OutputLine> lines)

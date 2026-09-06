@@ -52,6 +52,14 @@ namespace Hash.Game
             _tuned = File.Exists(_weightsPath);
             _toolIndexPath = toolIndexPath ?? Path.Combine(MelonEnvironment.UserDataDirectory, "Hash", "needle-tools.idx");
 
+            // Which model answers is the difference between four requests in five and one in ten, and until this
+            // line existed nothing said which one was loaded. Two measurements were taken against the fallback
+            // before anyone noticed the file was missing.
+            Core.Log?.Msg(_tuned
+                ? "Needle is using the tuned model beside the mod (" + WeightsFile + ")."
+                : "Needle is using its built-in base model: no " + WeightsFile + " beside Hash.dll. "
+                  + "Requests will be routed noticeably worse - install the complete release package.");
+
             _worker = new Thread(WorkLoop)
             {
                 IsBackground = true,
@@ -59,6 +67,9 @@ namespace Hash.Game
             };
             _worker.Start();
         }
+
+        /// <summary>Which weights answered, for a shared record. "base" is the built-in fallback.</summary>
+        internal string ModelName => _tuned ? WeightsFile : "base";
 
         public bool Available => File.Exists(_libraryPath);
 
@@ -263,7 +274,7 @@ namespace Hash.Game
                                 NaturalCommandTranslation result = Translate(
                                     native, work, ref activeFingerprint, out long inferenceMs, out bool constrained);
                                 Core.Log?.Msg("Hash translated in " + inferenceMs + " ms"
-                                              + (constrained ? " (constrained retry)." : "."));
+                                              + (constrained ? " (refined against one command)." : "."));
 #if DEBUG
                                 Core.Log?.Msg("Hash Needle event " + JsonSerializer.Serialize(new
                                 {
@@ -277,7 +288,7 @@ namespace Hash.Game
                                     elapsedMs = inferenceMs,
                                 }));
 #endif
-                                Publish(work.Generation, result, native);
+                                Publish(work.Generation, constrained ? result.AsConstrained() : result, native);
                                 if (constrained) Restore(native, work.Tools, ref activeFingerprint);
                                 break;
 
@@ -287,7 +298,7 @@ namespace Hash.Game
                                     native, work, ref activeFingerprint, out long diagnosticMs,
                                     out bool diagnosticConstrained);
                                 Core.Log?.Msg("Hash diagnostic translated in " + diagnosticMs + " ms"
-                                              + (diagnosticConstrained ? " (constrained retry)." : "."));
+                                              + (diagnosticConstrained ? " (refined against one command)." : "."));
                                 PublishDiagnostic(work.Generation, diagnostic, native);
                                 if (work.RestoreTools != null)
                                     Restore(native, work.RestoreTools, ref activeFingerprint);
@@ -363,7 +374,11 @@ namespace Hash.Game
                 NeedleToolset refinement = null;
                 string refinementName = null;
 
-                if (result.Error == null && result.Commands.Count == 1)
+                // Empty, not null. NaturalCommandTranslation stores `error ?? ""`, so `Error == null` was false
+                // for every answer the engine ever returned and this whole branch never ran: the second pass,
+                // the one that fills in the arguments, was dead. A request that did not begin with a command
+                // word came back as the bare command word, which the console then refused.
+                if (string.IsNullOrEmpty(result.Error) && result.Commands.Count == 1)
                 {
                     work.Tools.TryConstrain(result.Commands[0], work.Text, requireAll: false,
                                             out refinement, out refinementName);
@@ -384,7 +399,7 @@ namespace Hash.Game
                     return _tuned ? WithoutConfidence(result) : result;
                 }
 
-                if (result.Error == null && result.Commands.Count > 1)
+                if (string.IsNullOrEmpty(result.Error) && result.Commands.Count > 1)
                     result = new NaturalCommandTranslation(Array.Empty<string>(), result.Confidence,
                         "Hash selected more than one command route", reasoning: result.Reasoning,
                         prefillTps: result.PrefillTps, decodeTps: result.DecodeTps, peakRamMb: result.PeakRamMb);
