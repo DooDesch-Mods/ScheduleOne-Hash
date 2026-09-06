@@ -3,22 +3,23 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.0] - 2026-09-06
 
 ### Added
 
-- Start a line with `# ` to translate ordinary language into the console commands registered in the current game.
-  Cactus Needle runs locally on a background thread; requests at 80% confidence run automatically, requests from
-  50% through 79% wait for a bare `#` confirmation, and lower-confidence or off-topic requests are refused.
-- Release packages now include the pinned Windows x64 Needle 2.0.2 engine, its Apache-2.0 license, checksum
-  verification, and a Windows CI smoke test that performs a real native inference before publishing.
-- `NeedleKeepContext` optionally lets later requests refer to earlier Needle requests and command results. It is
-  off by default.
+- Type `# give me five OG Kush` and hash runs `give ogkush 5`. It reads the commands your game actually has, and
+  it works offline with no account and no key.
+- English, German, Spanish and French all work, and so does a request that needs two commands at once.
+- A request hash is sure about runs straight away. Between 50% and 79% it shows you the command and waits for a
+  bare `#`; below that it says no rather than guessing.
+- Every request you type this way is kept in `UserData/Hash/queries.jsonl` so the next model can learn from what players actually
+  type. Switch on `NeedleShareUsage` to send it; it stays on your machine until you do.
+- `NeedleKeepContext` lets a later request refer to the one before it. Off by default, so each line stands alone.
 
-### Safety
+### Fixed
 
-- Every structured call and argument is validated against the live command catalogue before any part of a batch
-  runs. Closing the terminal, pressing `Ctrl+C`, or beginning another line invalidates pending work.
+- Every command and every argument is checked against your game before any of them runs, so a request that maps
+  onto something that is not there is refused instead of half-run.
 
 ## [1.0.5] - 2026-08-10
 
