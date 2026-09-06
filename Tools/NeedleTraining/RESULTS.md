@@ -169,6 +169,21 @@ and gained nothing.
 Four of 79 cases therefore measure our own value handling rather than the model. Any headline number from
 this set has that ceiling built into it.
 
+### Every number in this file is a harness number
+
+The mod's second pass - the one that fills in the arguments - never ran in a shipped build. `Translate`
+asked `result.Error == null`, and `NaturalCommandTranslation` stores `error ?? ""`, so the test was false
+for every answer the engine has ever returned. It has been that way since the feature was written.
+
+The benchmark renders both passes explicitly and never went through that code, so nothing here measured it.
+What players got instead was the routing answer on its own: "make it noon" came back as `settime`, with no
+argument, and the console refused it. Only a request beginning with a command word was ever answered in
+full, because that one is resolved without the model at all.
+
+So the argument numbers in this file describe a pipeline that was live for the first time on 2026-09-06.
+The same three requests, in game, before and after: `settime` / `settime` / `triggerlightning` became
+`settime 1200` / `settime 1200` / `triggerlightning`.
+
 ### The time family was ours to lose, and we were losing it
 
 The eleven `settime` cases scored 0 of 11 in every condition, which read as a ceiling. It was not one. That
