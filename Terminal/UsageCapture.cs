@@ -27,18 +27,10 @@ namespace Hash.Terminal
         public const string FileName = "queries.jsonl";
 
         private readonly IStore _store;
-        private readonly Func<bool> _enabled;
 
         private Record _open;
 
-        public UsageCapture(IStore store, Func<bool> enabled)
-        {
-            _store = store;
-            _enabled = enabled ?? (() => false);
-        }
-
-        /// <summary>Whether anything is written at all. Read per call, because it is a live setting.</summary>
-        private bool On => _store != null && _enabled();
+        public UsageCapture(IStore store) => _store = store;
 
         /// <summary>
         /// The player submitted a request.
@@ -50,7 +42,7 @@ namespace Hash.Terminal
         {
             Flush(_open != null && _open.Failed ? "retried" : null, null);
 
-            if (!On) return;
+            if (_store == null) return;
 
             _open = new Record(query);
         }
@@ -121,7 +113,7 @@ namespace Hash.Terminal
             Record record = _open;
             _open = null;
 
-            if (record == null || !On) return;
+            if (record == null || _store == null) return;
 
             var json = new Json();
             json.Str("query", record.Query);

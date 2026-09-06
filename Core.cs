@@ -29,11 +29,12 @@ namespace Hash
 
         private static MelonPreferences_Entry<bool> _hijack;
         private static MelonPreferences_Entry<bool> _needleKeepContext;
-        private static MelonPreferences_Entry<bool> _needleUsageCapture;
+        private static MelonPreferences_Entry<bool> _needleShareUsage;
 
         private AppHandle _app;
         private Session _session;
         private UsageCapture _capture;
+        private UsageReport _report;
         private CommandIndex _index;
         private ICommandCatalogue _naturalCatalogue;
         private ArgProviders _providers;
@@ -80,11 +81,12 @@ namespace Hash
                 "NeedleKeepContext", false, "Needle keeps conversation context",
                 "OFF (default): every '# <request>' is translated independently. ON: later requests may refer to "
                 + "earlier Needle commands and their results.");
-            _needleUsageCapture = category.CreateEntry(
-                "NeedleUsageCapture", false, "Record '# ' requests to a file",
-                "OFF (default): nothing is written. ON: hash writes each '# <request>', the commands it produced "
-                + "and whether they worked to UserData/Hash/queries.jsonl, so they can be used to improve the "
-                + "model. Nothing is sent anywhere - the file stays on this machine until you choose to share it.");
+            _needleShareUsage = category.CreateEntry(
+                "NeedleShareUsage", false, "Share the '# ' request log",
+                "OFF (default): nothing leaves this machine. hash always writes each '# <request>', the commands "
+                + "it produced and whether they worked to UserData/Hash/queries.jsonl - open it and read it. ON: "
+                + "that file is uploaded so the requests can be used to make the model better, and cleared once "
+                + "the server has it. It holds no name, no save and no timestamp.");
 
             // Refuse rather than half-work. hash has no home-screen icon on purpose - the key is the only way in -
             // so a host that cannot raise the phone would leave the player with a mod that does nothing and no way
@@ -125,7 +127,8 @@ namespace Hash
             _runner = new CommandRunner(_log);
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
-            _capture = new UsageCapture(_store, () => _needleUsageCapture.Value);
+            _capture = new UsageCapture(_store);
+            _report = new UsageReport(_store, () => _needleShareUsage.Value);
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
                                    _naturalCatalogue, _capture);
 
@@ -397,8 +400,10 @@ namespace Hash
         private void Persist()
         {
             // Before the rest: the open usage record is the only state here that a later line could still change,
-            // and every path that reaches Persist is a path where no later line is coming.
+            // and every path that reaches Persist is a path where no later line is coming. Sharing looks at the
+            // finished file straight after, so a request made seconds ago is in the upload rather than the next one.
             _session?.CloseCapture();
+            _report?.Pump();
 
             _history.Save(_store);
             _aliases.Save(_store);

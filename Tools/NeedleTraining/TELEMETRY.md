@@ -1,7 +1,7 @@
-# Opt-in usage capture
+# Usage capture
 
-**Status:** built, off by default, shipped with the `# ` feature. What is left is the analysis side - turning a
-returned `queries.jsonl` into benchmark cases and training rows.
+**Status:** built and shipped with the `# ` feature. Recording is unconditional; uploading is off by default.
+What is left is the analysis side - turning the collected records into benchmark cases and training rows.
 
 ## Why this is worth more than another training run
 
@@ -15,8 +15,18 @@ the guess instead of improving it.
 
 ## What the mod writes
 
-`MelonPreferences.cfg`, section `Hash`, entry `NeedleUsageCapture`, default `false`. While it is on,
-`Terminal/UsageCapture.cs` appends one JSON object per `# ` request to `UserData/Hash/queries.jsonl`:
+`Terminal/UsageCapture.cs` appends one JSON object per `# ` request to `UserData/Hash/queries.jsonl`, always.
+Recording and sharing are two separate questions and were one setting for exactly one commit, which answered both
+wrongly: a player who turns sharing on has nothing to share, because the recording starts at the same moment, and
+a player who leaves it off never sees what they would have been sending.
+
+`Game/UsageReport.cs` is the only thing that moves the file, and only while `NeedleShareUsage` (default `false`)
+is on. It uploads to `POST https://sidehustle.doodesch.de/api/telemetry` when the terminal closes and clears what
+the server confirmed - a 503, a timeout or a broken connection leaves the file exactly where it was. While sharing
+is off the file is still trimmed to the newest 5,000 records, because a file nobody sends must not grow forever.
+
+Records land on the server as `hash-<version>-<day>.jsonl` on a volume, with the mod, mod version and game version
+added and nothing else. One line looks like:
 
 ```json
 {"query":"gib mir 10 og kush","commands":["give ogkush 10"],"confidence":0.98,"proven":true,
@@ -59,8 +69,9 @@ against the enum ranking the mod uses, and a query whose argument nothing resolv
 
 ## Boundaries
 
-- Opt-in, default off. Not opt-out.
-- Written locally only. The mod never uploads anything; sharing is the player choosing to send a file.
-- No identifiers of any kind.
+- Recording is unconditional and local. Sharing is opt-in, default off. Not opt-out.
+- Nothing is uploaded until the player switches sharing on, and the file is cleared only after the server
+  confirms it has the records.
+- No identifiers of any kind, and no timestamp finer than the day the server files it under.
 - The player can delete the file at any time and it is recreated empty.
 - Worth stating in the release notes, not just the setting.
