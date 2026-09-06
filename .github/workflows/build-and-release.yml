@@ -213,6 +213,10 @@ jobs:
           mkdir -p release
           cp bin/Release/net6.0/Hash.dll release/
           cp native-package/Hash.Needle.bin release/
+          # The tuned adapter. Without it the mod falls back to the untuned base model, which routes one
+          # request in ten (Tools/NeedleTraining/RESULTS.md); with it, 78.5 %. It is committed rather than
+          # fetched because there is nowhere to fetch it from - it is built by this repo's own pipeline.
+          cp Hash.Needle.cact release/
           if [ -d "thunderstore" ]; then
             cp -r thunderstore/* release/ 2>/dev/null || true
             if [ -f "release/manifest.json" ]; then
@@ -244,7 +248,7 @@ jobs:
       - name: Create Nexus/Vortex ZIP (payload under mods/ so the Schedule 1 Vortex extension installs cleanly)
         run: |
           mkdir -p nexus/mods
-          cp release/Hash.dll release/Hash.Needle.bin nexus/mods/
+          cp release/Hash.dll release/Hash.Needle.bin release/Hash.Needle.cact nexus/mods/
           for f in README.md CHANGELOG.md LICENSE.md THIRD-PARTY-NOTICES.md NEEDLE-LICENSE.txt; do
             [ -f "release/$f" ] && cp "release/$f" nexus/ || true
           done
@@ -271,6 +275,7 @@ jobs:
           mkdir -p debug
           cp bin/Debug/net6.0/Hash.dll debug/
           cp native-package/Hash.Needle.bin debug/
+          cp Hash.Needle.cact debug/
           [ -f "LICENSE.md" ] && cp LICENSE.md debug/ || true
           cp THIRD-PARTY-NOTICES.md NEEDLE-LICENSE.txt debug/
           (cd debug && zip -r "../Hash_${{ steps.version-check.outputs.version }}_debug.zip" .)
