@@ -23,6 +23,8 @@ stopping because "the machine was busy" (it was unbounded recursion), the assump
 renders what the engine reads (it did not, in three ways), and the 99 % gate as a goal.
 
 `RESULTS.md` has the run-by-run record, including the four changes that made it worse.
+`TELEMETRY.md` specifies the opt-in usage capture that would fix the measurement problem
+underneath all of it - 79 hand-written cases cannot separate the last three runs.
 
 What is left is the argument phase, where the adapter (28/73) is barely ahead of the untuned base
 (27/73). Fine-tuning buys routing and costs extraction. The corpus is the reason: `grounds_literals`
