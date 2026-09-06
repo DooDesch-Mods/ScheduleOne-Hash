@@ -374,7 +374,11 @@ namespace Hash.Game
                 NeedleToolset refinement = null;
                 string refinementName = null;
 
-                if (result.Error == null && result.Commands.Count == 1)
+                // Empty, not null. NaturalCommandTranslation stores `error ?? ""`, so `Error == null` was false
+                // for every answer the engine ever returned and this whole branch never ran: the second pass,
+                // the one that fills in the arguments, was dead. A request that did not begin with a command
+                // word came back as the bare command word, which the console then refused.
+                if (string.IsNullOrEmpty(result.Error) && result.Commands.Count == 1)
                 {
                     work.Tools.TryConstrain(result.Commands[0], work.Text, requireAll: false,
                                             out refinement, out refinementName);
@@ -395,7 +399,7 @@ namespace Hash.Game
                     return _tuned ? WithoutConfidence(result) : result;
                 }
 
-                if (result.Error == null && result.Commands.Count > 1)
+                if (string.IsNullOrEmpty(result.Error) && result.Commands.Count > 1)
                     result = new NaturalCommandTranslation(Array.Empty<string>(), result.Confidence,
                         "Hash selected more than one command route", reasoning: result.Reasoning,
                         prefillTps: result.PrefillTps, decodeTps: result.DecodeTps, peakRamMb: result.PeakRamMb);
