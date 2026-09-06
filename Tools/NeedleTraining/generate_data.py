@@ -174,7 +174,12 @@ def candidate_score(candidate: str, phrase: str) -> int:
     # A two-letter phrase like "me" is inside meth, megabean and horsesemen; the runtime's matcher rejects
     # those for the same reason its comment gives - they match far too much of a thousand-item list - and
     # letting them through here spent the whole 80-character budget before the right value was reached.
-    if len(phrase) >= 4 and (phrase in normalized or normalized in phrase):
+    if len(phrase) >= 4 and phrase in normalized:
+        return 4000 - abs(len(normalized) - len(phrase))
+    # The other direction - a catalogue value hiding inside a longer word the player typed - only counts
+    # when the value is most of that word. `addy` sits inside "grandaddy" and scored 3995, one notch under
+    # an exact match, which is how "give me 4 grandaddy seed" came back as addy.
+    if len(phrase) >= 4 and normalized in phrase and len(normalized) * 2 >= len(phrase):
         return 4000 - abs(len(normalized) - len(phrase))
     if len(phrase) >= 6 and abs(len(normalized) - len(phrase)) <= 1             and edit_distance_at_most_one(normalized, phrase):
         return 3500
@@ -235,14 +240,31 @@ def enum_choices(values: list[str], query: str) -> list[str]:
             if phrase and not phrase.isdigit():
                 phrases.add(phrase)
     ranked = []
+    unmatched = []
     for value in values:
         score = max((candidate_score(value, phrase) for phrase in phrases), default=0)
         if score > 0:
             ranked.append((-score, len(value), value.casefold(), value))
+        else:
+            unmatched.append(value)
     ranked.sort()
+
+    # A slot whose whole vocabulary fits is not a ranking problem. Offering only what matched a word in the
+    # query left the enum short and sometimes empty - "make it sunny" got heavyrain and lightrain, and
+    # `clear`, one of setweather's three possible values, was not offered at all. Eight benchmark cases
+    # failed exactly there.
+    #
+    # The fill stops where the ranking starts to matter. Padding a thousand-item catalogue with whatever
+    # sorts first would put back the original bug, which is how the enum for `give` came to read
+    # "acid, acunit, addy, airpot" and never contained ogkush.
+    everything = sum(len(value) for value in values)
+    order = [value for _, _, _, value in ranked]
+    if everything <= MAX_ENUM_CHARACTERS and len(values) <= MAX_ENUM_VALUES:
+        order += unmatched
+
     chosen: list[str] = []
     characters = 0
-    for _, _, _, value in ranked:
+    for value in order:
         if chosen and characters + len(value) > MAX_ENUM_CHARACTERS:
             continue
         chosen.append(value)

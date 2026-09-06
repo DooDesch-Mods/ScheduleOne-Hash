@@ -602,23 +602,39 @@ namespace Hash.Terminal
                 if (phrase.Length > 0 && !phrase.All(char.IsDigit)) phrases.Add(phrase);
             }
 
-            var ranked = _values.Select(value => new
+            var scored = _values.Select(value => new
                 {
                     Value = value,
                     Score = phrases.Count == 0 ? 0 : phrases.Max(phrase => CandidateScore(value, phrase)),
                 })
+                .ToList();
+
+            IEnumerable<string> ranked = scored
                 .Where(candidate => candidate.Score > 0)
                 .OrderByDescending(candidate => candidate.Score)
                 .ThenBy(candidate => candidate.Value.Length)
-                .ThenBy(candidate => candidate.Value, StringComparer.OrdinalIgnoreCase);
+                .ThenBy(candidate => candidate.Value, StringComparer.OrdinalIgnoreCase)
+                .Select(candidate => candidate.Value);
+
+            // A slot whose whole vocabulary fits is not a ranking problem. Offering only what matched a word
+            // the player typed left the list short and sometimes EMPTY - "make it sunny" was answered with a
+            // choice of heavyrain and lightrain, and `clear`, one of setweather's three possible values, was
+            // never on it. The fill stops where ranking starts to matter: padding a thousand-item catalogue
+            // with whatever sorts first is the original bug, the one that offered "acid, acunit, addy".
+            if (_values.Count <= NeedleToolset.MaxEnumValues
+                && _values.Sum(value => value.Length) <= NeedleToolset.MaxEnumCharacters)
+            {
+                ranked = ranked.Concat(scored.Where(candidate => candidate.Score == 0)
+                                             .Select(candidate => candidate.Value));
+            }
 
             var selected = new List<string>();
             int characters = 0;
-            foreach (var candidate in ranked)
+            foreach (string value in ranked)
             {
-                int next = characters + candidate.Value.Length;
+                int next = characters + value.Length;
                 if (selected.Count > 0 && next > NeedleToolset.MaxEnumCharacters) continue;
-                selected.Add(candidate.Value);
+                selected.Add(value);
                 characters = next;
                 if (selected.Count >= NeedleToolset.MaxEnumValues) break;
             }

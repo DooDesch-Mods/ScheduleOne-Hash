@@ -160,12 +160,37 @@ and gained nothing.
   the usage example did not help, and E made routing worse. This is not a model to train; it is a value
   provider the mod should own, the way it already resolves item names.
 - **The granddaddy cases: 4, and the answer is not on the list.** For "give me 4 grandaddy seed" the ranked
-  enum is `cocaseed, addy, ogkushseed, ...` - `granddaddypurpleseed` is absent while `addy` is present,
-  because it is a substring of "gr-addy". Every model scores these wrong by construction. SUSPECTED cause:
-  `candidate_score` lets a short substring outrank the intended value.
+  enum is `cocaseed, addy, ogkushseed, ...` and `granddaddypurpleseed` is absent. Every model scores these
+  wrong by construction.
+
+  Two corrections to a first reading of this. `addy` was there because `candidate_score` in
+  `generate_data.py` scored a catalogue value found INSIDE a word the player typed - `addy` in "gr-addy" -
+  at 3995, one notch under an exact match. The runtime never did that: `FuzzyMatcher.Match` only looks for
+  the query inside the candidate. So this was a divergence between the corpus builder and the mod, not a
+  bug players ever hit, and the fix removes the divergence. Removing `addy` does not make
+  `granddaddypurpleseed` appear - it still scores zero - so these four cases remain unwinnable.
 
 Fifteen of 79 cases therefore measure our own value handling rather than the model. Any headline number
 from this set has that ceiling built into it.
+
+### Two changes that came out of it
+
+**A small vocabulary is now offered whole**, in the mod and in the corpus builder. Values that matched no
+word in the query were dropped entirely, so "make it sunny" was offered a choice of `heavyrain` and
+`lightrain` and never `clear` - one of setweather's three possible values. Measured over the benchmark's
+53 catalogue-backed arguments, the expected value is present in the enum in **40 cases, up from 32**. The
+fill stops where ranking starts to matter: a thousand-item catalogue is not padded with whatever sorts
+first, which is the original bug that once offered "acid, acunit, addy, airpot" and never `ogkush`.
+
+**The corpus builder's extra match direction is gone**, so it ranks the way the runtime ranks. Recall is
+unchanged at 40/53 and one wrong answer stops being offered.
+
+### A caveat on the quantity family
+
+`NeedleToolset.Prepare` answers "give me 10 ogkush" deterministically, without asking the model at all -
+there is a test for it. The benchmark rows go straight to inference and skip that path, so the dropped
+quantity is a smaller problem for a player than these numbers suggest. It is still worth understanding,
+because a request the direct path cannot parse falls through to exactly this behaviour.
 
 ## What is left
 
