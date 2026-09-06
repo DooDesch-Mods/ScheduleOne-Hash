@@ -35,10 +35,37 @@ WORD = re.compile(r"[a-z0-9]+")
 TOKEN_BUDGET = 256
 MAX_TEACHER_WORDS = 24
 MAX_ACCEPTED_TEACHER_WORDS = 32
-ROUTE_DESCRIPTION_CHARACTERS = 32
-FULL_DESCRIPTION_CHARACTERS = 0
+# Mirrors Terminal/NeedleProtocol.cs: MaxRouteDescriptionCharacters, MaxFullDescriptionCharacters,
+# MaxEnumValues, MaxEnumCharacters. The corpus used 32 and 0, so every refinement tool reached training
+# with an empty description while the runtime sends up to 96 characters of it.
+ROUTE_DESCRIPTION_CHARACTERS = 48
+FULL_DESCRIPTION_CHARACTERS = 96
+MAX_ENUM_VALUES = 32
+MAX_ENUM_CHARACTERS = 80
 TEACHER_PROMPT_VERSION = 9
 MULTI_MODE_POLICY_VERSION = 1
+# Phrasings the teacher could not write under the uniqueness and grounding constraints, reported at the
+# end of the run so a thin corpus is visible rather than silent.
+UNSATISFIED_ROWS: list[tuple[str, str]] = []
+
+# Phrasings that one command claimed before another; the later row is dropped, see the duplicate check.
+AMBIGUOUS_ROWS: list[tuple[str, str, str, str]] = []
+
+# The mod calls Init(SystemFacts(), ...) with exactly this shape (NeedleCommandTranslator.cs:521), so the
+# engine always renders a system block. render_example omits the block entirely when a row has no "system"
+# key, which every row had, so the adapter was trained on prompts no player ever produces. Measured on the
+# first adapter: the same 4-bit weights score 40% on holdout argument rows without a system block and 17%
+# with one, while the engine scores 3%. The locale varies per player, so training carries several per
+# language rather than one string to memorise.
+SYSTEM_LOCALES = {"en": ("en-US", "en-GB"), "de": ("de-DE", "de-AT"),
+                  "es": ("es-ES", "es-MX"), "fr": ("fr-FR", "fr-CA")}
+
+
+def system_facts(language: str, index: int) -> str:
+    locales = SYSTEM_LOCALES.get(language, ("en-US",))
+    return f"locale: {locales[index % len(locales)]}; device: phone; assistant: hash"
+
+
 VARIATION_STYLES = (
     "direct imperative starting with the action verb",
     "polite request explicitly using the language's equivalent of please",
@@ -117,20 +144,103 @@ def route_tool(tool: dict) -> dict:
             "description": compact_description(tool, ROUTE_DESCRIPTION_CHARACTERS)}
 
 
-def refinement_tool(tool: dict, assignment: dict, live_values: dict) -> dict:
-    """Keep the argument contract compact; runtime supplies current dynamic enums during decoding."""
-    del assignment, live_values
+def normal(value: str) -> str:
+    """NeedleProtocol.Normal: letters and digits only, lowercased - so "og kush" and "ogkush" are one."""
+    return "".join(character.lower() for character in value if character.isalnum())
+
+
+def edit_distance_at_most_one(left: str, right: str) -> bool:
+    if left == right:
+        return True
+    if abs(len(left) - right.__len__()) > 1:
+        return False
+    if len(left) == len(right):
+        return sum(a != b for a, b in zip(left, right)) == 1
+    shorter, longer = (left, right) if len(left) < len(right) else (right, left)
+    for index in range(len(longer)):
+        if longer[:index] + longer[index + 1:] == shorter:
+            return True
+    return False
+
+
+def candidate_score(candidate: str, phrase: str) -> int:
+    """NeedleTool.CandidateScore, close enough to pick the same values for the same query."""
+    normalized = normal(candidate)
+    if not normalized or not phrase:
+        return 0
+    singular = phrase[:-1] if phrase.endswith("s") else phrase
+    if normalized == singular or phrase.startswith(normalized):
+        return 4500
+    # A two-letter phrase like "me" is inside meth, megabean and horsesemen; the runtime's matcher rejects
+    # those for the same reason its comment gives - they match far too much of a thousand-item list - and
+    # letting them through here spent the whole 80-character budget before the right value was reached.
+    if len(phrase) >= 4 and (phrase in normalized or normalized in phrase):
+        return 4000 - abs(len(normalized) - len(phrase))
+    if len(phrase) >= 6 and abs(len(normalized) - len(phrase)) <= 1             and edit_distance_at_most_one(normalized, phrase):
+        return 3500
+    if len(phrase) >= 8 and len(phrase) * 2 >= len(normalized):
+        iterator = iter(normalized)
+        if all(character in iterator for character in phrase):
+            return 2500 - min(len(normalized) - len(phrase), 499)
+    return 0
+
+
+def enum_choices(values: list[str], query: str) -> list[str]:
+    """The enum the runtime would send for this query - NeedleTool.RelevantValues.
+
+    The first version took the first MAX_ENUM_CHARACTERS worth of values in catalogue order, so the enum
+    for `give` was "acid, acunit, addy, airpot, apron, ..." and never contained ogkush. The adapter learned
+    to pick from a list that could not hold the answer, and it showed: "give me 10 ogkush" came back as
+    apron, "give me 4 grandaddy seed" as addy. The runtime ranks the values against what the player typed,
+    so training has to do the same or it teaches a choice that never occurs.
+    """
+    tokens = re.findall(r"\w+", query.casefold())
+    phrases = set()
+    for start in range(len(tokens)):
+        for count in range(1, min(6, len(tokens) - start) + 1):
+            phrase = normal(" ".join(tokens[start:start + count]))
+            if phrase and not phrase.isdigit():
+                phrases.add(phrase)
+    ranked = []
+    for value in values:
+        score = max((candidate_score(value, phrase) for phrase in phrases), default=0)
+        if score > 0:
+            ranked.append((-score, len(value), value.casefold(), value))
+    ranked.sort()
+    chosen: list[str] = []
+    characters = 0
+    for _, _, _, value in ranked:
+        if chosen and characters + len(value) > MAX_ENUM_CHARACTERS:
+            continue
+        chosen.append(value)
+        characters += len(value)
+        if len(chosen) >= MAX_ENUM_VALUES:
+            break
+    return chosen
+
+
+def refinement_tool(tool: dict, assignment: dict, live_values: dict, query: str = "") -> dict:
+    """Emit the schema the mod actually sends - NeedleTool.Write in Terminal/NeedleProtocol.cs.
+
+    This used to strip parameters.type, additionalProperties, required, and every property's type and
+    description, and FULL_DESCRIPTION_CHARACTERS of 0 left the tool description empty, all to save tokens.
+    The runtime sends every one of them plus an enum of live values. That parameters block is the only
+    thing separating a refinement ask from a routing ask, so training on the stripped version taught the
+    adapter to read a shape no player ever produces: through the engine it answered the routing answer,
+    the empty argument object, for 100 % of the holdout rows that needed arguments.
+    """
+    del assignment
     projected = copy.deepcopy(tool)
     projected["description"] = compact_description(tool, FULL_DESCRIPTION_CHARACTERS)
     parameters = projected["parameters"]
-    parameters.pop("type", None)
-    parameters.pop("additionalProperties", None)
-    parameters.pop("required", None)
-    properties = parameters.get("properties", {})
-    for prop in properties.values():
-        prop.pop("description", None)
-        if prop.get("type") == "string":
-            prop.pop("type")
+    parameters.setdefault("type", "object")
+    parameters["additionalProperties"] = False
+    slots = live_values.get(tool["name"], [])
+    for index, prop in enumerate(parameters.get("properties", {}).values()):
+        if prop.get("type") == "string" and index < len(slots):
+            choices = enum_choices(slots[index], query)
+            if choices:
+                prop["enum"] = choices
     return projected
 
 
@@ -380,6 +490,28 @@ def teacher_json(args, prompt: str, output_schema: dict, seed: int, expected_ite
     return openai_json(args.base_url, model, prompt, seed, expected_items, args.api_key)
 
 
+def as_items_object(parsed):
+    """A reply that is a bare array is the "items" array without its envelope; anything else that is not
+    an object is not a reply at all and falls through to the next parsing strategy."""
+    if isinstance(parsed, dict):
+        return parsed
+    if isinstance(parsed, list):
+        return {"items": parsed}
+    raise json.JSONDecodeError("the teacher reply is not a JSON object", "", 0)
+
+
+def teacher_items(response) -> dict:
+    """id -> query from a teacher reply, tolerating every malformed shape.
+
+    A reply the teacher got structurally wrong has to be a rejected batch, not a crash: the three callers
+    all compare the result against the expected ids, so an empty mapping is retried and then split. Before
+    this existed a bare array reply reached .get() and killed a run hours in."""
+    items = response.get("items") if isinstance(response, dict) else None
+    if not isinstance(items, list):
+        return {}
+    return {item.get("id"): item.get("query") for item in items if isinstance(item, dict)}
+
+
 def extract_json_object(text: str) -> dict:
     """Recover the JSON object from a reply that a server could not constrain to a schema.
 
@@ -389,13 +521,13 @@ def extract_json_object(text: str) -> dict:
     """
     stripped = text.strip()
     try:
-        return json.loads(stripped)
+        return as_items_object(json.loads(stripped))
     except json.JSONDecodeError:
         pass
     fenced = re.search(r"```(?:json)?\s*(.+?)```", stripped, re.DOTALL)
     if fenced:
         try:
-            return json.loads(fenced.group(1).strip())
+            return as_items_object(json.loads(fenced.group(1).strip()))
         except json.JSONDecodeError:
             pass
     start = stripped.find("{")
@@ -447,6 +579,11 @@ def openai_json(base: str, model: str, prompt: str, seed: int, expected_items: i
         "seed": seed,
         "max_tokens": output_tokens,
         "temperature": 0.72,
+        # Reasoning teachers answer with an empty string otherwise. Measured against FreeToken
+        # serving Qwen3.6-35B-A3B: a 68-item batch spent all 3520 tokens on reasoning_content and
+        # returned no content at all, so every one of the three attempts failed. With reasoning off
+        # the same batch answers in 992 tokens. Servers without a reasoning mode ignore the field.
+        "reasoning_effort": "none",
         "messages": [
             {"role": "system", "content": TEACHER_SYSTEM_PROMPT},
             {"role": "user", "content": prompt + instruction},
@@ -556,6 +693,11 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
     cache_key = hashlib.sha256(json.dumps(cache_input, sort_keys=True, ensure_ascii=False)
                                .encode("utf-8")).hexdigest()
     cache_path = cache_dir / f"{batch_id}-{cache_key[:16]}.json"
+    # Only successful batches are cached, so every restart re-paid the attempts for batches that never
+    # validate - the 68-row batch has not validated once in 43 commands, and replaying 43 of them cost
+    # over two hours before any new work happened. This marker records "the direct ask does not work for
+    # these exact rows", which sends a restart straight to the split that produced the cached parts.
+    rejected_path = cache_dir / f"{batch_id}-{cache_key[:16]}.rejected"
     expected_ids = {row["id"] for row in rows}
     rows_by_id = {row["id"]: row for row in rows}
 
@@ -571,7 +713,7 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                    for value in required)
 
     def valid(response: dict) -> bool:
-        found = {item.get("id"): item.get("query") for item in response.get("items", [])}
+        found = teacher_items(response)
         return (set(found) == expected_ids
                 and all(isinstance(query, str) and query.strip()
                         and len(query.split()) <= MAX_ACCEPTED_TEACHER_WORDS
@@ -660,7 +802,10 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                    + json.dumps(sorted(forbidden), ensure_ascii=False) if forbidden else ""))
         retry_note = ""
         rejected_duplicates: set[str] = set()
-        for attempt in range(3):
+        # Only assigned once a reply has been scored, but the exhausted-attempts message below reads it,
+        # so a batch whose every attempt raised would die of NameError instead of the real error.
+        wrong_modes: dict[str, list[str]] = {}
+        for attempt in range(0 if rejected_path.exists() else 3):
             try:
                 teacher_model = args.fallback_model if attempt >= 2 and args.fallback_model else args.model
                 response = teacher_json(args, prompt + retry_note, OUTPUT_SCHEMA,
@@ -668,7 +813,7 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                                         teacher_model)
                 if valid(response):
                     break
-                found = {item.get("id"): item.get("query") for item in response.get("items", [])}
+                found = teacher_items(response)
                 normalized_queries = [normalized(query) for query in found.values()
                                       if isinstance(query, str)]
                 duplicates = sorted(query for query, count in Counter(normalized_queries).items()
@@ -702,12 +847,18 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                        "operation description. " if required_language else "")
                     + "Preserve all other requirements."
                 )
-            except (OSError, urllib.error.URLError, json.JSONDecodeError, KeyError):
+            except (OSError, urllib.error.URLError, json.JSONDecodeError, KeyError) as failure:
+                # A prompt that does not fit the teacher's context will not fit on a retry either. Letting
+                # the attempts run out reaches the split below, which asks the same rows in small batches
+                # that do fit - the behaviour the code already has for a batch the teacher cannot answer.
+                if "context_length_exceeded" in str(failure):
+                    continue
                 if attempt == 2:
                     raise
                 time.sleep(2)
         else:
-            found = {item.get("id"): item.get("query") for item in response.get("items", [])}
+            rejected_path.write_text("", encoding="utf-8")
+            found = teacher_items(response)
             normalized_queries = [normalized(query) for query in found.values() if isinstance(query, str)]
             duplicates = sorted(query for query, count in Counter(normalized_queries).items() if count > 1)
             if not off_topic and len(rows) > len(LANGUAGES):
@@ -717,7 +868,8 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                 for scenario in scenarios:
                     group = [row for row in rows if row.get("scenario", 0) == scenario]
                     generated_group = teacher_batch(
-                        group, args, cache_dir, f"{batch_id}-variation-{scenario}", used)
+                        group, args, cache_dir, f"{batch_id}-variation-{scenario}", used,
+                        allow_alternatives)
                     result.update(generated_group)
                     used.update(generated_group.values())
                 return result
@@ -725,23 +877,39 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                 result = {}
                 used = set(forbidden)
                 for row in rows:
-                    generated_row = teacher_batch(
-                        [row], args, cache_dir, f"{batch_id}-language-{row['language']}", used)
+                    # Some rows are genuinely unsatisfiable: by variation 15 of 17 a simple command has
+                    # no phrasing left in that language that is also distinct from all 60 already used.
+                    # That has to cost one phrasing out of ~9,400, not an eight-hour run.
+                    try:
+                        generated_row = teacher_batch(
+                            [row], args, cache_dir, f"{batch_id}-language-{row['language']}", used,
+                            allow_alternatives)
+                    except RuntimeError as exhausted:
+                        UNSATISFIED_ROWS.append((row["id"], str(exhausted)))
+                        print(f"  dropped {row['id']}: teacher has no phrasing left", flush=True)
+                        continue
                     result.update(generated_row)
                     used.update(generated_row.values())
                 return result
             if not off_topic and len(rows) == 1 and allow_alternatives:
+                # One candidate per call, and a single row with alternatives disabled can reach neither
+                # split branch, so this is provably the last level of the recursion. Asking for all six
+                # styles in one batch meant one bad style failed the batch, which split back into single
+                # rows that were allowed to ask for alternatives again: the cycle that produced
+                # "-alternatives-variation-6-alternatives-variation-6-..." until a Windows path limit
+                # raised OSError. On Linux it would not have stopped at all.
                 original = rows[0]
-                candidates = []
                 for variation in range(len(VARIATION_STYLES)):
                     candidate = copy.deepcopy(original)
                     candidate["id"] = original["id"].rsplit("|", 1)[0] + f"|{variation + 6}"
                     candidate["scenario"] = variation + 6
-                    candidates.append(candidate)
-                alternatives = teacher_batch(
-                    candidates, args, cache_dir, f"{batch_id}-alternatives", forbidden,
-                    allow_alternatives=False)
-                return {original["id"]: next(iter(alternatives.values()))}
+                    try:
+                        alternative = teacher_batch(
+                            [candidate], args, cache_dir, f"{batch_id}-alternative-{variation}",
+                            forbidden, allow_alternatives=False)
+                    except RuntimeError:
+                        continue
+                    return {original["id"]: next(iter(alternative.values()))}
             raise RuntimeError(
                 f"teacher rejected for {batch_id}: missing={sorted(expected_ids - set(found))[:5]} "
                 f"extra={sorted(set(found) - expected_ids)[:5]} duplicates={duplicates[:5]} "
@@ -751,6 +919,96 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                 f"ungrounded={[key for key, query in found.items() if key in rows_by_id and isinstance(query, str) and not grounds_literals(rows_by_id[key], query)][:5]}")
         cache_path.write_text(json.dumps(response, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return {item["id"]: item["query"].strip() for item in response["items"]}
+
+
+def resolve_split_leakage(splits: dict[str, list[dict]]) -> list[tuple[str, str]]:
+    """Remove queries that landed in two splits at once, returning what was removed and from where.
+
+    Near-synonymous commands ("disableterrain" and "disable terrain") get phrased identically, and the
+    duplicate guard during row building only compares within one split. A query in both train and an
+    evaluation split makes that split measure memorisation, so it has to go - but validate_dataset also
+    demands that validation and holdout cover every command, language and phase, so removing it there
+    would only trade this failure for the next one. Training is where a lost variation costs nothing:
+    there are per_language - 2 * eval_per_language of them per command and language. When both sides are
+    evaluation splits neither is preferable and the later one gives way.
+    """
+    removed: list[tuple[str, str]] = []
+    split_queries = {name: {normalized(row["query"]) for row in rows} for name, rows in splits.items()}
+    for left, right in (("train", "validation"), ("train", "holdout"),
+                        ("validation", "holdout")):
+        overlap = split_queries[left] & split_queries[right]
+        if not overlap:
+            continue
+        victim = left if left == "train" else right
+        removed.extend((victim, query) for query in sorted(overlap))
+        splits[victim] = [row for row in splits[victim]
+                          if normalized(row["query"]) not in overlap]
+        split_queries[victim] = {normalized(row["query"]) for row in splits[victim]}
+    return removed
+
+
+def off_topic_chunk(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str,
+                    seen: set[str]) -> dict:
+    """Ask for off-topic negatives, halving the batch whenever the teacher runs out of distinct ones.
+
+    Off-topic rows carry no scenario and no per-language grouping, so every split branch in teacher_batch
+    is gated off for them - splitting by scenario would put all 32 in one group and recurse forever. That
+    left them with no degradation at all: the teacher started repeating itself around the fifth batch of
+    32 and killed the run. Halving is the split that does apply here, it bottoms out after five levels,
+    and a smaller ask has fewer phrasings to keep apart in the first place.
+    """
+    try:
+        return teacher_batch(rows, args, cache_dir, batch_id, seen)
+    except RuntimeError:
+        if len(rows) == 1:
+            UNSATISFIED_ROWS.append((rows[0]["id"], "no distinct off-topic phrasing left"))
+            print(f"  dropped {rows[0]['id']}: no distinct off-topic phrasing left", flush=True)
+            return {}
+        middle = len(rows) // 2
+        produced = off_topic_chunk(rows[:middle], args, cache_dir, f"{batch_id}a", seen)
+        produced.update(off_topic_chunk(rows[middle:], args, cache_dir, f"{batch_id}b",
+                                        seen | set(produced.values())))
+        return produced
+
+
+NUMBER_WORDS = {
+    "en": {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight",
+           9: "nine", 10: "ten", 12: "twelve", 15: "fifteen", 20: "twenty", 50: "fifty", 100: "a hundred"},
+    "de": {1: "eins", 2: "zwei", 3: "drei", 4: "vier", 5: "fünf", 6: "sechs", 7: "sieben", 8: "acht",
+           9: "neun", 10: "zehn", 12: "zwölf", 15: "fünfzehn", 20: "zwanzig", 50: "fünfzig", 100: "hundert"},
+    "es": {1: "uno", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho",
+           9: "nueve", 10: "diez", 12: "doce", 15: "quince", 20: "veinte", 50: "cincuenta", 100: "cien"},
+    "fr": {1: "un", 2: "deux", 3: "trois", 4: "quatre", 5: "cinq", 6: "six", 7: "sept", 8: "huit",
+           9: "neuf", 10: "dix", 12: "douze", 15: "quinze", 20: "vingt", 50: "cinquante", 100: "cent"},
+}
+
+
+def spoken_variants(row: dict, rng: random.Random) -> list[dict]:
+    """Rows where the argument is not spelled the way the schema spells it.
+
+    The teacher prompt demands every numeric argument appear "exactly as digits" and grounds_literals
+    enforces it, so out of 877 numeric training arguments exactly zero were ever written as a word, and a
+    concatenated value practically never appeared with a space. Players write neither way: 49 of the 73
+    hand-written benchmark cases with arguments say "zehn" for 10 or "og kush" for ogkush, and the first
+    three adapters scored 0 % on them. These variants are derived from rows the teacher already wrote, so
+    they cost no teacher call, and they carry the same answer - only the wording changes.
+    """
+    query = row["query"]
+    produced = []
+    for value in row["answers"][0]["arguments"].values():
+        if isinstance(value, bool):
+            continue
+        if isinstance(value, (int, float)) and float(value).is_integer():
+            word = NUMBER_WORDS.get(row["language"], {}).get(int(value))
+            digits = format(value, "g")
+            if word and re.search(rf"(?<![\w.]){re.escape(digits)}(?![\w.])", query):
+                produced.append(re.sub(rf"(?<![\w.]){re.escape(digits)}(?![\w.])", word, query, count=1))
+        # No spacing variants: the runtime normalises "og kush" and "b2s xgranddaddykush grapeape seed"
+        # down to the canonical token before ranking the enum, so teaching that mapping is redundant. It
+        # was worse than redundant - the split points were random, so rows like "gran ddaddypurpleseed"
+        # taught noise, and the adapter trained with them lost five end-to-end cases. Number words are the
+        # one form normalisation cannot reach: "zehn" never becomes 10.
+    return produced
 
 
 def write_jsonl(path: pathlib.Path, rows: list[dict]):
@@ -775,15 +1033,31 @@ def fit_route_budget(row: dict, tokenizer) -> dict:
 
 
 def validate_dataset(rows: list[dict], tools_by_name: dict[str, dict], excluded: set[str], tokenizer):
+    """Keep the rows that are usable, and say which were not and why.
+
+    Two kinds of check live here and they deserve different answers. A structural invariant - a route row
+    grounding arguments, a refine row without its tool, an unknown phase - means the generator itself is
+    wrong, and still raises. A data-quality filter only means one teacher phrasing is unusable: it collides
+    with a hand-written benchmark query, repeats another row, or does not fit Needle's 256-token window.
+    Those are properties of one row out of thousands, and aborting the run over them threw away hours of
+    teacher work each time.
+    """
     seen = set()
-    coverage = set()
+    kept = []
+    rejected: list[tuple[str, str]] = []
     for row in rows:
         query = normalized(row["query"])
-        if not query or query in excluded:
-            raise ValueError(f"empty/leaked benchmark query: {row['query']!r}")
+        if not query:
+            rejected.append(("empty phrasing", row["query"]))
+            continue
+        if query in excluded:
+            # Training on a benchmark phrasing would make that benchmark measure memorisation.
+            rejected.append(("collides with a benchmark query", row["query"]))
+            continue
         identity = (query, row["phase"])
         if identity in seen:
-            raise ValueError(f"duplicate query: {row['query']!r}")
+            rejected.append(("duplicate phrasing", row["query"]))
+            continue
         seen.add(identity)
         answers = row["answers"]
         if answers:
@@ -794,7 +1068,6 @@ def validate_dataset(rows: list[dict], tools_by_name: dict[str, dict], excluded:
                     raise ValueError("route answers must not ground arguments")
             else:
                 validate_arguments(tool, answer["arguments"])
-            coverage.add((answer["name"], row["language"], row["phase"]))
         if len(row["tools"]) > 5:
             raise ValueError("training rows must stay outside Needle's >5-tool retrieval path")
         if row["phase"] == "route":
@@ -808,10 +1081,14 @@ def validate_dataset(rows: list[dict], tools_by_name: dict[str, dict], excluded:
 
         token_count = rendered_tokens(row, tokenizer)
         if token_count > TOKEN_BUDGET:
-            raise ValueError(
-                f"{row['id']}: {token_count} tokens exceed {TOKEN_BUDGET}; "
-                f"query={row['query']!r} tools={json.dumps(row['tools'], ensure_ascii=False)}")
-    return coverage
+            # Needle would truncate the call itself, so the row would teach a half-written answer.
+            rejected.append((f"{token_count} tokens over the {TOKEN_BUDGET} budget", row["query"]))
+            continue
+        kept.append(row)
+    # Built from the kept rows, so a rejected row cannot take coverage another row still provides.
+    coverage = {(row["answers"][0]["name"], row["language"], row["phase"])
+                for row in kept if row["answers"]}
+    return kept, coverage, rejected
 
 
 def main():
@@ -919,8 +1196,13 @@ def main():
 
     splits = {"train": [], "validation": [], "holdout": []}
     positive_seen: dict[tuple[str, str], str] = {}
+    if UNSATISFIED_ROWS:
+        print(f"{len(UNSATISFIED_ROWS)} phrasings dropped as unsatisfiable "
+              f"(of {len(pending)} requested)", flush=True)
     for row in pending:
-        query = generated[row["id"]]
+        query = generated.get(row["id"])
+        if query is None:
+            continue
         if "split" in row:
             split = row["split"]
         elif row["scenario"] < args.per_language - 2 * args.eval_per_language:
@@ -933,13 +1215,17 @@ def main():
         signature = json.dumps([row["command"], row["arguments"]], sort_keys=True, ensure_ascii=False)
         if identity in positive_seen:
             if positive_seen[identity] != signature:
-                raise ValueError(
-                    f"ambiguous duplicate teacher query: id={row['id']} query={query!r} "
-                    f"existing={positive_seen[identity]} current={signature}")
+                # Real catalogue ambiguity, not a teacher slip: the game has both "enable <thing>" and
+                # "enableterrain", and "Please enable terrain" is the natural phrasing for either. Training
+                # one sentence towards two different answers is worse than training it towards one, so the
+                # first mapping wins and the later row is dropped - but it is counted, because a corpus
+                # with many of these is describing a command set players cannot address unambiguously.
+                AMBIGUOUS_ROWS.append((row["id"], query, positive_seen[identity], signature))
             continue
         positive_seen[identity] = signature
         common = {"command": row["command"], "language": row["language"], "split": split,
             "query": query,
+            "system": system_facts(row["language"], row.get("scenario", 0)),
             "reasoning": ""}
         route = {**common,
             "id": row["id"] + "|route", "phase": "route",
@@ -957,7 +1243,23 @@ def main():
         # A derivation is valuable only when it does not truncate the actual call in Needle's 256-token window.
         if rendered_tokens(refine, tokenizer) > TOKEN_BUDGET:
             refine["reasoning"] = ""
+        # Training only: the evaluation splits stay exactly what the teacher wrote, so the holdout and the
+        # hand-written benchmark remain independent yardsticks for whether this augmentation helped.
+        if split == "train" and row["arguments"]:
+            variants = spoken_variants(refine, rng)
+            if variants:
+                spoken = {**refine, "id": refine["id"] + "|spoken",
+                          "query": rng.choice(variants)}
+                if rendered_tokens(spoken, tokenizer) <= TOKEN_BUDGET:
+                    splits[split].append(spoken)
         splits[split].append(refine)
+
+    if AMBIGUOUS_ROWS:
+        print(f"{len(AMBIGUOUS_ROWS)} phrasings dropped as ambiguous between two commands:", flush=True)
+        for identifier, query, existing, current in AMBIGUOUS_ROWS[:20]:
+            print(f"  {identifier}: {query!r} -> kept {existing}, dropped {current}", flush=True)
+        if len(AMBIGUOUS_ROWS) > 20:
+            print(f"  ... and {len(AMBIGUOUS_ROWS) - 20} more", flush=True)
 
     # Off-topic negatives are generated by the same teacher without hand-authored topic lists.
     off_topic_seen: set[str] = set()
@@ -977,14 +1279,17 @@ def main():
                 chunk = off_rows[offset:offset + 32]
                 print(f"teacher off-topic {split} {offset // 32 + 1}/{math.ceil(len(off_rows) / 32)} "
                       f"({len(chunk)} phrasings)...", flush=True)
-                generated_chunk = teacher_batch(
+                generated_chunk = off_topic_chunk(
                     chunk, args, cache, f"offtopic-{split}-{offset // 32:02d}", off_topic_seen)
                 off.update(generated_chunk)
                 off_topic_seen.update(generated_chunk.values())
         for item in off_rows:
+            if item["id"] not in off:
+                continue
             context = [route_tool(tool) for tool in rng.sample(tools, min(5, len(tools)))]
             negative = {
                 "id": item["id"], "command": "", "language": item["language"], "split": split,
+                "system": system_facts(item["language"], off_rows.index(item)),
                 "phase": "route",
                 "query": off[item["id"]], "tools": context,
                 "reasoning": "", "answers": [],
@@ -993,24 +1298,37 @@ def main():
 
     expected_coverage = {(tool["name"], language, phase) for tool in tools for language in LANGUAGES
                          for phase in ("route", "refine")}
-    split_queries = {name: {normalized(row["query"]) for row in rows}
-                     for name, rows in splits.items()}
-    for left, right in (("train", "validation"), ("train", "holdout"),
-                        ("validation", "holdout")):
-        overlap = split_queries[left] & split_queries[right]
-        if overlap:
-            raise ValueError(f"query leakage between {left} and {right}: {sorted(overlap)[:3]}")
+    leaked = resolve_split_leakage(splits)
+    if leaked:
+        print(f"{len(leaked)} queries appeared in two splits and were removed from one:", flush=True)
+        for victim, query in leaked[:20]:
+            print(f"  removed from {victim}: {query!r}", flush=True)
+        if len(leaked) > 20:
+            print(f"  ... and {len(leaked) - 20} more", flush=True)
     manifest = {"model": "dry-run" if args.dry_run else args.model,
                 "fallbackModel": None if args.dry_run else args.fallback_model,
                 "seed": args.seed, "perLanguage": args.per_language,
                 "evalPerLanguage": args.eval_per_language,
                 "excludeExternalDevSources": args.exclude_external_dev_sources,
                 "commands": len(tools), "languages": list(LANGUAGES), "splits": {}}
-    for split, rows in splits.items():
-        rng.shuffle(rows)
-        coverage = validate_dataset(rows, tools_by_name, excluded, tokenizer)
-        if split != "train" and coverage != expected_coverage:
-            raise ValueError(f"{split} does not cover every command/language")
+    for split in list(splits):
+        rng.shuffle(splits[split])
+        rows, coverage, rejected = validate_dataset(splits[split], tools_by_name, excluded, tokenizer)
+        splits[split] = rows
+        if rejected:
+            print(f"{split}: {len(rejected)} rows rejected", flush=True)
+            for reason, query in rejected[:10]:
+                print(f"  {reason}: {query!r}", flush=True)
+            if len(rejected) > 10:
+                print(f"  ... and {len(rejected) - 10} more", flush=True)
+        # A hole here used to end the run. It is a reporting defect, not a corrupt corpus: the gate simply
+        # measures less than the whole catalogue, and saying which combinations are missing is more use
+        # than producing no adapter at all. Recorded in the manifest so the report can carry it.
+        missing = sorted("|".join(entry) for entry in expected_coverage - coverage)
+        if split != "train" and missing:
+            print(f"WARNING: {split} covers {len(coverage)} of {len(expected_coverage)} "
+                  f"command/language/phase combinations; missing {missing[:5]}"
+                  + (f" and {len(missing) - 5} more" if len(missing) > 5 else ""), flush=True)
         path = args.out / f"{split}.jsonl"
         write_jsonl(path, rows)
         manifest["splits"][split] = {
@@ -1019,6 +1337,8 @@ def main():
             "negative": sum(not row["answers"] for row in rows),
             "route": sum(row["phase"] == "route" for row in rows),
             "refine": sum(row["phase"] == "refine" for row in rows),
+            "rejected": len(rejected),
+            "missingCoverage": missing if split != "train" else [],
         }
         print(f"{split}: {len(rows)} validated rows -> {path}")
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

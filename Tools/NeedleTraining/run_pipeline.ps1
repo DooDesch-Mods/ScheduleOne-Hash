@@ -131,6 +131,9 @@ function Invoke-Rtk {
 
 function Assert-CorpusCoverage {
     $manifest = Get-Content -Raw -LiteralPath (Join-Path $CorpusRoot "manifest.json") | ConvertFrom-Json
+    # Back at the provider's 100 per intent. It was briefly lowered to 90 because setvar (94) and
+    # setmovespeed (96) fell short when the teacher ran out of distinct phrasings; the spoken-form
+    # variants carry both back over the line without a single extra teacher call.
     $required = [ordered]@{ train = 100; validation = 10; holdout = 10 }
     foreach ($split in $required.Keys) {
         $rows = Get-Content -LiteralPath (Join-Path $CorpusRoot "$split.jsonl") |

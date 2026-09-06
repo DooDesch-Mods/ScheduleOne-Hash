@@ -76,14 +76,30 @@ static int RunBenchmark(string[] args)
             string tools = row["tools"]?.ToJsonString() ?? throw new InvalidDataException(id + " has no tools");
             JsonNode expected = row["answers"]?.DeepClone() ?? new JsonArray();
             var initClock = Stopwatch.StartNew();
-            needle.Init("locale: " + CultureInfo.CurrentUICulture.Name + "; device: phone; assistant: hash", tools);
+            // The mod sends SystemFacts() (NeedleCommandTranslator.cs:521) and this has to match it, or the
+            // benchmark measures a contract no player ever gets. It is overridable only so the cost of that
+            // contract can be measured: the corpus carries no system block, so the adapter was trained
+            // without one, and the mismatch is worth a number rather than an argument.
+            string systemFacts = Environment.GetEnvironmentVariable("NEEDLE_SMOKE_SYSTEM")
+                ?? "locale: " + CultureInfo.CurrentUICulture.Name + "; device: phone; assistant: hash";
+            needle.Init(systemFacts, tools);
             initClock.Stop();
 
             var inferenceClock = Stopwatch.StartNew();
             string raw = needle.Complete(query);
             inferenceClock.Stop();
-            JsonNode responseNode = JsonNode.Parse(raw) ?? throw new InvalidDataException(id + " response is not JSON");
-            JsonNode actual = responseNode["function_calls"]?.DeepClone() ?? new JsonArray();
+            // A response the model mangles is a failed case, not a reason to abandon the run: it happened
+            // on one German give phrasing and took the whole benchmark down with it, after the engine had
+            // already scored every row before it.
+            JsonNode? responseNode = null;
+            try
+            {
+                responseNode = JsonNode.Parse(raw);
+            }
+            catch (JsonException)
+            {
+            }
+            JsonNode actual = responseNode?["function_calls"]?.DeepClone() ?? new JsonArray();
             bool exact = JsonNode.DeepEquals(expected, actual);
             results.Add(new BenchmarkResult(
                 id,
