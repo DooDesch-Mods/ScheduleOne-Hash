@@ -327,3 +327,43 @@ def test_spoken_variants_keep_the_answer_and_change_only_the_wording():
 
 test_spoken_variants_keep_the_answer_and_change_only_the_wording()
 print("spoken variants ok")
+
+
+def test_grounding_accepts_what_the_runtime_can_resolve():
+    """The rule that decides which phrasings the teacher is allowed to write.
+
+    It used to demand the literal - opaque ids verbatim, every number as digits - which is stricter than
+    the game and left the corpus without a single spelled-out number in 877 numeric arguments, while 49
+    of the 73 hand-written benchmark cases with arguments need one. It now asks what the runtime asks:
+    a number may be its word, and any other value has to be the one NeedleArgument.TryResolveText would
+    land on for this phrasing.
+    """
+    import json
+    import pathlib
+
+    import generate_data as g
+
+    g.LIVE_VALUES.update(json.loads(
+        (pathlib.Path(__file__).resolve().parent / "data" / "values.json").read_text(encoding="utf-8")))
+    give = {"command": "give", "language": "de", "arguments": {"arg1": "ogkush", "arg2": 10.0}}
+
+    assert g.grounds_literals(give, "gib mir 10 ogkush")
+    # The two forms the corpus never contained: the number as a word, the value as a player writes it.
+    assert g.grounds_literals(give, "gib mir zehn og kush")
+    assert g.grounds_literals({**give, "language": "en", "arguments": {"arg1": "speedgrow", "arg2": 10.0}},
+                              "give me ten speed grow")
+    # A different item is not this item, and a dropped quantity is a dropped argument.
+    assert not g.grounds_literals(give, "gib mir zehn apfelsaft")
+    assert not g.grounds_literals(give, "gib mir og kush")
+    # 1200 has no word form in the table, so "noon" cannot be verified and stays rejected.
+    settime = {"command": "settime", "language": "en", "arguments": {"arg1": 1200.0}}
+    assert g.grounds_literals(settime, "set the time to 1200")
+    assert not g.grounds_literals(settime, "set the time to noon")
+    # An opaque id is still literal: nobody says sample17 any other way.
+    sample = {"command": "setqueststate", "language": "en", "arguments": {"arg1": "sample17"}}
+    assert g.grounds_literals(sample, "set sample17 to failed")
+    assert not g.grounds_literals(sample, "set the quest to failed")
+
+
+test_grounding_accepts_what_the_runtime_can_resolve()
+print("grounding rule ok")

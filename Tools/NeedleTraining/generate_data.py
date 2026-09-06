@@ -42,7 +42,7 @@ ROUTE_DESCRIPTION_CHARACTERS = 48
 FULL_DESCRIPTION_CHARACTERS = 96
 MAX_ENUM_VALUES = 32
 MAX_ENUM_CHARACTERS = 80
-TEACHER_PROMPT_VERSION = 9
+TEACHER_PROMPT_VERSION = 10
 MULTI_MODE_POLICY_VERSION = 1
 # Phrasings the teacher could not write under the uniqueness and grounding constraints, reported at the
 # end of the run so a thin corpus is visible rather than silent.
@@ -183,6 +183,51 @@ def candidate_score(candidate: str, phrase: str) -> int:
         if all(character in iterator for character in phrase):
             return 2500 - min(len(normalized) - len(phrase), 499)
     return 0
+
+
+# Filled by main() from values.json. grounds_literals needs it and runs inside teacher_batch, which has
+# no other route to the catalogue.
+LIVE_VALUES: dict[str, list[list[str]]] = {}
+
+
+def grounds_literals(row: dict, query: str) -> bool:
+    """Can the runtime still recover every argument from this phrasing?
+
+    This used to demand the literal: opaque ids verbatim and every number as digits. That is stricter
+    than the game, and it cost the adapter the phrasings players actually use - of 877 numeric training
+    arguments not one was ever written as a word, while 49 of the 73 hand-written benchmark cases with
+    arguments need exactly that ("gib mir zehn og kush"). An opaque sample id stays literal, because
+    nobody says it any other way. A number may be its word. Everything else has to satisfy the rule the
+    runtime itself applies: NeedleArgument.TryResolveText resolves what the model produced against the
+    value catalogue, so a phrasing is grounded when that matcher lands on this value and nothing else.
+    """
+    requested = query.casefold()
+    for name, value in row.get("arguments", {}).items():
+        if isinstance(value, bool):
+            continue
+        if isinstance(value, str) and re.fullmatch(r"sample\d+", value):
+            if not re.search(rf"(?<![\d.]){re.escape(value.casefold())}(?![\d.])", requested):
+                return False
+        elif isinstance(value, (int, float)):
+            digits = format(value, "g")
+            word = (NUMBER_WORDS.get(row.get("language", ""), {}).get(int(value))
+                    if float(value).is_integer() else None)
+            if not re.search(rf"(?<![\d.]){re.escape(digits)}(?![\d.])", requested) and not (
+                    word and re.search(rf"\b{re.escape(word)}\b", requested)):
+                return False
+        elif isinstance(value, str) and not value.startswith("#"):
+            slots = LIVE_VALUES.get(row.get("command", ""), [])
+            index = argument_slot(row, name)
+            if index is not None and index < len(slots) and slots[index]:
+                if enum_choices(slots[index], query)[:1] != [value]:
+                    return False
+    return True
+
+
+def argument_slot(row: dict, name: str):
+    """Which value slot an argument name belongs to, from the arg1/arg2 naming the catalogue uses."""
+    match = re.fullmatch(r"arg(\d+)", name)
+    return int(match.group(1)) - 1 if match else None
 
 
 def enum_choices(values: list[str], query: str) -> list[str]:
@@ -701,17 +746,6 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
     expected_ids = {row["id"] for row in rows}
     rows_by_id = {row["id"]: row for row in rows}
 
-    def grounds_literals(row: dict, query: str) -> bool:
-        requested = query.casefold()
-        required = []
-        for value in row.get("arguments", {}).values():
-            if isinstance(value, str) and re.fullmatch(r"sample\d+", value):
-                required.append(value.casefold())
-            elif isinstance(value, (int, float)) and not isinstance(value, bool):
-                required.append(format(value, "g"))
-        return all(re.search(rf"(?<![\d.]){re.escape(value)}(?![\d.])", requested)
-                   for value in required)
-
     def valid(response: dict) -> bool:
         found = teacher_items(response)
         return (set(found) == expected_ids
@@ -793,8 +827,10 @@ def teacher_batch(rows: list[dict], args, cache_dir: pathlib.Path, batch_id: str
                 "only the mode selected by canonical_arguments and usage_example, and never mention any unselected "
                 "mode. "
                 "even when operation and arguments repeat. Any canonical argument matching sample plus digits is "
-                "an opaque one-token value and must appear exactly unchanged in the request. Every numeric "
-                "canonical argument must appear exactly as digits in the request. "
+                "an opaque one-token value and must appear exactly unchanged in the request. A numeric "
+                "canonical argument may be written as digits or spelled out as a word in the request "
+                "language, whichever a player would actually say. Any other canonical argument may be "
+                "written the natural way a player would say it rather than as the exact identifier. "
                 f"Use at most {MAX_TEACHER_WORDS} whitespace-separated words per request. Do not include '#', JSON, "
                 "explanations, or invent extra intent. Return every id exactly once.\nINPUT:\n"
                 + json.dumps(compact_rows, ensure_ascii=False)
@@ -1133,6 +1169,7 @@ def main():
     args.out.mkdir(parents=True, exist_ok=True)
     tools = json.loads(args.tools.read_text(encoding="utf-8"))
     values = json.loads(args.values.read_text(encoding="utf-8"))
+    LIVE_VALUES.update(values)
     command_metadata = ({entry["name"]: entry for entry in
                          json.loads(args.commands.read_text(encoding="utf-8"))}
                         if args.commands.exists() else {})
