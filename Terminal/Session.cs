@@ -26,6 +26,9 @@ namespace Hash.Terminal
     {
         public IReadOnlyList<OutputLine> Lines { get; internal set; } = Array.Empty<OutputLine>();
 
+        /// <summary>A natural-language request is still running and the page should keep polling.</summary>
+        public bool Pending { get; internal set; }
+
         /// <summary>Something to put on the system clipboard, or null. The host owns the clipboard.</summary>
         public string Clipboard { get; internal set; }
 
@@ -45,6 +48,7 @@ namespace Hash.Terminal
     public sealed class Session
     {
         private readonly ICommandCatalogue _catalogue;
+        private readonly ICommandCatalogue _naturalCatalogue;
         private readonly ICommandRunner _runner;
         private readonly Suggestions _suggestions;
         private readonly Builtins _builtins;
@@ -54,6 +58,15 @@ namespace Hash.Terminal
         private readonly Usage _usage;
         private readonly Marks _marks;
         private readonly MarkExpansion _expansion;
+        private readonly INaturalCommandTranslator _natural;
+
+        private NaturalCommandTranslation _naturalProposal;
+
+        /// <summary>Opt-in record of what each request produced. Null unless the player switched it on.</summary>
+        private readonly UsageCapture _capture;
+
+        private const double NaturalAutoConfidence = 0.80;
+        private const double NaturalConfirmConfidence = 0.50;
 
         private SuggestionSet _current = SuggestionSet.Empty;
         private int _selected;
@@ -81,13 +94,18 @@ namespace Hash.Terminal
         private string _searchQuery = "";
 
         public Session(ICommandCatalogue catalogue, ICommandRunner runner, Usage usage,
-                       History history, Aliases aliases, IMarks marks = null)
+                       History history, Aliases aliases, IMarks marks = null,
+                       INaturalCommandTranslator natural = null, ICommandCatalogue naturalCatalogue = null,
+                       UsageCapture capture = null)
         {
             _catalogue = catalogue;
+            _naturalCatalogue = naturalCatalogue ?? catalogue;
             _runner = runner;
             _usage = usage;
             _history = history;
             _aliases = aliases;
+            _natural = natural;
+            _capture = capture;
 
             _marks = new Marks(marks);
             _expansion = new MarkExpansion(_marks, catalogue);
@@ -107,6 +125,9 @@ namespace Hash.Terminal
         /// <summary>Whether the prompt accepts anything. False on a client, and false with the console switched
         /// off.</summary>
         public bool Locked => !_runner.CanRun;
+
+        /// <summary>Whether a background translation is still in flight.</summary>
+        public bool NaturalPending => _natural?.Busy == true;
 
         /// <summary>
         /// How many words the prompt accepts.
@@ -158,6 +179,12 @@ namespace Hash.Terminal
         public NavResult Typed(string line)
         {
             _searchSkip = 0;
+
+            // Beginning another line withdraws a pending request before its answer can race the player's typing.
+            // Preserve a lone # because that is the explicit confirmation gesture for a medium-confidence proposal;
+            // the first character after "# " makes it a new request and cancels the old one.
+            string replacement = (line ?? "").Trim();
+            if (replacement.Length > 0 && replacement != "#") CancelNatural();
 
             // An open list STAYS open while the line is edited. Opening it is a decision - "show me what there is" -
             // and typing the next letter is the player narrowing that list, not withdrawing the question. Closing it
@@ -335,6 +362,14 @@ namespace Hash.Terminal
             _searchSkip = 0;
             _expanded = false;
 
+            // A bare hash is deliberately handled before an ordinary line discards a waiting proposal. Everywhere
+            // else `#` keeps its old meaning as an argument (`give # 1`); only the first whole token wakes Needle.
+            if (typed == "#") return ConfirmNatural(typed, lines, result);
+
+            // Any new submitted line supersedes an inference or proposal the player has left behind. A native call
+            // cannot be stopped halfway through, but its generation is invalidated and its eventual answer ignored.
+            CancelNatural();
+
             // History expansion happens before anything else looks at the line, the way a shell does it - `!!` IS
             // the previous command by the time the parser sees it, so `repeat 3 !!` and `!! ; settime 1200` work
             // without either of them knowing that history exists.
@@ -343,6 +378,9 @@ namespace Hash.Terminal
                 result.Lines = lines;
                 return result;
             }
+
+            if (NaturalQuery(typed, out string query))
+                return StartNatural(typed, query, lines, result);
 
             Echo(typed, lines);
             _history.Add(typed);
@@ -385,6 +423,10 @@ namespace Hash.Terminal
 
             _marks.Ran(typed);
 
+            // Whatever Hash last answered is closed by this line. After a command that ran, typing one by hand
+            // is the correction signal the record exists for; after one that failed, it is the missing answer.
+            _capture?.PlayerRan(typed);
+
             foreach (string command in ready) RunOne(command, lines);
 
             // The transcript shrinking across a run can only mean `clear`, which is the one thing the page cannot
@@ -394,6 +436,273 @@ namespace Hash.Terminal
             result.Clipboard = _builtins.TakeClipboard();
             return result;
         }
+
+        /// <summary>Take a completed background translation, applying the confidence policy on the game thread.</summary>
+        public RunResult PollNatural()
+        {
+            var result = new RunResult { Pending = NaturalPending };
+            var lines = new List<OutputLine>();
+
+            if (_natural == null || !_natural.TryTake(out NaturalCommandTranslation translated))
+            {
+                result.Lines = lines;
+                result.Pending = NaturalPending;
+                return result;
+            }
+
+            result.Pending = NaturalPending;
+
+            _capture?.Answered(translated);
+
+            if (!string.IsNullOrEmpty(translated.Error))
+            {
+                Emit(OutputLine.Error("Hash: " + translated.Error), lines);
+                _capture?.Refused(translated.Error);
+                _natural.Cancel();
+            }
+            else if (translated.Commands.Count == 0)
+            {
+                Emit(OutputLine.Warn("Hash: could not map that request to a console command."), lines);
+                _capture?.Refused("no command matched the request");
+                _natural.Cancel();
+            }
+            else if (translated.Confidence.HasValue && translated.Confidence.Value < NaturalConfirmConfidence)
+            {
+                string score = Confidence(translated.Confidence.Value);
+                Emit(OutputLine.Warn("Hash: not confident enough (" + score + "). Please be more specific."), lines);
+                _capture?.Refused("below the confidence to run (" + score + ")");
+                _natural.Cancel();
+            }
+            else
+            {
+                ShowNatural(translated, lines);
+
+            // Needle confidence is a ranking signal, not execution authorization. A live incident mapped `kill`
+            // to `quit` at 97% and closed the game. Only a command Hash derived entirely from the current catalogue
+            // may auto-run; every native prediction requires the user to confirm the concrete proposal with `#`.
+            if (translated.Proven && translated.Confidence.HasValue
+                                  && translated.Confidence.Value >= NaturalAutoConfidence)
+                ExecuteNatural(translated, lines);
+            else
+            {
+                    _naturalProposal = translated;
+                    Emit(OutputLine.Warn("Type # to run this suggestion; any other command discards it."), lines);
+                }
+            }
+
+            result.Lines = lines;
+            result.Pending = NaturalPending;
+            return result;
+        }
+
+        /// <summary>
+        /// Close the usage record still open, if the player switched capture on.
+        ///
+        /// Separate from <see cref="CancelNatural"/> because the two answer different questions. Cancelling happens
+        /// on every new line and must not end the record - the line IS what the record was waiting for. This runs
+        /// when the terminal goes off screen or the game goes down, where nothing further can be observed.
+        /// </summary>
+        public void CloseCapture() => _capture?.Close();
+
+        /// <summary>Invalidate a running translation or a proposal waiting for confirmation.</summary>
+        public void CancelNatural()
+        {
+            bool active = _naturalProposal != null || NaturalPending;
+            _naturalProposal = null;
+            if (active) _natural?.Cancel();
+        }
+
+        private RunResult ConfirmNatural(string typed, List<OutputLine> lines, RunResult result)
+        {
+            Echo(typed, lines);
+            _history.Add(typed);
+
+            if (_naturalProposal != null)
+            {
+                NaturalCommandTranslation proposal = _naturalProposal;
+                _naturalProposal = null;
+                ExecuteNatural(proposal, lines);
+            }
+            else if (NaturalPending)
+                Emit(OutputLine.Warn("Hash: still translating the previous request."), lines);
+            else
+                Emit(OutputLine.Dim("usage: # <request>"), lines);
+
+            result.Lines = lines;
+            result.Pending = NaturalPending;
+            return result;
+        }
+
+        private RunResult StartNatural(string typed, string query, List<OutputLine> lines, RunResult result)
+        {
+            Echo(typed, lines);
+            _history.Add(typed);
+
+            if (Locked)
+                Emit(OutputLine.Error(_runner.RefusalReason), lines);
+            else if (_natural == null || !_natural.Available)
+                Emit(OutputLine.Error(_natural?.UnavailableReason ?? "Hash is unavailable: Needle is not installed."), lines);
+            else
+            {
+                try
+                {
+                    _natural.Start(query);
+                    _capture?.Asked(query);
+                    Emit(OutputLine.Dim("Hash: translating..."), lines);
+                }
+                catch (Exception e)
+                {
+                    Emit(OutputLine.Error("Hash: " + e.Message), lines);
+                    _natural.Cancel();
+                }
+            }
+
+            result.Lines = lines;
+            result.Pending = NaturalPending;
+            return result;
+        }
+
+        private void ShowNatural(NaturalCommandTranslation translated, List<OutputLine> lines)
+        {
+            string prefix = translated.Confidence.HasValue
+                ? "Hash " + Confidence(translated.Confidence.Value) + ": "
+                : "Hash: ";
+
+            for (int i = 0; i < translated.Commands.Count; i++)
+                Emit(OutputLine.Dim((i == 0 ? prefix : "        ") + translated.Commands[i]), lines);
+        }
+
+        private void ExecuteNatural(NaturalCommandTranslation translated, List<OutputLine> lines)
+        {
+            var ready = new List<string>();
+
+            if (Locked)
+            {
+                Emit(OutputLine.Error(_runner.RefusalReason), lines);
+                _capture?.Refused(_runner.RefusalReason);
+                _natural?.Complete(new[] { new NaturalCommandExecution("", false, _runner.RefusalReason) });
+                return;
+            }
+
+            // Validate the whole batch before the first side effect. The catalogue may have changed while the
+            // worker was running, and mark expansion may reject a target that no longer exists.
+            foreach (string command in translated.Commands)
+            {
+                List<string> tokens = CommandLine.Tokenise(command);
+                string word = tokens.Count > 0 ? tokens[0] : "";
+                CommandInfo current = _naturalCatalogue.Commands.FirstOrDefault(c =>
+                    string.Equals(c.Word, word, StringComparison.OrdinalIgnoreCase));
+
+                if (word.Length == 0 || word == "#" || current == null)
+                {
+                    string error = "Hash returned an unavailable command: " + (word.Length == 0 ? "(empty)" : word);
+                    Emit(OutputLine.Error(error), lines);
+                    _capture?.Refused(error);
+                    _natural?.Complete(new[] { new NaturalCommandExecution(command, false, error) });
+                    return;
+                }
+
+                if (!ValidateNaturalArguments(current, tokens, out string validationError))
+                {
+                    Emit(OutputLine.Error(validationError), lines);
+                    _capture?.Refused(validationError);
+                    _natural?.Complete(new[] { new NaturalCommandExecution(command, false, validationError) });
+                    return;
+                }
+
+                Expansion expanded = _expansion.Apply(command);
+                if (expanded.Failed)
+                {
+                    foreach (string part in expanded.Error.Split('\n')) Emit(OutputLine.Error(part), lines);
+                    _capture?.Refused(expanded.Error);
+                    _natural?.Complete(new[] { new NaturalCommandExecution(command, false, expanded.Error) });
+                    return;
+                }
+
+                ready.Add(expanded.Line);
+            }
+
+            var executions = new List<NaturalCommandExecution>();
+            _marks.Ran(string.Join(" ; ", translated.Commands));
+
+            for (int i = 0; i < ready.Count; i++)
+            {
+                int before = lines.Count;
+                RunOne(ready[i], lines);
+                IReadOnlyList<OutputLine> output = lines.Skip(before).ToList();
+                bool success = !output.Any(line => line.Kind == LineKind.Error);
+                executions.Add(new NaturalCommandExecution(translated.Commands[i], success,
+                    string.Join("\n", output.Select(line => line.Text))));
+            }
+
+            _capture?.Ran(executions);
+            _natural?.Complete(executions);
+        }
+
+        private bool ValidateNaturalArguments(CommandInfo command, IReadOnlyList<string> tokens, out string error)
+        {
+            error = null;
+            List<string> shape = CommandLine.Tokenise(command.Signature);
+            int supplied = Math.Max(0, tokens.Count - 1);
+            int available = Math.Max(0, shape.Count - 1);
+            int required = shape.Skip(1).Count(token => token.StartsWith("<", StringComparison.Ordinal));
+
+            if (supplied < required || supplied > available)
+            {
+                error = "Hash returned the wrong number of arguments for " + command.Word
+                        + ". Usage: " + command.Signature;
+                return false;
+            }
+
+            for (int i = 0; i < supplied; i++)
+            {
+                string value = tokens[i + 1];
+                if (Marks.IsWord(value)) continue; // MarkExpansion validates its existence and kind next.
+
+                IReadOnlyList<ArgValue> current;
+                bool owned;
+                try
+                {
+                    current = _naturalCatalogue.ValuesFor(command.Word, i) ?? Array.Empty<ArgValue>();
+                    owned = _naturalCatalogue.Owns(command.Word, i);
+                }
+                catch (Exception e)
+                {
+                    error = "Hash could not verify " + command.Word + " argument " + (i + 1) + ": " + e.Message;
+                    return false;
+                }
+
+                if (current.Count == 0)
+                {
+                    if (!owned) continue;
+                    error = "Hash returned a value for " + command.Word + " argument " + (i + 1)
+                            + ", but no values are currently available.";
+                    return false;
+                }
+
+                if (current.Any(candidate => string.Equals(candidate.Value, value, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+
+                error = "Hash returned a value that is no longer available for " + command.Word
+                        + " argument " + (i + 1) + ": " + value;
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool NaturalQuery(string line, out string query)
+        {
+            query = "";
+            if (string.IsNullOrEmpty(line) || line[0] != '#' || line.Length < 2)
+                return false;
+
+            query = line.Substring(1).Trim();
+            return query.Length > 0;
+        }
+
+        private static string Confidence(double value) =>
+            Math.Round(value * 100, MidpointRounding.AwayFromZero).ToString(System.Globalization.CultureInfo.InvariantCulture) + "%";
 
         /// <summary>
         /// Replace `!!` with the previous line and `!text` with the most recent line starting with it.

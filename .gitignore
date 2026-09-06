@@ -1,3 +1,6 @@
 bin/
 obj/
+__pycache__/
 *.user
+Native/Hash.Needle.bin
+.planning

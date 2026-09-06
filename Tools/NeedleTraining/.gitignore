@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+artifacts/
+checkpoints/
+
+# Generated corpora. Every one of these is reproducible from data/*.json plus a teacher run, and a
+# committed copy goes stale the moment the command catalogue or the prompt version changes.
+data/teacher-cache/
+data-smoke*/
+data-dry*/
+data-production*/

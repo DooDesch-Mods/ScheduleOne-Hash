@@ -95,6 +95,78 @@ namespace Hash.Terminal
         public static OutputLine Dim(string text) => new OutputLine(LineKind.Dim, text);
     }
 
+    /// <summary>One completed Needle turn before the session decides whether it may run.</summary>
+    public sealed class NaturalCommandTranslation
+    {
+        public NaturalCommandTranslation(IReadOnlyList<string> commands, double? confidence, string error = null,
+                                         bool proven = false, string reasoning = null, double? prefillTps = null,
+                                         double? decodeTps = null, double? peakRamMb = null,
+                                         bool constrained = false)
+        {
+            Commands = commands ?? Array.Empty<string>();
+            Confidence = confidence;
+            Error = error ?? "";
+            Proven = proven;
+            Reasoning = reasoning ?? "";
+            PrefillTps = prefillTps;
+            DecodeTps = decodeTps;
+            PeakRamMb = peakRamMb;
+            Constrained = constrained;
+        }
+
+        /// <summary>
+        /// The same turn, marked as having come from the constrained retry.
+        ///
+        /// Whether the retry ran is decided after the answer has been parsed, so it cannot be a constructor
+        /// argument at any of the seven places a turn is built.
+        /// </summary>
+        public NaturalCommandTranslation AsConstrained() =>
+            Constrained
+                ? this
+                : new NaturalCommandTranslation(Commands, Confidence, Error, Proven, Reasoning, PrefillTps,
+                                                DecodeTps, PeakRamMb, constrained: true);
+
+        public IReadOnlyList<string> Commands { get; }
+
+        public double? Confidence { get; }
+
+        public string Error { get; }
+
+        /// <summary>
+        /// True only when Hash itself derived every command and argument from the live catalogue. Native model
+        /// confidence is never proof and therefore can never set this flag.
+        /// </summary>
+        public bool Proven { get; }
+
+        public string Reasoning { get; }
+
+        public double? PrefillTps { get; }
+
+        public double? DecodeTps { get; }
+
+        public double? PeakRamMb { get; }
+
+        /// <summary>True when the first answer was unusable and the grammar-constrained retry produced this one.</summary>
+        public bool Constrained { get; }
+    }
+
+    /// <summary>What happened when Hash executed one translated call, fed back when context is retained.</summary>
+    public readonly struct NaturalCommandExecution
+    {
+        public NaturalCommandExecution(string command, bool success, string output)
+        {
+            Command = command ?? "";
+            Success = success;
+            Output = output ?? "";
+        }
+
+        public string Command { get; }
+
+        public bool Success { get; }
+
+        public string Output { get; }
+    }
+
     /// <summary>Where a suggestion came from, which decides how its row is drawn and what accepting it does.</summary>
     public enum SuggestionKind
     {

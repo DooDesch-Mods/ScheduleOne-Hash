@@ -1,0 +1,986 @@
+[
+  {
+    "name": "addemployee",
+    "description": "Adds an employee of the specified type to the given property.",
+    "usage": "addemployee botanist barn",
+    "signature": "addemployee <type> <property>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "addxp",
+    "description": "Adds the specified amount of experience points.",
+    "usage": "addxp 100",
+    "signature": "addxp <amount>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "alias",
+    "description": "make a short name for a command, or list them",
+    "usage": "alias gk \"give ogkush 5\"",
+    "signature": "alias [name] [command]",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "b2salive",
+    "description": "the two dev strains while they grow: report, 'row [0..1]' sows funk+dank+control at that growth, 'tick', 'glow <share>', 'clear'",
+    "usage": "b2salive row 0.4",
+    "signature": "b2salive <arg1> [amount]",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sapp",
+    "description": "drive the Weedtimes app from the console",
+    "usage": "b2sapp",
+    "signature": "b2sapp",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sassign",
+    "description": "why a pot will or will not take a botanist, and what your aim reaches",
+    "usage": "b2sassign",
+    "signature": "b2sassign",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sbot",
+    "description": "what a botanist sees at the tent; 'setup' wires one up, 'ripen' finishes the growth",
+    "usage": "b2sbot setup",
+    "signature": "b2sbot <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sclaim",
+    "description": "put a name on every placed tent's plate",
+    "usage": "b2sclaim Marco",
+    "signature": "b2sclaim <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2scross",
+    "description": "start a cross",
+    "usage": "b2scross headband purplekush",
+    "signature": "b2scross <arg1> <arg2>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sdonors",
+    "description": "every buildable the tent could be cloned from",
+    "usage": "b2sdonors",
+    "signature": "b2sdonors",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sdump",
+    "description": "strains with their effects; a word matches a name or an effect",
+    "usage": "b2sdump energizing",
+    "signature": "b2sdump <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sdumpfx",
+    "description": "write vanilla and our particle textures to disk",
+    "usage": "b2sdumpfx",
+    "signature": "b2sdumpfx",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2segg",
+    "description": "the #166 easter egg: report, 'setup [dank]', 'fire', 'harvest', 'smoke', 'consume [funk|dank]', 'npc [funk|dank] [dealer]', 'say [funk|dank|font]', 'score [real|funk|dank|vol|state|stop]', 'hooks',...",
+    "usage": "b2segg consume",
+    "signature": "b2segg <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sexit",
+    "description": "who can still receive an Escape, and who is patching the way there",
+    "usage": "b2sexit",
+    "signature": "b2sexit",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sfem",
+    "description": "dump the feminizer, 'pot' to pour one in, 'card' for the nearest pot's dropdown, 'drop' to open it",
+    "usage": "b2sfem card",
+    "signature": "b2sfem <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sfoil",
+    "description": "the vial label's holofoil: report, 'card [effect|strain|off]', 'row', 'spin <deg>', 'fit <gain> [travel] [drift] [swing]', 'flare <floor> <peak> [bands]', 'watch [frames]', 'mode lit|flat', 'fx [ti...",
+    "usage": "b2sfoil card",
+    "signature": "b2sfoil <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sgen",
+    "description": "age a line by n propagations",
+    "usage": "b2sgen headband 3",
+    "signature": "b2sgen <arg1> [amount]",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sgive",
+    "description": "give n seeds and n buds of a strain",
+    "usage": "b2sgive headband 5",
+    "signature": "b2sgive <arg1> [amount]",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sglow",
+    "description": "the plants' tier crack glow: report, 'row [clear]', 'all', 'look [n]', 'fit <floor> <gain>', 'map on|off'",
+    "usage": "b2sglow row clear",
+    "signature": "b2sglow <arg1> <arg2>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sgoto",
+    "description": "stand in front of a placed tent",
+    "usage": "b2sgoto",
+    "signature": "b2sgoto",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sharvest",
+    "description": "tent seed check ('go' cuts), or 'pot' to cut an ordinary fertilized plant and count",
+    "usage": "b2sharvest pot",
+    "signature": "b2sharvest <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2shelp",
+    "description": "list the test kit",
+    "usage": "b2shelp",
+    "signature": "b2shelp",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2shover",
+    "description": "what the crosshair is on",
+    "usage": "b2shover",
+    "signature": "b2shover",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2shunt",
+    "description": "hunt a cross",
+    "usage": "b2shunt headband",
+    "signature": "b2shunt <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sicon",
+    "description": "write the tent's inventory icon to disk",
+    "usage": "b2sicon",
+    "signature": "b2sicon",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sicons",
+    "description": "which strains would draw as a blank tile in the product app",
+    "usage": "b2sicons",
+    "signature": "b2sicons",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sleaf",
+    "description": "the leaf colour: report, 'mode label|parent|olive|gradient' live, 'ramp [a b]', 'tex', 'shot [n]', 'photo [strain...]', 'stalk [off|f] [strain...]', 'stem [f] [strain...]', 'bud [strain...]'",
+    "usage": "b2sleaf mode gradient",
+    "signature": "b2sleaf <arg1> <arg2>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2smat",
+    "description": "materialization state, or dress one strain now",
+    "usage": "b2smat headband",
+    "signature": "b2smat <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sname",
+    "description": "name a discovered strain",
+    "usage": "b2sname krunkog+purpleurkle Dawn",
+    "signature": "b2sname <arg1> <arg2>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2snames",
+    "description": "what is named, what is bred but unnamed, what is still open",
+    "usage": "b2snames",
+    "signature": "b2snames",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2snext",
+    "description": "step to the next strain",
+    "usage": "b2snext",
+    "signature": "b2snext",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2snotice",
+    "description": "raise a real discovery notice",
+    "usage": "b2snotice headband",
+    "signature": "b2snotice <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2snotices",
+    "description": "what the app has been told this session",
+    "usage": "b2snotices",
+    "signature": "b2snotices",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2spair",
+    "description": "the #255 pair trigger: report, 'peek [n]', 'setup', 'fire', 'harvest', 'clear'",
+    "usage": "b2spair peek 12",
+    "signature": "b2spair <arg1> [amount]",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2splace",
+    "description": "put a breeding tent down, with pots if asked",
+    "usage": "b2splace pots",
+    "signature": "b2splace <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sprev",
+    "description": "step to the previous strain",
+    "usage": "b2sprev",
+    "signature": "b2sprev",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sproducts",
+    "description": "open the game's own Products app; a term goes into its search box, or press a chip",
+    "usage": "b2sproducts sort tierdown",
+    "signature": "b2sproducts <arg1> <arg2>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2spuff",
+    "description": "play the seed-vial puff, and list the strains that glow",
+    "usage": "b2spuff",
+    "signature": "b2spuff",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sreset",
+    "description": "wipe this save's lines, tents, names and discoveries",
+    "usage": "b2sreset confirm",
+    "signature": "b2sreset <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sseedcheck",
+    "description": "verify sowing consumes our seeds",
+    "usage": "b2sseedcheck",
+    "signature": "b2sseedcheck",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2ssheet",
+    "description": "write n labels and icons to disk with an index.html",
+    "usage": "b2ssheet 24",
+    "signature": "b2ssheet <value>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sskip",
+    "description": "fast-forward running crosses, in minutes",
+    "usage": "b2sskip 60",
+    "signature": "b2sskip <value>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2ssmoke",
+    "description": "which strains smoke, and force the wisp onto the vial in your hand; 'off', 'sow', 'fit <size> [life]'",
+    "usage": "b2ssmoke",
+    "signature": "b2ssmoke",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2ssound",
+    "description": "when each tent moans, or play a clip now",
+    "usage": "b2ssound rearm",
+    "signature": "b2ssound <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2ssow",
+    "description": "fill the tent's pots; a third number leaves the second one part-grown",
+    "usage": "b2ssow headband purplekush 0.5",
+    "signature": "b2ssow <arg1> <arg2> [amount]",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2sstatus",
+    "description": "running crosses and every line you own",
+    "usage": "b2sstatus",
+    "signature": "b2sstatus",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2stent",
+    "description": "what the placed tents see, and why a cross is refused",
+    "usage": "b2stent",
+    "signature": "b2stent",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "b2svial",
+    "description": "dump a strain's seed-vial prefab; no argument means the selected one",
+    "usage": "b2svial fadestylefunk",
+    "signature": "b2svial <arg1>",
+    "source": "BreedToSeed v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "bind",
+    "description": "Binds the given key to the given command.",
+    "usage": "bind t 'settime 1200'",
+    "signature": "bind <key> <command>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "changebalance",
+    "description": "Changes the player's online balance by the specified amount",
+    "usage": "changebalance 5000",
+    "signature": "changebalance <amount>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "changecash",
+    "description": "Changes the player's cash balance by the specified amount",
+    "usage": "changecash 5000",
+    "signature": "changecash <amount>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "clear",
+    "description": "empty the screen",
+    "usage": "clear",
+    "signature": "clear",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "clearbinds",
+    "description": "Clears ALL binds.",
+    "usage": "clearbinds",
+    "signature": "clearbinds",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "clearinventory",
+    "description": "Clears the player's inventory",
+    "usage": "clearinventory",
+    "signature": "clearinventory",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "cleartrash",
+    "description": "Instantly removes all trash from the world.",
+    "usage": "cleartrash",
+    "signature": "cleartrash",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "clearwanted",
+    "description": "Clears the player's wanted level",
+    "usage": "clearwanted",
+    "signature": "clearwanted",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "copy",
+    "description": "put a line on the system clipboard - the last one, unless you name it",
+    "usage": "copy ogkushseed",
+    "signature": "copy [text]",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "destroynpcs",
+    "description": "Destroys all NPCs in the scene, including employees and dealers.",
+    "usage": "destroynpcs",
+    "signature": "destroynpcs",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disable",
+    "description": "Disables the specified GameObject",
+    "usage": "disable pp",
+    "signature": "disable <label>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disableinstancing",
+    "description": "Disables instancing in the game",
+    "usage": "disableinstancing",
+    "signature": "disableinstancing",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disablenpcasset",
+    "description": "Disabled the given asset under all NPCs",
+    "usage": "disablenpcasset avatar",
+    "signature": "disablenpcasset <asset|all>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disablenpcs",
+    "description": "Disables all NPCs in the scene (sets their GameObjects to inactive).",
+    "usage": "disablenpcs",
+    "signature": "disablenpcs",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disableocclusionculling",
+    "description": "Disables occlusion culling in the game",
+    "usage": "disableocclusionculling",
+    "signature": "disableocclusionculling",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disablephysics",
+    "description": "Disables physics in the game",
+    "usage": "disablephysics",
+    "signature": "disablephysics",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "disableterrain",
+    "description": "Disables terrain in the game",
+    "usage": "disableterrain",
+    "signature": "disableterrain",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "enable",
+    "description": "Enables the specified GameObject",
+    "usage": "enable pp",
+    "signature": "enable <label>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "enableinstancing",
+    "description": "Enables instancing in the game",
+    "usage": "enableinstancing",
+    "signature": "enableinstancing",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "enableocclusionculling",
+    "description": "Enables occlusion culling in the game",
+    "usage": "enableocclusionculling",
+    "signature": "enableocclusionculling",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "enablephysics",
+    "description": "Enables physics in the game",
+    "usage": "enablephysics",
+    "signature": "enablephysics",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "enableterrain",
+    "description": "Enables terrain in the game",
+    "usage": "enableterrain",
+    "signature": "enableterrain",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "endtutorial",
+    "description": "Forces the tutorial to end immediately (only if the player is actually in the tutorial).",
+    "usage": "endtutorial",
+    "signature": "endtutorial",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "font",
+    "description": "switch the typeface, or say which one is on",
+    "usage": "font pixel",
+    "signature": "font [mono|pixel]",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "forcesleep",
+    "description": "Forces all players to immediately sleep.",
+    "usage": "forcesleep",
+    "signature": "forcesleep",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "freecam",
+    "description": "Toggles free cam mode",
+    "usage": "freecam",
+    "signature": "freecam",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "give",
+    "description": "Gives the player the specified item. Optionally specify a quantity.",
+    "usage": "give ogkush 5",
+    "signature": "give <item> [quantity]",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "grep",
+    "description": "show only the lines on screen containing something",
+    "usage": "grep ogkush",
+    "signature": "grep <text>",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "growplants",
+    "description": "Sets ALL plants in the world fully grown",
+    "usage": "growplants",
+    "signature": "growplants",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "hashequip",
+    "description": "equip a hotbar slot, the way a number key would",
+    "usage": "hashequip 0",
+    "signature": "hashequip <value>",
+    "source": "hash v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "hashhand",
+    "description": "what the game thinks is in the player's hand",
+    "usage": "hashhand",
+    "signature": "hashhand",
+    "source": "hash v0.0.0-dev",
+    "vanilla": false
+  },
+  {
+    "name": "help",
+    "description": "explain one command, list a topic, or search",
+    "usage": "help all 2",
+    "signature": "help [word|topic|all] [page]",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "hidefps",
+    "description": "Hides FPS label.",
+    "usage": "hidefps",
+    "signature": "hidefps",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "hideui",
+    "description": "Hides all on-screen UI.",
+    "usage": "hideui",
+    "signature": "hideui",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "history",
+    "description": "what you have run before, oldest first",
+    "usage": "history give",
+    "signature": "history [text]",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "logs",
+    "description": "show what the game logs as it happens",
+    "usage": "logs warn",
+    "signature": "logs [filter|off]",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "lowerwanted",
+    "description": "Lowers the player's wanted level",
+    "usage": "lowerwanted",
+    "signature": "lowerwanted",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "npcworkbench",
+    "description": "Opens the local-only S1API NPC appearance editor and preview.",
+    "usage": "npcworkbench",
+    "signature": "npcworkbench",
+    "source": "S1API (Forked by Bars) v3.1.15",
+    "vanilla": false
+  },
+  {
+    "name": "packageproduct",
+    "description": "Packages the equipped product with the specified packaging",
+    "usage": "packageproduct jar, packageproduct baggie",
+    "signature": "packageproduct <packaging>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "playcutscene",
+    "description": "Plays the cutscene with the given name",
+    "usage": "playcutscene Tutorial end",
+    "signature": "playcutscene <cutscene>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "presentationworkbench",
+    "description": "Open the local icon and equippable presentation authoring workbench.",
+    "usage": "presentationworkbench [product|item] <id> | close",
+    "signature": "presentationworkbench [product|item] <id> | close",
+    "source": "S1API (Forked by Bars) v3.1.15",
+    "vanilla": false
+  },
+  {
+    "name": "quit",
+    "description": "Immediately quits the game without saving progress.",
+    "usage": "quit",
+    "signature": "quit",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "raisewanted",
+    "description": "Raises the player's wanted level",
+    "usage": "raisewanted",
+    "signature": "raisewanted",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "raw",
+    "description": "run the rest of the line as one command, semicolons and all",
+    "usage": "raw bind t 'settime 1200'",
+    "signature": "raw <command>",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "repeat",
+    "description": "run a command several times",
+    "usage": "repeat 5 give ogkush 1",
+    "signature": "repeat <count> <command>",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "save",
+    "description": "Forces a save",
+    "usage": "save",
+    "signature": "save",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setdayduration",
+    "description": "Sets the (real life) duration of an in-game 24-hour cycle. Measured in real minutes.",
+    "usage": "setdayduration 24",
+    "signature": "setdayduration <minutes>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setdiscovered",
+    "description": "Sets the specified product as discovered",
+    "usage": "setdiscovered ogkush",
+    "signature": "setdiscovered <product>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setemotion",
+    "description": "Sets the facial expression of the player's avatar.",
+    "usage": "setemotion cheery",
+    "signature": "setemotion <emotion>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setgravitymultiplier",
+    "description": "Sets the multiplier of the gravity strength.",
+    "usage": "setgravitymultiplier 0.5",
+    "signature": "setgravitymultiplier <multiplier>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "sethealth",
+    "description": "Sets the player's health to the specified amount",
+    "usage": "sethealth 100",
+    "signature": "sethealth <amount>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setjumpforce",
+    "description": "Sets the player's jump force multiplier",
+    "usage": "setjumpforce 1",
+    "signature": "setjumpforce <multiplier>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setlawintensity",
+    "description": "Sets the intensity of law enforcement activity on a scale of 0-10.",
+    "usage": "setlawintensity 6",
+    "signature": "setlawintensity <intensity>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setmovespeed",
+    "description": "Sets the player's move speed multiplier",
+    "usage": "setmovespeed 1",
+    "signature": "setmovespeed <multiplier>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setowned",
+    "description": "Sets the specified property or business as owned",
+    "usage": "setowned barn, setowned laundromat",
+    "signature": "setowned <property|business>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setpoliceignoreplayers",
+    "description": "Sets whether police ignore players.",
+    "usage": "setpoliceignoreplayers true, setpoliceignoreplayers false",
+    "signature": "setpoliceignoreplayers <true|false>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setquality",
+    "description": "Sets the quality of the currently equipped item.",
+    "usage": "setquality standard, setquality heavenly",
+    "signature": "setquality <quality>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setquantity",
+    "description": "Sets the quantity of the currently equipped item.",
+    "usage": "setquantity 5",
+    "signature": "setquantity <amount>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setquestentrystate",
+    "description": "Sets the state of the specified quest entry",
+    "usage": "setquestentrystate <quest name> <entry index> <state>",
+    "signature": "setquestentrystate <quest> <entry> <state>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setqueststate",
+    "description": "Sets the state of the specified quest",
+    "usage": "setqueststate <quest name> <state>",
+    "signature": "setqueststate <quest> <state>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setregionunlocked",
+    "description": "Unlocks the given region",
+    "usage": "setregionunlocked downtown",
+    "signature": "setregionunlocked <region>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setrelationship",
+    "description": "Sets the relationship scalar of the given NPC. Range is 0-5.",
+    "usage": "setrelationship <npc_id> 5",
+    "signature": "setrelationship <npc> <value>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setstaminareserve",
+    "description": "Sets the player's stamina reserve (default 100) to the specified amount.",
+    "usage": "setstaminareserve 200",
+    "signature": "setstaminareserve <amount>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "settime",
+    "description": "Sets the time of day to the specified 24-hour time",
+    "usage": "settime 1530",
+    "signature": "settime <hhmm>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "settimescale",
+    "description": "Sets the time scale. Default 1",
+    "usage": "settimescale 1",
+    "signature": "settimescale <scale>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setunlocked",
+    "description": "Unlocks the given NPC",
+    "usage": "setunlocked <npc_id>",
+    "signature": "setunlocked <npc>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setvar",
+    "description": "Sets the value of the specified variable",
+    "usage": "setvar <variable> <value>",
+    "signature": "setvar <variable> <value>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "setweather",
+    "description": "Sets the weather to the specified type",
+    "usage": "setweather clear, setweather lightrain, setweather heavyrain",
+    "signature": "setweather <weather>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "showfps",
+    "description": "Shows FPS label.",
+    "usage": "showfps",
+    "signature": "showfps",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "spawnvehicle",
+    "description": "Spawns a vehicle at the player's location",
+    "usage": "spawnvehicle shitbox",
+    "signature": "spawnvehicle <vehicle>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "teleport",
+    "description": "Teleports the player to the specified location, property, or NPC.",
+    "usage": "teleport townhall, teleport barn, teleport jessi_waters",
+    "signature": "teleport <location|property|npc>",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "triggerdistantthunder",
+    "description": "Triggers distant thunder.",
+    "usage": "triggerdistantthunder",
+    "signature": "triggerdistantthunder",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "triggerlightning",
+    "description": "Triggers a lightning event. You can specify a target (player or npc) or leave it empty for a random location.",
+    "usage": "triggerlightning, triggerlightning cranky_frank, triggerlightning playername",
+    "signature": "triggerlightning [npc|player]",
+    "source": "Vanilla",
+    "vanilla": true
+  },
+  {
+    "name": "unalias",
+    "description": "remove an alias",
+    "usage": "unalias gk",
+    "signature": "unalias <name>",
+    "source": "hash",
+    "vanilla": false
+  },
+  {
+    "name": "unbind",
+    "description": "Removes the given bind.",
+    "usage": "unbind t",
+    "signature": "unbind <key>",
+    "source": "Vanilla",
+    "vanilla": true
+  }
+]

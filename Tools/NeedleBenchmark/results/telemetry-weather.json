@@ -1,0 +1,95 @@
+﻿{
+    "schemaVersion":  1,
+    "generatedAtUtc":  "2026-08-21T01:55:52.6062414Z",
+    "bridge":  "http://127.0.0.1:6139",
+    "cases":  1,
+    "perfect":  0,
+    "passRate":  0,
+    "perfectOnBroad":  0,
+    "perfectAfterSelectedCommand":  0,
+    "perfectAfterRequiredArguments":  0,
+    "unresolved":  1,
+    "errors":  0,
+    "averageCaseMs":  1586,
+    "medianCaseMs":  1586,
+    "p95CaseMs":  1586,
+    "byLanguage":  [
+                       {
+                           "language":  "en",
+                           "cases":  1,
+                           "perfect":  0,
+                           "passRate":  0
+                       }
+                   ],
+    "byCategory":  [
+                       {
+                           "category":  "weather",
+                           "cases":  1,
+                           "perfect":  0,
+                           "passRate":  0
+                       }
+                   ],
+    "results":  [
+                    {
+                        "id":  "weather-clear-en-1",
+                        "language":  "en",
+                        "category":  "weather",
+                        "query":  "remove rain",
+                        "expected":  "setweather clear",
+                        "selectedCommand":  "cleartrash",
+                        "status":  "unresolved",
+                        "firstPerfectIteration":  null,
+                        "totalMs":  1586,
+                        "stages":  [
+                                       {
+                                           "iteration":  1,
+                                           "kind":  "broad",
+                                           "result":  {
+                                                          "commands":  [
+                                                                           "cleartrash"
+                                                                       ],
+                                                          "confidence":  0.6699,
+                                                          "error":  "",
+                                                          "reasoning":  "User wants to remove trash from world. cleartrash tool has no required params.",
+                                                          "prefillTps":  629.2,
+                                                          "decodeTps":  271.2,
+                                                          "peakRamMb":  4338.8,
+                                                          "elapsedMs":  916
+                                                      }
+                                       },
+                                       {
+                                           "iteration":  2,
+                                           "kind":  "selected-command",
+                                           "result":  {
+                                                          "commands":  [
+                                                                           "cleartrash"
+                                                                       ],
+                                                          "confidence":  0.9621,
+                                                          "error":  "",
+                                                          "reasoning":  "\u0027remove rain\u0027 -\u003e cleartrash. No arguments needed.",
+                                                          "prefillTps":  603.7,
+                                                          "decodeTps":  307,
+                                                          "peakRamMb":  4338.8,
+                                                          "elapsedMs":  315
+                                                      }
+                                       },
+                                       {
+                                           "iteration":  3,
+                                           "kind":  "required-arguments",
+                                           "result":  {
+                                                          "commands":  [
+                                                                           "cleartrash"
+                                                                       ],
+                                                          "confidence":  0.9621,
+                                                          "error":  "",
+                                                          "reasoning":  "\u0027remove rain\u0027 -\u003e cleartrash. No arguments needed.",
+                                                          "prefillTps":  655.7,
+                                                          "decodeTps":  301.9,
+                                                          "peakRamMb":  4338.8,
+                                                          "elapsedMs":  320
+                                                      }
+                                       }
+                                   ]
+                    }
+                ]
+}

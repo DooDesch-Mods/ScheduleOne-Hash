@@ -1,0 +1,3478 @@
+{
+  "formatVersion": 1,
+  "generatedAtUtc": "2026-09-05T16:53:50.1276759+00:00",
+  "engine": "C:\\Users\\denni\\Projects\\Mods\\Schedule1\\Hash\\Native\\Hash.Needle.bin",
+  "weights": "C:\\Users\\denni\\Projects\\Mods\\Schedule1\\Hash\\Tools\\NeedleTraining\\artifacts\\base-nolora.cact",
+  "dataset": "C:\\Users\\denni\\Projects\\Mods\\Schedule1\\Hash\\Tools\\NeedleTraining\\data-production\\human-cases.jsonl",
+  "cases": 152,
+  "exact": 31,
+  "accuracy": 0.20394736842105263,
+  "totalMs": 66408.5652,
+  "medianInferenceMs": 123.9245,
+  "p95InferenceMs": 366.2642,
+  "byLanguage": {
+    "de": {
+      "cases": 27,
+      "exact": 5,
+      "accuracy": 0.18518518518518517
+    },
+    "en": {
+      "cases": 75,
+      "exact": 18,
+      "accuracy": 0.24
+    },
+    "es": {
+      "cases": 25,
+      "exact": 3,
+      "accuracy": 0.12
+    },
+    "fr": {
+      "cases": 25,
+      "exact": 5,
+      "accuracy": 0.2
+    }
+  },
+  "byPhase": {
+    "refine": {
+      "cases": 73,
+      "exact": 25,
+      "accuracy": 0.3424657534246575
+    },
+    "route": {
+      "cases": 79,
+      "exact": 6,
+      "accuracy": 0.0759493670886076
+    }
+  },
+  "results": [
+    {
+      "Id": "give-ogkush-en-1|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 10 ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 218.2498,
+      "InferenceMs": 90.6053,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for fetching or displaying stored data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:641.0,\u0022decode_tps\u0022:338.0,\u0022peak_ram_mb\u0022:74.6}"
+    },
+    {
+      "Id": "give-ogkush-en-1|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 10 ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 209.4914,
+      "InferenceMs": 127.4353,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5683,\u0022prefill_tps\u0022:593.5,\u0022decode_tps\u0022:221.8,\u0022peak_ram_mb\u0022:78.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-en-1|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 10 speed grow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 222.9681,
+      "InferenceMs": 78.5149,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for reading or displaying speed data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:545.7,\u0022decode_tps\u0022:337.0,\u0022peak_ram_mb\u0022:78.8}"
+    },
+    {
+      "Id": "give-speedgrow-en-1|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 10 speed grow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 175.0823,
+      "InferenceMs": 129.2199,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5833,\u0022prefill_tps\u0022:459.0,\u0022decode_tps\u0022:223.4,\u0022peak_ram_mb\u0022:80.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-en-1|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 4 grandaddy seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 220.1596,
+      "InferenceMs": 88.1127,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for sending messages or contacts.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:578.6,\u0022decode_tps\u0022:322.3,\u0022peak_ram_mb\u0022:80.9}"
+    },
+    {
+      "Id": "give-granddaddy-en-1|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 4 grandaddy seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy",
+            "arg2": 4
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 246.5229,
+      "InferenceMs": 211.2004,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022,\u0022arg2\u0022:4}}],\u0022reasoning\u0022:\u0022arg1 \u0027grandaddy\u0027 from query;arg2 \u0027seed\u0027 from query; tool is give.\u0022,\u0022confidence\u0022:0.6122,\u0022prefill_tps\u0022:602.4,\u0022decode_tps\u0022:274.0,\u0022peak_ram_mb\u0022:80.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-de-1|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "gib mir 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 206.9579,
+      "InferenceMs": 76.1671,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to access or display a document.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:644.3,\u0022decode_tps\u0022:331.4,\u0022peak_ram_mb\u0022:81.2}"
+    },
+    {
+      "Id": "give-ogkush-de-1|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "gib mir 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg2": 2,
+            "arg1": "b2s_purplekush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 219.6835,
+      "InferenceMs": 511.0753,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg2\u0022:2,\u0022arg1\u0022:\u0022b2s_purplekush\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027ogkushseed\u0027 from \u0027og kush\u0027;arg2 \u0027b2s_purplekush\u0027 from \u0027og kush\u0027; additionalProperties omitted\u0022,\u0022confidence\u0022:0.0283,\u0022prefill_tps\u0022:646.3,\u0022decode_tps\u0022:173.7,\u0022peak_ram_mb\u0022:81.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-de-1|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "pack zehn speed grow in mein inventar",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 325.9117,
+      "InferenceMs": 119.9304,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for physical equipment or device control.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:409.4,\u0022decode_tps\u0022:237.5,\u0022peak_ram_mb\u0022:82.0}"
+    },
+    {
+      "Id": "give-speedgrow-de-1|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "pack zehn speed grow in mein inventar",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "growtent",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 288.1456,
+      "InferenceMs": 682.1355,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022growtent\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022\u0027zehn\u0027 -\u003E 10; \u0027speed\u0027 -\u003E speedgrow; \u0027inventar\u0027 -\u003E growtent\u0022,\u0022confidence\u0022:0.4027,\u0022prefill_tps\u0022:421.0,\u0022decode_tps\u0022:114.2,\u0022peak_ram_mb\u0022:82.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022,\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-de-1|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "gib mir vier granddaddy samen",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 324.76,
+      "InferenceMs": 139.4771,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for creating or retrieving a list of gear items.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:424.8,\u0022decode_tps\u0022:241.7,\u0022peak_ram_mb\u0022:82.6}"
+    },
+    {
+      "Id": "give-granddaddy-de-1|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "gib mir vier granddaddy samen",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 314.4607,
+      "InferenceMs": 1555.0059,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022\u0027vier\u0027 -\u003E 4; \u0027granddaddy\u0027 -\u003E addy. Two separate calls needed.\u0022,\u0022confidence\u0022:0.0000,\u0022prefill_tps\u0022:423.7,\u0022decode_tps\u0022:44.9,\u0022peak_ram_mb\u0022:82.8}"
+    },
+    {
+      "Id": "give-ogkush-es-1|route",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "dame 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 327.5149,
+      "InferenceMs": 118.5425,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for fetching or displaying data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:417.1,\u0022decode_tps\u0022:240.7,\u0022peak_ram_mb\u0022:82.9}"
+    },
+    {
+      "Id": "give-ogkush-es-1|refine",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "dame 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg2": 2,
+            "arg1": "b2s_purplekush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 320.7945,
+      "InferenceMs": 630.0017,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg2\u0022:2,\u0022arg1\u0022:\u0022b2s_purplekush\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027ogkushseed\u0027 from \u0027og kush\u0027;arg2 \u0027b2s_purplekush\u0027 from \u0027kush\u0027; additionalProperties omitted\u0022,\u0022confidence\u0022:0.0232,\u0022prefill_tps\u0022:420.2,\u0022decode_tps\u0022:140.3,\u0022peak_ram_mb\u0022:83.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-es-1|route",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "a\u00F1ade diez speed grow a mi inventario",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 323.4129,
+      "InferenceMs": 217.2038,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de gesti\u00F3n de listas de inventarios disponible. No se puede cumplir la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:449.6,\u0022decode_tps\u0022:243.0,\u0022peak_ram_mb\u0022:83.1}"
+    },
+    {
+      "Id": "give-speedgrow-es-1|refine",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "a\u00F1ade diez speed grow a mi inventario",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 272.1898,
+      "InferenceMs": 235.6353,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022\u0027diez\u0027 -\u003E 10; \u0027speed grow\u0027 -\u003E speedgrow; no additional properties\u0022,\u0022confidence\u0022:0.4865,\u0022prefill_tps\u0022:422.2,\u0022decode_tps\u0022:243.8,\u0022peak_ram_mb\u0022:84.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-es-1|route",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "dame cuatro semillas granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 325.6174,
+      "InferenceMs": 194.258,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de lista de semillas disponible. No se puede satisfacer la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:411.0,\u0022decode_tps\u0022:252.8,\u0022peak_ram_mb\u0022:84.6}"
+    },
+    {
+      "Id": "give-granddaddy-es-1|refine",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "dame cuatro semillas granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg2": 1,
+            "arg1": "b2s_granddaddykush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 316.7259,
+      "InferenceMs": 754.3818,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg2\u0022:1,\u0022arg1\u0022:\u0022b2s_granddaddykush\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027granddaddykush\u0027 from \u0027granddaddy\u0027;arg2 \u0027b2s_granddaddykush\u0027 from \u0027cuatro semillas\u0027 (current item); two separate calls needed.\u0022,\u0022confidence\u0022:0.0082,\u0022prefill_tps\u0022:413.1,\u0022decode_tps\u0022:146.4,\u0022peak_ram_mb\u0022:84.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-fr-1|route",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "donne-moi 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 324.7082,
+      "InferenceMs": 127.7607,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for fetching or displaying data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:418.2,\u0022decode_tps\u0022:241.4,\u0022peak_ram_mb\u0022:84.9}"
+    },
+    {
+      "Id": "give-ogkush-fr-1|refine",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "donne-moi 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 322.3052,
+      "InferenceMs": 355.6239,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022arg1 \u0027ogkushseed\u0027 from \u0027og kush\u0027;arg2 10 from \u002710 og\u0027; tool is give.\u0022,\u0022confidence\u0022:0.4315,\u0022prefill_tps\u0022:424.1,\u0022decode_tps\u0022:247.3,\u0022peak_ram_mb\u0022:85.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-fr-1|route",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ajoute dix speed grow \u00E0 mon inventaire",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 323.1394,
+      "InferenceMs": 127.4435,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to modify or add data to a device.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:412.4,\u0022decode_tps\u0022:251.1,\u0022peak_ram_mb\u0022:85.2}"
+    },
+    {
+      "Id": "give-speedgrow-fr-1|refine",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ajoute dix speed grow \u00E0 mon inventaire",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 273.1262,
+      "InferenceMs": 242.9026,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022\u0027dix\u0027 -\u003E 10; \u0027speed grow\u0027 -\u003E enum speedgrow; no additional properties\u0022,\u0022confidence\u0022:0.5254,\u0022prefill_tps\u0022:423.4,\u0022decode_tps\u0022:239.8,\u0022peak_ram_mb\u0022:85.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-fr-1|route",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "donne-moi quatre graines granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 326.3762,
+      "InferenceMs": 129.0253,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for creating or retrieving gear lists.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:449.6,\u0022decode_tps\u0022:275.2,\u0022peak_ram_mb\u0022:85.3}"
+    },
+    {
+      "Id": "give-granddaddy-fr-1|refine",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "donne-moi quatre graines granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy",
+            "arg2": 4
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 315.4685,
+      "InferenceMs": 175.812,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022,\u0022arg2\u0022:4}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6220,\u0022prefill_tps\u0022:418.0,\u0022decode_tps\u0022:178.8,\u0022peak_ram_mb\u0022:85.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-give-og-seed|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 5 og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 326.0543,
+      "InferenceMs": 116.1359,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for web search or image retrieval.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:435.1,\u0022decode_tps\u0022:239.8,\u0022peak_ram_mb\u0022:85.5}"
+    },
+    {
+      "Id": "historical-give-og-seed|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 5 og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed",
+            "arg2": 5
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg2": 2,
+            "arg1": "b2s_seedfert"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 334.2067,
+      "InferenceMs": 669.2279,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg2\u0022:2,\u0022arg1\u0022:\u0022b2s_seedfert\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027ogkushseed\u0027 from \u0027og kush\u0027;arg2 \u0027b2s_seedfert\u0027 from \u0027seed\u0027; arg2 omitted as not specified\u0022,\u0022confidence\u0022:0.0063,\u0022prefill_tps\u0022:434.6,\u0022decode_tps\u0022:136.0,\u0022peak_ram_mb\u0022:85.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-put-ogkush|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "put ten og kush in my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 325.3388,
+      "InferenceMs": 119.0257,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to manage inventory or access contents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:434.3,\u0022decode_tps\u0022:243.8,\u0022peak_ram_mb\u0022:85.7}"
+    },
+    {
+      "Id": "historical-put-ogkush|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "put ten og kush in my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 323.1028,
+      "InferenceMs": 348.8261,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022arg1 \u0027ogkushseed\u0027 from \u0027og kush\u0027;arg2 10 from \u0027ten\u0027\u0022,\u0022confidence\u0022:0.4460,\u0022prefill_tps\u0022:437.0,\u0022decode_tps\u0022:230.7,\u0022peak_ram_mb\u0022:85.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-add-speedgrow|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "add ten speed grow to my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 324.3681,
+      "InferenceMs": 121.8768,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to manage inventory or physical appliances.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:406.1,\u0022decode_tps\u0022:240.8,\u0022peak_ram_mb\u0022:85.8}"
+    },
+    {
+      "Id": "historical-add-speedgrow|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "add ten speed grow to my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 273.6449,
+      "InferenceMs": 269.2435,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022arg1 \u0027speedgrow\u0027 from \u0027speed grow\u0027;arg2 10 from \u0027ten\u0027 -\u003E number 10; tool is give.\u0022,\u0022confidence\u0022:0.6842,\u0022prefill_tps\u0022:414.8,\u0022decode_tps\u0022:233.8,\u0022peak_ram_mb\u0022:85.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-en-1|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 292.657,
+      "InferenceMs": 116.7398,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to share or export data to another device.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:405.5,\u0022decode_tps\u0022:243.7,\u0022peak_ram_mb\u0022:86.9}"
+    },
+    {
+      "Id": "teleport-docks-en-1|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 218.3449,
+      "InferenceMs": 107.9587,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8499,\u0022prefill_tps\u0022:499.5,\u0022decode_tps\u0022:225.6,\u0022peak_ram_mb\u0022:87.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-en-1|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "take me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 297.6241,
+      "InferenceMs": 102.8884,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to capture or save location data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:402.4,\u0022decode_tps\u0022:243.8,\u0022peak_ram_mb\u0022:87.6}"
+    },
+    {
+      "Id": "teleport-home-en-1|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "take me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 195.2206,
+      "InferenceMs": 95.6504,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to capture or save location data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:475.8,\u0022decode_tps\u0022:255.0,\u0022peak_ram_mb\u0022:87.6}"
+    },
+    {
+      "Id": "teleport-docks-en-2|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 294.5415,
+      "InferenceMs": 110.5506,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No document or file management tool available. Cannot access documents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:459.4,\u0022decode_tps\u0022:243.6,\u0022peak_ram_mb\u0022:87.7}"
+    },
+    {
+      "Id": "teleport-docks-en-2|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 218.1061,
+      "InferenceMs": 196.8215,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027docks\u0027 from query word \u0027docks\u0027; no additional properties mentioned so omitted\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:449.6,\u0022decode_tps\u0022:244.4,\u0022peak_ram_mb\u0022:87.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-1|route",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleportiere mich zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 295.1777,
+      "InferenceMs": 114.2215,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for sending documents or sharing documents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:445.2,\u0022decode_tps\u0022:250.4,\u0022peak_ram_mb\u0022:87.8}"
+    },
+    {
+      "Id": "teleport-docks-de-1|refine",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleportiere mich zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 234.7583,
+      "InferenceMs": 117.9029,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8265,\u0022prefill_tps\u0022:447.3,\u0022decode_tps\u0022:225.7,\u0022peak_ram_mb\u0022:87.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-de-1|route",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring mich nach hause",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 298.1582,
+      "InferenceMs": 103.8549,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control smart home devices or access system settings.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:436.2,\u0022decode_tps\u0022:284.0,\u0022peak_ram_mb\u0022:88.0}"
+    },
+    {
+      "Id": "teleport-home-de-1|refine",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring mich nach hause",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 228.0797,
+      "InferenceMs": 92.3908,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to access or display location data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:458.9,\u0022decode_tps\u0022:281.5,\u0022peak_ram_mb\u0022:88.0}"
+    },
+    {
+      "Id": "teleport-docks-de-2|route",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ich will zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 291.9291,
+      "InferenceMs": 110.744,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No document or file management tool available. Cannot create documents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:443.2,\u0022decode_tps\u0022:239.4,\u0022peak_ram_mb\u0022:88.1}"
+    },
+    {
+      "Id": "teleport-docks-de-2|refine",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ich will zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 215.2002,
+      "InferenceMs": 200.4902,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:\u0022\u0027zu den docks\u0027 -\u003E array [\u0027docks\u0027]; no other params\u0022,\u0022confidence\u0022:0.9525,\u0022prefill_tps\u0022:469.5,\u0022decode_tps\u0022:240.3,\u0022peak_ram_mb\u0022:88.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-es-1|route",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teletransp\u00F3rtame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 291.6069,
+      "InferenceMs": 210.2731,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de reproducci\u00F3n de audio o temporizador disponible. No se puede cumplir la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:454.3,\u0022decode_tps\u0022:246.3,\u0022peak_ram_mb\u0022:88.3}"
+    },
+    {
+      "Id": "teleport-docks-es-1|refine",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teletransp\u00F3rtame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 197.508,
+      "InferenceMs": 187.0632,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de reproducci\u00F3n de audio o tel\u00E9fono disponible. No se puede realizar la acci\u00F3n.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:450.5,\u0022decode_tps\u0022:285.8,\u0022peak_ram_mb\u0022:88.3}"
+    },
+    {
+      "Id": "teleport-home-es-1|route",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ll\u00E9vame a casa",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 299.2449,
+      "InferenceMs": 192.0999,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de m\u00E9tricas o localizaci\u00F3n disponible. No se puede satisfacer la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:425.0,\u0022decode_tps\u0022:247.8,\u0022peak_ram_mb\u0022:88.5}"
+    },
+    {
+      "Id": "teleport-home-es-1|refine",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ll\u00E9vame a casa",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 195.9859,
+      "InferenceMs": 184.9925,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de m\u00E9tricas o localizaci\u00F3n disponible. No se puede realizar la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:455.1,\u0022decode_tps\u0022:255.9,\u0022peak_ram_mb\u0022:88.5}"
+    },
+    {
+      "Id": "teleport-docks-es-2|route",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ll\u00E9vame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 288.7243,
+      "InferenceMs": 196.4167,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de m\u00E9tricas o calendario disponible. No se puede cumplir la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:407.6,\u0022decode_tps\u0022:247.0,\u0022peak_ram_mb\u0022:88.6}"
+    },
+    {
+      "Id": "teleport-docks-es-2|refine",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ll\u00E9vame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 196.378,
+      "InferenceMs": 171.5429,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de m\u00FAsica disponible. No se puede realizar la llamada.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:463.2,\u0022decode_tps\u0022:255.0,\u0022peak_ram_mb\u0022:88.7}"
+    },
+    {
+      "Id": "teleport-docks-fr-1|route",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "t\u00E9l\u00E9porte-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 298.0817,
+      "InferenceMs": 119.1403,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No document or file system tool available. Cannot retrieve documents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:443.6,\u0022decode_tps\u0022:280.5,\u0022peak_ram_mb\u0022:88.7}"
+    },
+    {
+      "Id": "teleport-docks-fr-1|refine",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "t\u00E9l\u00E9porte-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 217.9006,
+      "InferenceMs": 123.2473,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8230,\u0022prefill_tps\u0022:436.1,\u0022decode_tps\u0022:220.0,\u0022peak_ram_mb\u0022:88.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-fr-1|route",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ram\u00E8ne-moi chez moi",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 299.114,
+      "InferenceMs": 123.9245,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to check or read a phone\u0027s own profile.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:447.2,\u0022decode_tps\u0022:249.9,\u0022peak_ram_mb\u0022:88.9}"
+    },
+    {
+      "Id": "teleport-home-fr-1|refine",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ram\u00E8ne-moi chez moi",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 193.3752,
+      "InferenceMs": 105.5313,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to check location or share data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:470.6,\u0022decode_tps\u0022:252.1,\u0022peak_ram_mb\u0022:88.9}"
+    },
+    {
+      "Id": "teleport-docks-fr-2|route",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "emm\u00E8ne-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 292.8547,
+      "InferenceMs": 113.6972,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No document or file management tool available. Cannot create documents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:444.3,\u0022decode_tps\u0022:258.0,\u0022peak_ram_mb\u0022:89.0}"
+    },
+    {
+      "Id": "teleport-docks-fr-2|refine",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "emm\u00E8ne-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 218.5351,
+      "InferenceMs": 185.738,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:\u0022\u0027docks\u0027 -\u003E enum \u0027docks\u0027. No other params.\u0022,\u0022confidence\u0022:0.9439,\u0022prefill_tps\u0022:463.9,\u0022decode_tps\u0022:258.1,\u0022peak_ram_mb\u0022:89.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-en|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "make it noon",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 276.0115,
+      "InferenceMs": 202.1085,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to create or modify an existing quest entry\u0027s time. setquestentrystate only sets a new entry, not editing an existing one.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:388.1,\u0022decode_tps\u0022:247.6,\u0022peak_ram_mb\u0022:89.2}"
+    },
+    {
+      "Id": "time-noon-en|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "make it noon",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 167.2248,
+      "InferenceMs": 93.5426,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to create or modify an existing alarm.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:442.5,\u0022decode_tps\u0022:291.6,\u0022peak_ram_mb\u0022:89.3}"
+    },
+    {
+      "Id": "time-eight-en|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set the time to 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 275.9937,
+      "InferenceMs": 139.4553,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires a \u0027settime\u0027 parameter; user didn\u0027t specify which time.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:451.8,\u0022decode_tps\u0022:248.3,\u0022peak_ram_mb\u0022:89.3}"
+    },
+    {
+      "Id": "time-eight-en|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set the time to 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 8
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 169.4166,
+      "InferenceMs": 109.9635,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:8}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.3541,\u0022prefill_tps\u0022:482.2,\u0022decode_tps\u0022:176.6,\u0022peak_ram_mb\u0022:89.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-de|route",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "mach es mittag",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "time_hours": 0,
+            "time_minutes": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 275.4722,
+      "InferenceMs": 366.2642,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022time_hours\u0022:0,\u0022time_minutes\u0022:0}}],\u0022reasoning\u0022:\u0022User wants to set a time of day. \u0027mittag\u0027 -\u003E settime. No other parameters specified, so only time_hours and time_minutes are required.\u0022,\u0022confidence\u0022:0.1148,\u0022prefill_tps\u0022:450.4,\u0022decode_tps\u0022:182.6,\u0022peak_ram_mb\u0022:89.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.time_hours\u0022,\u0022settime.time_minutes\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-de|refine",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "mach es mittag",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 170.3049,
+      "InferenceMs": 99.1757,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to set time-based schedules.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:483.0,\u0022decode_tps\u0022:256.1,\u0022peak_ram_mb\u0022:89.5}"
+    },
+    {
+      "Id": "time-eight-de|route",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "stell die uhr auf 8 uhr morgens",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 276.0705,
+      "InferenceMs": 151.2692,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to set a timed alarm. No alarm tool exists in the available tools.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:432.6,\u0022decode_tps\u0022:246.6,\u0022peak_ram_mb\u0022:89.7}"
+    },
+    {
+      "Id": "time-eight-de|refine",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "stell die uhr auf 8 uhr morgens",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 167.4912,
+      "InferenceMs": 122.299,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to set timed alerts or schedules.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:444.6,\u0022decode_tps\u0022:257.1,\u0022peak_ram_mb\u0022:89.9}"
+    },
+    {
+      "Id": "time-noon-es|route",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ponlo al mediod\u00EDa",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "time": "12:00"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 276.7991,
+      "InferenceMs": 208.7551,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022time\u0022:\u002212:00\u0022}}],\u0022reasoning\u0022:\u0022\u0027mediod\u00EDa\u0027 -\u003E settime. No time given, use default 24h. setTime with no time param.\u0022,\u0022confidence\u0022:0.4738,\u0022prefill_tps\u0022:448.8,\u0022decode_tps\u0022:247.4,\u0022peak_ram_mb\u0022:89.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.time\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-es|refine",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ponlo al mediod\u00EDa",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 164.7703,
+      "InferenceMs": 149.8364,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de temporizador disponible. No se puede crear una alarma.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:489.7,\u0022decode_tps\u0022:271.5,\u0022peak_ram_mb\u0022:89.9}"
+    },
+    {
+      "Id": "time-eight-es|route",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "pon la hora a las 8",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 275.8942,
+      "InferenceMs": 187.4769,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de temporizador disponible. Ninguna herramienta puede crear recordatorios o alarmas.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:457.4,\u0022decode_tps\u0022:270.6,\u0022peak_ram_mb\u0022:90.0}"
+    },
+    {
+      "Id": "time-eight-es|refine",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "pon la hora a las 8",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 169.9273,
+      "InferenceMs": 158.876,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de temporizador disponible. No se puede crear una hora.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:463.6,\u0022decode_tps\u0022:260.1,\u0022peak_ram_mb\u0022:90.1}"
+    },
+    {
+      "Id": "time-noon-fr|route",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "mets l\u0027heure \u00E0 midi",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "time_hours": 12,
+            "time_minutes": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 275.88,
+      "InferenceMs": 219.482,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022time_hours\u0022:12,\u0022time_minutes\u0022:0}}],\u0022reasoning\u0022:\u0022\u0027midi\u0027 -\u003E time_hours 12, time_minutes 0; setTimezone tool\u0022,\u0022confidence\u0022:0.9496,\u0022prefill_tps\u0022:402.3,\u0022decode_tps\u0022:252.7,\u0022peak_ram_mb\u0022:90.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.time_hours\u0022,\u0022settime.time_minutes\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-fr|refine",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "mets l\u0027heure \u00E0 midi",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 168.9258,
+      "InferenceMs": 109.4656,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to set time-based schedules.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:428.5,\u0022decode_tps\u0022:255.5,\u0022peak_ram_mb\u0022:90.3}"
+    },
+    {
+      "Id": "time-eight-fr|route",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "r\u00E8gle l\u0027heure \u00E0 8h",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 275.3127,
+      "InferenceMs": 159.7776,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime requires a numeric 24-hour ti; \u00278h\u0027 is not a valid 24-hour format.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:446.7,\u0022decode_tps\u0022:274.5,\u0022peak_ram_mb\u0022:90.3}"
+    },
+    {
+      "Id": "time-eight-fr|refine",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "r\u00E8gle l\u0027heure \u00E0 8h",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 168.8605,
+      "InferenceMs": 108.0773,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to set time-based schedules.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:470.7,\u0022decode_tps\u0022:256.8,\u0022peak_ram_mb\u0022:90.4}"
+    },
+    {
+      "Id": "historical-time-day-long|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set the time to the day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 274.8945,
+      "InferenceMs": 144.2569,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires a \u0027settime\u0027 parameter; the user didn\u0027t specify which time.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:449.9,\u0022decode_tps\u0022:246.9,\u0022peak_ram_mb\u0022:90.5}"
+    },
+    {
+      "Id": "historical-time-day-long|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set the time to the day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 169.4573,
+      "InferenceMs": 168.4399,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022Intended tool: settime. Missing required parameter: \u0027arg1\u0027 (the user didn\u0027t specify which hhmm).\u0022,\u0022confidence\u0022:0.7556,\u0022prefill_tps\u0022:485.2,\u0022decode_tps\u0022:257.7,\u0022peak_ram_mb\u0022:90.5}"
+    },
+    {
+      "Id": "historical-time-day-short|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set time day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 276.2994,
+      "InferenceMs": 113.793,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires a \u0027settime\u0027 parameter, which is missing.\u0022,\u0022confidence\u0022:0.6825,\u0022prefill_tps\u0022:425.5,\u0022decode_tps\u0022:248.6,\u0022peak_ram_mb\u0022:90.6}"
+    },
+    {
+      "Id": "historical-time-day-short|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set time day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 127.3053,
+      "InferenceMs": 202.0337,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0.0}}],\u0022reasoning\u0022:\u0022User wants time of day. No parameters provided, so call with empty arguments.\u0022,\u0022confidence\u0022:0.0142,\u0022prefill_tps\u0022:700.8,\u0022decode_tps\u0022:206.3,\u0022peak_ram_mb\u0022:90.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-time-eight|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set time 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 276.9291,
+      "InferenceMs": 136.3939,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires a \u0027settime\u0027 parameter; user didn\u0027t specify which time.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:405.6,\u0022decode_tps\u0022:250.8,\u0022peak_ram_mb\u0022:90.8}"
+    },
+    {
+      "Id": "historical-time-eight|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set time 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 8
+          }
+        },
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 8.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 166.8743,
+      "InferenceMs": 252.626,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:8}},{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:8.0}}],\u0022reasoning\u0022:\u0022arg1 from \u00278am\u0027 -\u003E 8; argument2 from \u00278am\u0027 -\u003E 8; two calls to settime tool.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:483.2,\u0022decode_tps\u0022:263.1,\u0022peak_ram_mb\u0022:90.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-en-1|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "remove rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 286.9094,
+      "InferenceMs": 110.126,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to manage device settings or remove rain data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:402.6,\u0022decode_tps\u0022:246.5,\u0022peak_ram_mb\u0022:90.9}"
+    },
+    {
+      "Id": "weather-clear-en-1|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "remove rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 167.3602,
+      "InferenceMs": 97.124,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to delete or remove rain data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:447.8,\u0022decode_tps\u0022:254.4,\u0022peak_ram_mb\u0022:91.0}"
+    },
+    {
+      "Id": "weather-clear-en-2|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "stop the rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 289.3315,
+      "InferenceMs": 94.8358,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control weather or appliances.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:420.0,\u0022decode_tps\u0022:259.2,\u0022peak_ram_mb\u0022:91.0}"
+    },
+    {
+      "Id": "weather-clear-en-2|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "stop the rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 172.5426,
+      "InferenceMs": 87.0357,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control weather or stop notifications.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:452.1,\u0022decode_tps\u0022:268.6,\u0022peak_ram_mb\u0022:91.1}"
+    },
+    {
+      "Id": "weather-clear-de-1|route",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "beende den regen",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 287.9242,
+      "InferenceMs": 104.8667,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control weather or appliances.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:405.6,\u0022decode_tps\u0022:244.7,\u0022peak_ram_mb\u0022:91.2}"
+    },
+    {
+      "Id": "weather-clear-de-1|refine",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "beende den regen",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 154.3969,
+      "InferenceMs": 109.1047,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to stop or cancel a weather alert.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:411.6,\u0022decode_tps\u0022:255.2,\u0022peak_ram_mb\u0022:91.3}"
+    },
+    {
+      "Id": "weather-clear-de-2|route",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "mach den regen aus",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 287.2768,
+      "InferenceMs": 104.513,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control weather or disconnect.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:449.0,\u0022decode_tps\u0022:244.6,\u0022peak_ram_mb\u0022:91.3}"
+    },
+    {
+      "Id": "weather-clear-de-2|refine",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "mach den regen aus",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 153.2191,
+      "InferenceMs": 98.6228,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control weather or disconnect.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:487.6,\u0022decode_tps\u0022:257.1,\u0022peak_ram_mb\u0022:91.4}"
+    },
+    {
+      "Id": "weather-clear-es-1|route",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "quita la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 287.6005,
+      "InferenceMs": 107.1986,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to delete or remove weather data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:433.1,\u0022decode_tps\u0022:246.5,\u0022peak_ram_mb\u0022:91.5}"
+    },
+    {
+      "Id": "weather-clear-es-1|refine",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "quita la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 154.3947,
+      "InferenceMs": 165.8463,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta para eliminar lluvia. setweather solo crea, no modifica.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:466.9,\u0022decode_tps\u0022:268.3,\u0022peak_ram_mb\u0022:91.5}"
+    },
+    {
+      "Id": "weather-clear-es-2|route",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "para la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 289.6226,
+      "InferenceMs": 214.5699,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta para controlar lluvia o calendario. Ninguna herramienta disponible puede satisfacer la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:433.7,\u0022decode_tps\u0022:260.2,\u0022peak_ram_mb\u0022:91.6}"
+    },
+    {
+      "Id": "weather-clear-es-2|refine",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "para la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 154.7021,
+      "InferenceMs": 199.809,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta para controlar lluvia o calendario. Ninguna herramienta disponible puede cumplir la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:465.7,\u0022decode_tps\u0022:279.4,\u0022peak_ram_mb\u0022:91.7}"
+    },
+    {
+      "Id": "weather-clear-fr-1|route",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "arr\u00EAte la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 288.9068,
+      "InferenceMs": 103.6333,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to stop weather alerts.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:411.9,\u0022decode_tps\u0022:244.5,\u0022peak_ram_mb\u0022:91.8}"
+    },
+    {
+      "Id": "weather-clear-fr-1|refine",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "arr\u00EAte la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 155.3797,
+      "InferenceMs": 97.9299,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to stop weather alerts.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:449.4,\u0022decode_tps\u0022:255.0,\u0022peak_ram_mb\u0022:91.9}"
+    },
+    {
+      "Id": "weather-clear-fr-2|route",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "enl\u00E8ve la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 289.2243,
+      "InferenceMs": 103.3213,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No weather tool available to delete rain data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:415.6,\u0022decode_tps\u0022:244.5,\u0022peak_ram_mb\u0022:91.9}"
+    },
+    {
+      "Id": "weather-clear-fr-2|refine",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "enl\u00E8ve la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 155.1184,
+      "InferenceMs": 101.6779,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to delete or manage weather data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:442.0,\u0022decode_tps\u0022:257.6,\u0022peak_ram_mb\u0022:92.0}"
+    },
+    {
+      "Id": "cash-en|route",
+      "Command": "changecash",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "add 500 dollars to my cash",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 353.6253,
+      "InferenceMs": 202.1507,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool supports adding money to a specific account or payment method. Only sethealth and addxp exist, neither can modify payment methods.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:424.6,\u0022decode_tps\u0022:246.0,\u0022peak_ram_mb\u0022:92.0}"
+    },
+    {
+      "Id": "cash-en|refine",
+      "Command": "changecash",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "add 500 dollars to my cash",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 175.1435,
+      "InferenceMs": 176.0389,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool exists to modify or add a new cash balance. Only change_player andchanged_cash are available.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:422.2,\u0022decode_tps\u0022:256.5,\u0022peak_ram_mb\u0022:92.0}"
+    },
+    {
+      "Id": "speed-en|route",
+      "Command": "setmovespeed",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set my movement speed to 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "speed": 2
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 364.2781,
+      "InferenceMs": 138.1404,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022speed\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6013,\u0022prefill_tps\u0022:432.7,\u0022decode_tps\u0022:163.2,\u0022peak_ram_mb\u0022:92.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-en|refine",
+      "Command": "setmovespeed",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set my movement speed to 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 181.3314,
+      "InferenceMs": 126.875,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9054,\u0022prefill_tps\u0022:482.2,\u0022decode_tps\u0022:186.6,\u0022peak_ram_mb\u0022:92.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-de|route",
+      "Command": "changecash",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "f\u00FCge meinem bargeld 500 dollar hinzu",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 357.4355,
+      "InferenceMs": 180.0025,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to add a price to the current account. No tool for account management or financial data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:397.9,\u0022decode_tps\u0022:237.6,\u0022peak_ram_mb\u0022:92.0}"
+    },
+    {
+      "Id": "cash-de|refine",
+      "Command": "changecash",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "f\u00FCge meinem bargeld 500 dollar hinzu",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 174.756,
+      "InferenceMs": 120.9514,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to add or modify a balance.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:452.3,\u0022decode_tps\u0022:271.7,\u0022peak_ram_mb\u0022:92.0}"
+    },
+    {
+      "Id": "speed-de|route",
+      "Command": "setmovespeed",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "setz meine laufgeschwindigkeit auf 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "speed": 2
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 337.7678,
+      "InferenceMs": 144.7907,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022speed\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.4110,\u0022prefill_tps\u0022:427.8,\u0022decode_tps\u0022:183.9,\u0022peak_ram_mb\u0022:92.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-de|refine",
+      "Command": "setmovespeed",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "setz meine laufgeschwindigkeit auf 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 181.0905,
+      "InferenceMs": 149.8301,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9194,\u0022prefill_tps\u0022:478.1,\u0022decode_tps\u0022:176.2,\u0022peak_ram_mb\u0022:92.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-es|route",
+      "Command": "changecash",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "a\u00F1ade 500 d\u00F3lares a mi efectivo",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 355.3977,
+      "InferenceMs": 251.999,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de edici\u00F3n de efectivos disponible. Ninguna herramienta puede modificar pases de efectivo.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:428.3,\u0022decode_tps\u0022:248.6,\u0022peak_ram_mb\u0022:92.2}"
+    },
+    {
+      "Id": "cash-es|refine",
+      "Command": "changecash",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "a\u00F1ade 500 d\u00F3lares a mi efectivo",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 169.7307,
+      "InferenceMs": 215.4399,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de agregaci\u00F3n de pagos o efectivos disponible. No se puede cumplir la solicitud.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:485.4,\u0022decode_tps\u0022:258.5,\u0022peak_ram_mb\u0022:92.3}"
+    },
+    {
+      "Id": "speed-es|route",
+      "Command": "setmovespeed",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "pon mi velocidad de movimiento en 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "speed": 2
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 364.9695,
+      "InferenceMs": 154.7586,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022speed\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6227,\u0022prefill_tps\u0022:426.0,\u0022decode_tps\u0022:153.9,\u0022peak_ram_mb\u0022:92.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-es|refine",
+      "Command": "setmovespeed",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "pon mi velocidad de movimiento en 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 175.3022,
+      "InferenceMs": 140.4922,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9107,\u0022prefill_tps\u0022:485.4,\u0022decode_tps\u0022:177.0,\u0022peak_ram_mb\u0022:92.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-fr|route",
+      "Command": "changecash",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ajoute 500 dollars \u00E0 mon argent",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 355.991,
+      "InferenceMs": 122.065,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to create or modify a payment card.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:417.9,\u0022decode_tps\u0022:246.2,\u0022peak_ram_mb\u0022:92.6}"
+    },
+    {
+      "Id": "cash-fr|refine",
+      "Command": "changecash",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ajoute 500 dollars \u00E0 mon argent",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 174.4516,
+      "InferenceMs": 115.4571,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to create or modify a payment card.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:466.8,\u0022decode_tps\u0022:253.6,\u0022peak_ram_mb\u0022:92.7}"
+    },
+    {
+      "Id": "speed-fr|route",
+      "Command": "setmovespeed",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "r\u00E8gle ma vitesse de d\u00E9placement sur 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "speed": 2
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 360.1558,
+      "InferenceMs": 160.4655,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022speed\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6377,\u0022prefill_tps\u0022:403.0,\u0022decode_tps\u0022:155.7,\u0022peak_ram_mb\u0022:92.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-fr|refine",
+      "Command": "setmovespeed",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "r\u00E8gle ma vitesse de d\u00E9placement sur 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 181.7025,
+      "InferenceMs": 147.2544,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9006,\u0022prefill_tps\u0022:447.2,\u0022decode_tps\u0022:177.9,\u0022peak_ram_mb\u0022:92.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-bench|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "i want a mixing bench",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 324.0215,
+      "InferenceMs": 145.0885,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to save a favorite favorite. No favorite tool available. Cannot fulfill request.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:421.3,\u0022decode_tps\u0022:280.4,\u0022peak_ram_mb\u0022:93.9}"
+    },
+    {
+      "Id": "historical-mixing-bench|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "i want a mixing bench",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstation"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstationmk2",
+            "arg2": 2
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 246.5162,
+      "InferenceMs": 421.7149,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022mixingstationmk2\u0022,\u0022arg2\u0022:2}}],\u0022reasoning\u0022:\u0022arg1 \u0027mixingstationmk2\u0027 from \u0027mixing bench\u0027; argument2 \u0027mixingstationmk2\u0027 from \u0027bench\u0027\u0022,\u0022confidence\u0022:0.0652,\u0022prefill_tps\u0022:439.7,\u0022decode_tps\u0022:173.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-table|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "I want a mixing table",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "title": "Mixing Table"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 322.0694,
+      "InferenceMs": 239.1971,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022title\u0022:\u0022Mixing Table\u0022}}],\u0022reasoning\u0022:\u0022User wants to save a table. \u0027mixing table\u0027 -\u003E title \u0027Mixing Table\u0027. No other tools relevant.\u0022,\u0022confidence\u0022:0.6109,\u0022prefill_tps\u0022:439.0,\u0022decode_tps\u0022:245.6,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-table|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "I want a mixing table",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstation"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstationmk2"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 251.9998,
+      "InferenceMs": 271.9242,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022mixingstationmk2\u0022}}],\u0022reasoning\u0022:\u0022User wants mixingstationmk2 quantity. \u0027mixing table\u0027 -\u003E enum \u0027mixingstationmk2\u0027. No additional properties.\u0022,\u0022confidence\u0022:0.9276,\u0022prefill_tps\u0022:455.6,\u0022decode_tps\u0022:252.6,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-supergrow|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "supergrow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 322.6053,
+      "InferenceMs": 103.4412,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to update or adjust device settings.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:396.5,\u0022decode_tps\u0022:243.2,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-supergrow|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "supergrow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "supergrow"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 207.6991,
+      "InferenceMs": 102.1052,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to update or modify a product.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:423.3,\u0022decode_tps\u0022:255.1,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-kill-safety|route",
+      "Command": "sethealth",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "kill",
+      "Expected": [
+        {
+          "name": "sethealth",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 354.7228,
+      "InferenceMs": 101.1738,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control device hardware or power management.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:433.5,\u0022decode_tps\u0022:242.0,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-kill-safety|refine",
+      "Command": "sethealth",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "kill",
+      "Expected": [
+        {
+          "name": "sethealth",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 170.9211,
+      "InferenceMs": 82.3976,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to control device hardware.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:485.8,\u0022decode_tps\u0022:258.1,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-home-compact|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 293.8036,
+      "InferenceMs": 99.9098,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to set homework or access system settings.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:362.3,\u0022decode_tps\u0022:248.4,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-home-compact|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 195.9112,
+      "InferenceMs": 85.8057,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to set home mode or display settings.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:369.9,\u0022decode_tps\u0022:284.4,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-teleport-major|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to the major",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 297.1031,
+      "InferenceMs": 112.755,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to initiate or transfer teleports.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:425.8,\u0022decode_tps\u0022:243.6,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-teleport-major|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to the major",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "mayor"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 194.4565,
+      "InferenceMs": 95.7137,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022arg1 is required and missing from query.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:457.7,\u0022decode_tps\u0022:253.0,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-bring-sea|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring me to the sea",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 298.071,
+      "InferenceMs": 100.5916,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to display or access contacts.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:447.3,\u0022decode_tps\u0022:244.3,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "historical-bring-sea|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring me to the sea",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 195.1951,
+      "InferenceMs": 95.7488,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to display or access contacts.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:475.6,\u0022decode_tps\u0022:255.6,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-give-ogkush-some|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 324.5558,
+      "InferenceMs": 117.0318,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to access or display content of a document.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:403.0,\u0022decode_tps\u0022:243.4,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-give-ogkush-some|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me some ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 320.5216,
+      "InferenceMs": 123.7308,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8459,\u0022prefill_tps\u0022:397.2,\u0022decode_tps\u0022:203.7,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-seed|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 328.9293,
+      "InferenceMs": 129.407,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to access or display content of a web search.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:436.0,\u0022decode_tps\u0022:237.6,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-give-ogkush-seed|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me some og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 334.0803,
+      "InferenceMs": 162.2847,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8304,\u0022prefill_tps\u0022:437.1,\u0022decode_tps\u0022:159.3,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkushseed|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some ogkushseed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 326.4679,
+      "InferenceMs": 114.6488,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for web search or image retrieval.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:469.9,\u0022decode_tps\u0022:236.0,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-give-ogkushseed|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me some ogkushseed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 308.3004,
+      "InferenceMs": 156.0621,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9190,\u0022prefill_tps\u0022:443.9,\u0022decode_tps\u0022:166.8,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-de|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "gib mir ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 325.8285,
+      "InferenceMs": 116.7909,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to retrieve or display a document.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:459.7,\u0022decode_tps\u0022:226.2,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-give-ogkush-de|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "gib mir ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 317.4618,
+      "InferenceMs": 121.2254,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8570,\u0022prefill_tps\u0022:442.0,\u0022decode_tps\u0022:196.3,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-seeds-ambiguous|route",
+      "Command": "",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some seeds",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 324.8951,
+      "InferenceMs": 118.4449,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to search or list contents of player data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:437.0,\u0022decode_tps\u0022:242.1,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-teleport-docks|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 295.9579,
+      "InferenceMs": 100.003,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to share or export documents.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:430.5,\u0022decode_tps\u0022:243.9,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-teleport-docks|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 217.3131,
+      "InferenceMs": 114.8257,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8277,\u0022prefill_tps\u0022:449.8,\u0022decode_tps\u0022:209.8,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-motel|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to motel",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 302.436,
+      "InferenceMs": 102.7111,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to initiate or share location data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:418.0,\u0022decode_tps\u0022:274.9,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-teleport-motel|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to motel",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "motel"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "motel"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 219.151,
+      "InferenceMs": 121.0539,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022motel\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9147,\u0022prefill_tps\u0022:456.0,\u0022decode_tps\u0022:210.6,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-bring-home|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 302.2723,
+      "InferenceMs": 102.7042,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to access or display homework data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:398.9,\u0022decode_tps\u0022:245.0,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-bring-home|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 194.7301,
+      "InferenceMs": 96.0243,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to access or display homework data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:472.6,\u0022decode_tps\u0022:254.1,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-teleport-home|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 298.0435,
+      "InferenceMs": 106.6255,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available to initiate or share location data.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:389.8,\u0022decode_tps\u0022:242.6,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-teleport-home|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 194.4121,
+      "InferenceMs": 159.3652,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to share location with a home. No tool supports sharing or exporting locations. Only local/navigation tools exist.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:457.4,\u0022decode_tps\u0022:273.6,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-weather-light|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set weather to light rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 289.7516,
+      "InferenceMs": 103.7657,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No weather tool exists; cannot set light conditions.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:372.2,\u0022decode_tps\u0022:243.0,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-weather-light|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set weather to light rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "lightrain"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "lightrain"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 176.5878,
+      "InferenceMs": 105.8761,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022lightrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8574,\u0022prefill_tps\u0022:414.2,\u0022decode_tps\u0022:227.3,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-weather-heavy|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set the weather to heavyrain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 294.3726,
+      "InferenceMs": 111.4025,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No weather tool exists in the available tools. Cannot fulfill request.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:446.1,\u0022decode_tps\u0022:272.6,\u0022peak_ram_mb\u0022:94.2}"
+    },
+    {
+      "Id": "manual-weather-heavy|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set the weather to heavyrain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 168.5025,
+      "InferenceMs": 112.8187,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022heavyrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:481.1,\u0022decode_tps\u0022:216.5,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-shitbox|route",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "spawn a shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 352.1144,
+      "InferenceMs": 288.1375,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to clear a shitbox. \u0027spawn\u0027 -\u003E spawnvehicle. No specific vehicle mentioned, so use default. No location given, omit optional params.\u0022,\u0022confidence\u0022:0.6348,\u0022prefill_tps\u0022:406.9,\u0022decode_tps\u0022:248.4,\u0022peak_ram_mb\u0022:94.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-shitbox|refine",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "spawn a shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 228.5207,
+      "InferenceMs": 255.3169,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022shitbox\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027shitbox\u0027 from query word \u0027shitbox\u0027; no additional properties mentioned so omitted\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:425.0,\u0022decode_tps\u0022:225.0,\u0022peak_ram_mb\u0022:94.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-shitbox-terse|route",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "clearwanted",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 347.0453,
+      "InferenceMs": 237.4331,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022clearwanted\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to clear the wearable. \u0027shitbox\u0027 is a typo for \u0027show\u0027. Call clearwanted tool with no arguments.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:438.8,\u0022decode_tps\u0022:251.7,\u0022peak_ram_mb\u0022:94.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-shitbox-terse|refine",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 226.3394,
+      "InferenceMs": 235.027,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022shitbox\u0022}}],\u0022reasoning\u0022:\u0022arg1 \u0027shitbox\u0027 from query word \u0027shitbox\u0027; no additional properties mentioned so omitted\u0022,\u0022confidence\u0022:0.9435,\u0022prefill_tps\u0022:440.5,\u0022decode_tps\u0022:235.6,\u0022peak_ram_mb\u0022:94.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-car-ambiguous|route",
+      "Command": "",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "spawn a car",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 350.17,
+      "InferenceMs": 296.8729,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to spawn a car. \u0027spawn\u0027 maps to spawnvehicle. No specific vehicle mentioned, so use default. No location given, so omit optional params.\u0022,\u0022confidence\u0022:0.7538,\u0022prefill_tps\u0022:373.6,\u0022decode_tps\u0022:243.1,\u0022peak_ram_mb\u0022:94.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-en|route",
+      "Command": "",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "tell me a joke",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 320.2817,
+      "InferenceMs": 109.5781,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for sending messages or contacts.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:439.3,\u0022decode_tps\u0022:243.4,\u0022peak_ram_mb\u0022:94.3}"
+    },
+    {
+      "Id": "offtopic-de|route",
+      "Command": "",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "erz\u00E4hl mir einen witz",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 322.3302,
+      "InferenceMs": 113.5323,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool available for arithmetic or math.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:429.9,\u0022decode_tps\u0022:216.6,\u0022peak_ram_mb\u0022:94.3}"
+    },
+    {
+      "Id": "offtopic-es|route",
+      "Command": "",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "cu\u00E9ntame un chiste",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 266.4002,
+      "InferenceMs": 221.0465,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No hay herramienta de gesti\u00F3n de chistes o contenido disponible. Ninguna herramienta puede realizar la acci\u00F3n.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:402.4,\u0022decode_tps\u0022:261.3,\u0022peak_ram_mb\u0022:94.3}"
+    },
+    {
+      "Id": "offtopic-fr|route",
+      "Command": "",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "raconte-moi une blague",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 280.1315,
+      "InferenceMs": 170.7957,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool for creating or retrieving a blanket. The available tools only manage player/game management.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:404.9,\u0022decode_tps\u0022:246.9,\u0022peak_ram_mb\u0022:94.3}"
+    }
+  ]
+}

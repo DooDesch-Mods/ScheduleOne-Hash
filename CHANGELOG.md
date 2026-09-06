@@ -3,6 +3,24 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-09-06
+
+### Added
+
+- Type `# give me five OG Kush` and hash runs `give ogkush 5`. It reads the commands your game actually has, and
+  it works offline with no account and no key.
+- English, German, Spanish and French all work, and so does a request that needs two commands at once.
+- A request hash is sure about runs straight away. Between 50% and 79% it shows you the command and waits for a
+  bare `#`; below that it says no rather than guessing.
+- Every request you type this way is kept in `UserData/Hash/queries.jsonl` so the next model can learn from what players actually
+  type. Switch on `NeedleShareUsage` to send it; it stays on your machine until you do.
+- `NeedleKeepContext` lets a later request refer to the one before it. Off by default, so each line stands alone.
+
+### Fixed
+
+- Every command and every argument is checked against your game before any of them runs, so a request that maps
+  onto something that is not there is refused instead of half-run.
+
 ## [1.0.5] - 2026-08-10
 
 ### Added

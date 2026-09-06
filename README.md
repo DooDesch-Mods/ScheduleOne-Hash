@@ -1,7 +1,8 @@
 # hash
 
 A terminal on the in-game phone. Press the console key and instead of the grey bar you get a prompt that completes
-commands, shows what they printed, and remembers what you typed last time.
+commands, shows what they printed, remembers what you typed last time, and turns a request beginning with `# ` into
+real console commands entirely offline.
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
 
@@ -29,6 +30,10 @@ visibly happens, because the reason is in a log file behind the game.
   six mods reads as six lists.
 - **`help`.** The game registers every command with a description and an example each, and shows them to nobody.
   `help` lists the common ones plus a map of the topics, `help give` explains one, `help weather` searches.
+- **Natural language with `# `.** Type `# give me five OG Kush seeds` and the bundled
+  [Cactus Needle](https://github.com/cactus-compute/needle) engine maps the request to the commands currently
+  registered in your game. It runs locally, needs no account or API key, and makes no network request during
+  inference.
 - **`#` is whatever you are looking at**, so you never look an id up. Face someone and `setrelationship # 5`
   maxes them out without knowing they are `benji_coleman`; `setunlocked #` unlocks them. `give #hand 5` is five
   more of whatever you are holding, `setowned #home` buys the property you are standing in, and `teleport #it`
@@ -47,10 +52,36 @@ visibly happens, because the reason is in a log file behind the game.
 Ordinary commands are untouched. `give ogkushseed 5` reaches the game byte for byte, and `raw <line>` turns the
 shell off entirely for a command whose arguments contain a `;` or a quote.
 
+## Natural-language commands
+
+Put `# ` at the beginning of the line, followed by what you want:
+
+```text
+# set the time to noon and make it rain
+```
+
+Needle returns structured calls, not arbitrary command text. hash builds its tool list from the live console
+catalogue, resolves each argument against the same values used by autocomplete, and validates the entire batch
+before any command runs.
+
+- At 80% confidence or above, the proposed command or commands run automatically.
+- From 50% through 79%, hash prints the proposal. Submit a bare `#` to confirm it.
+- Below 50%, an off-topic request, an unknown command, or any invalid argument is refused.
+- `Ctrl+C`, closing the terminal, or beginning another line cancels and invalidates the pending request.
+
+The prefix only has this meaning at the start of a line and when followed by text. Marks keep their existing
+meaning inside commands: `give # 1`, `give #hand 5`, and the rest behave exactly as before.
+
 ## Requirements
 
 - [MelonLoader](https://melonwiki.xyz/) 0.7.3
 - [Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload) 1.7.0 or newer
+
+Install the complete release package. `Hash.Needle.bin` must remain beside `Hash.dll` in the `Mods` directory;
+the first is the pinned Windows x64 inference engine used by the second.
+
+For a source build, `pwsh Tools/fetch-needle.ps1` downloads the same pinned wheel, verifies both SHA-256 hashes,
+and puts the native engine in `Native/`; the Windows post-build step copies it beside the mod automatically.
 
 Sideload is what draws the app, and on a host too old to take the phone out hash refuses to start rather than
 leaving you with a mod you cannot reach. The console key is the way in; a home-screen icon appears alongside it
@@ -62,14 +93,32 @@ while the game's console is switched on, and goes away when it is not.
 
 - `HijackConsoleKey` (default `true`) - the console key opens hash. Turn it off and the vanilla console bar comes
   back, for a player who prefers it or a mod that needs it.
+- `NeedleKeepContext` (default `false`) - let a later `# ` request refer to earlier Needle requests and their
+  command results. The default resets context after every request so each line stands alone.
+- `NeedleShareUsage` (default `false`) - upload the `# ` request log so it can improve the model. See below.
 
 Your history and aliases live in `UserData/Hash/`. Which commands you use most is remembered per save, beside it.
+
+## Helping the model get better
+
+hash writes one line per `# ` request to `UserData/Hash/queries.jsonl`: what you typed, the commands it produced,
+and whether they worked. The last part is the useful one - a request that ran and was right teaches nothing, a
+request you had to type out by hand afterwards teaches exactly what was missing.
+
+**That file never leaves your machine unless you switch `NeedleShareUsage` on.** It is plain text and it holds no
+name, no save and no timestamp, so you can open it and read every line before you decide. Deleting it is fine at
+any time; it starts again empty. With sharing on, hash uploads it when you close the terminal and clears it once
+the server has it.
+
+The model shipped with hash was trained on requests a language model was asked to invent, which is why it
+understands "give me five OG Kush" better than whatever you would actually have typed. Real requests are the only
+way past that.
 
 ## Multiplayer
 
 The console is host-only, and the game says so by doing nothing at all when a client presses the key. hash opens
 anyway and says why - and `help`, the command reference and the search still work, because looking something up is
-not the same as running it.
+not the same as running it. A client-side `# ` request is refused before inference starts.
 
 ## For mod authors
 
@@ -118,6 +167,10 @@ The autocomplete this grew out of started as
 [shreyas1996/Schedule_I_AutocompleteConsoleCommand](https://github.com/shreyas1996/Schedule_I_AutocompleteConsoleCommand).
 The matching, the ranking and the argument tables here are rewritten, but the idea and the first version came from
 that work.
+
+Natural-language command translation is powered by
+[Cactus Compute Needle](https://github.com/cactus-compute/needle), distributed under Apache-2.0. Its license and
+third-party notice ship with every release.
 
 ## License
 

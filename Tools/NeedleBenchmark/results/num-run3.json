@@ -1,0 +1,3764 @@
+{
+  "formatVersion": 1,
+  "generatedAtUtc": "2026-09-05T16:54:46.6763779+00:00",
+  "engine": "C:\\Users\\denni\\Projects\\Mods\\Schedule1\\Hash\\Native\\Hash.Needle.bin",
+  "weights": "C:\\Users\\denni\\Projects\\Mods\\Schedule1\\Hash\\Tools\\NeedleTraining\\artifacts\\run3-schemas.cact",
+  "dataset": "C:\\Users\\denni\\Projects\\Mods\\Schedule1\\Hash\\Tools\\NeedleTraining\\data-production\\human-cases.jsonl",
+  "cases": 152,
+  "exact": 76,
+  "accuracy": 0.5,
+  "totalMs": 56431.4537,
+  "medianInferenceMs": 99.6973,
+  "p95InferenceMs": 165.7075,
+  "byLanguage": {
+    "de": {
+      "cases": 27,
+      "exact": 13,
+      "accuracy": 0.48148148148148145
+    },
+    "en": {
+      "cases": 75,
+      "exact": 44,
+      "accuracy": 0.5866666666666667
+    },
+    "es": {
+      "cases": 25,
+      "exact": 9,
+      "accuracy": 0.36
+    },
+    "fr": {
+      "cases": 25,
+      "exact": 10,
+      "accuracy": 0.4
+    }
+  },
+  "byPhase": {
+    "refine": {
+      "cases": 73,
+      "exact": 17,
+      "accuracy": 0.2328767123287671
+    },
+    "route": {
+      "cases": 79,
+      "exact": 59,
+      "accuracy": 0.7468354430379747
+    }
+  },
+  "results": [
+    {
+      "Id": "give-ogkush-en-1|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 10 ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 229.2001,
+      "InferenceMs": 71.7039,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:499.4,\u0022decode_tps\u0022:302.4,\u0022peak_ram_mb\u0022:74.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-en-1|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 10 ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 234.7073,
+      "InferenceMs": 99.6464,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5171,\u0022prefill_tps\u0022:616.4,\u0022decode_tps\u0022:286.5,\u0022peak_ram_mb\u0022:78.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-en-1|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 10 speed grow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 243.0289,
+      "InferenceMs": 72.5644,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:468.9,\u0022decode_tps\u0022:277.5,\u0022peak_ram_mb\u0022:79.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-en-1|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 10 speed grow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 194.4291,
+      "InferenceMs": 112.7179,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5398,\u0022prefill_tps\u0022:655.8,\u0022decode_tps\u0022:233.3,\u0022peak_ram_mb\u0022:80.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-en-1|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 4 grandaddy seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 223.8992,
+      "InferenceMs": 63.3791,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:611.2,\u0022decode_tps\u0022:336.0,\u0022peak_ram_mb\u0022:80.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-en-1|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 4 grandaddy seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 240.5655,
+      "InferenceMs": 89.9639,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9582,\u0022prefill_tps\u0022:611.0,\u0022decode_tps\u0022:291.0,\u0022peak_ram_mb\u0022:80.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-de-1|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "gib mir 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 228.3941,
+      "InferenceMs": 62.2513,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:638.6,\u0022decode_tps\u0022:323.3,\u0022peak_ram_mb\u0022:81.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-de-1|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "gib mir 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 247.2638,
+      "InferenceMs": 96.9622,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9615,\u0022prefill_tps\u0022:560.3,\u0022decode_tps\u0022:278.4,\u0022peak_ram_mb\u0022:81.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-de-1|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "pack zehn speed grow in mein inventar",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 234.7356,
+      "InferenceMs": 73.6987,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9906,\u0022prefill_tps\u0022:577.2,\u0022decode_tps\u0022:306.9,\u0022peak_ram_mb\u0022:81.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-de-1|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "pack zehn speed grow in mein inventar",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 242.3784,
+      "InferenceMs": 234.1464,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6107,\u0022prefill_tps\u0022:419.9,\u0022decode_tps\u0022:177.9,\u0022peak_ram_mb\u0022:82.2}"
+    },
+    {
+      "Id": "give-granddaddy-de-1|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "gib mir vier granddaddy samen",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 327.8321,
+      "InferenceMs": 93.3617,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9875,\u0022prefill_tps\u0022:424.3,\u0022decode_tps\u0022:244.7,\u0022peak_ram_mb\u0022:82.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-de-1|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "gib mir vier granddaddy samen",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 314.7855,
+      "InferenceMs": 130.4557,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9725,\u0022prefill_tps\u0022:427.0,\u0022decode_tps\u0022:210.1,\u0022peak_ram_mb\u0022:83.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-es-1|route",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "dame 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 324.8156,
+      "InferenceMs": 90.3612,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:415.6,\u0022decode_tps\u0022:220.5,\u0022peak_ram_mb\u0022:83.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-es-1|refine",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "dame 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 328.7155,
+      "InferenceMs": 127.1615,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9630,\u0022prefill_tps\u0022:425.7,\u0022decode_tps\u0022:207.2,\u0022peak_ram_mb\u0022:83.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-es-1|route",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "a\u00F1ade diez speed grow a mi inventario",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 327.8107,
+      "InferenceMs": 101.043,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8957,\u0022prefill_tps\u0022:406.0,\u0022decode_tps\u0022:229.9,\u0022peak_ram_mb\u0022:83.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-es-1|refine",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "a\u00F1ade diez speed grow a mi inventario",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 279.2084,
+      "InferenceMs": 145.6685,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5391,\u0022prefill_tps\u0022:425.8,\u0022decode_tps\u0022:213.2,\u0022peak_ram_mb\u0022:84.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-es-1|route",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "dame cuatro semillas granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 324.0452,
+      "InferenceMs": 87.479,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9498,\u0022prefill_tps\u0022:468.7,\u0022decode_tps\u0022:265.9,\u0022peak_ram_mb\u0022:84.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-es-1|refine",
+      "Command": "give",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "dame cuatro semillas granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 318.0578,
+      "InferenceMs": 134.3447,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9684,\u0022prefill_tps\u0022:412.8,\u0022decode_tps\u0022:209.8,\u0022peak_ram_mb\u0022:84.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-fr-1|route",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "donne-moi 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 324.4664,
+      "InferenceMs": 97.8412,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9884,\u0022prefill_tps\u0022:419.8,\u0022decode_tps\u0022:227.2,\u0022peak_ram_mb\u0022:84.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-fr-1|refine",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "donne-moi 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 324.6141,
+      "InferenceMs": 142.7662,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9686,\u0022prefill_tps\u0022:422.7,\u0022decode_tps\u0022:195.3,\u0022peak_ram_mb\u0022:84.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-fr-1|route",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ajoute dix speed grow \u00E0 mon inventaire",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 324.7154,
+      "InferenceMs": 97.7208,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7392,\u0022prefill_tps\u0022:408.5,\u0022decode_tps\u0022:243.1,\u0022peak_ram_mb\u0022:85.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-fr-1|refine",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ajoute dix speed grow \u00E0 mon inventaire",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 278.9398,
+      "InferenceMs": 140.0104,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5371,\u0022prefill_tps\u0022:436.5,\u0022decode_tps\u0022:223.2,\u0022peak_ram_mb\u0022:85.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-fr-1|route",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "donne-moi quatre graines granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 327.0407,
+      "InferenceMs": 99.6973,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9717,\u0022prefill_tps\u0022:435.6,\u0022decode_tps\u0022:265.1,\u0022peak_ram_mb\u0022:85.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-fr-1|refine",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "donne-moi quatre graines granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 311.6826,
+      "InferenceMs": 142.4965,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9708,\u0022prefill_tps\u0022:414.6,\u0022decode_tps\u0022:212.8,\u0022peak_ram_mb\u0022:85.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-give-og-seed|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me 5 og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 327.4756,
+      "InferenceMs": 90.6912,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:430.6,\u0022decode_tps\u0022:243.4,\u0022peak_ram_mb\u0022:85.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-give-og-seed|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me 5 og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed",
+            "arg2": 5
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 335.4164,
+      "InferenceMs": 170.5125,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9860,\u0022prefill_tps\u0022:435.0,\u0022decode_tps\u0022:164.7,\u0022peak_ram_mb\u0022:85.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-put-ogkush|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "put ten og kush in my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 325.6353,
+      "InferenceMs": 89.5346,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:442.6,\u0022decode_tps\u0022:244.2,\u0022peak_ram_mb\u0022:85.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-put-ogkush|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "put ten og kush in my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 323.7599,
+      "InferenceMs": 134.426,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9418,\u0022prefill_tps\u0022:437.1,\u0022decode_tps\u0022:204.8,\u0022peak_ram_mb\u0022:85.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-add-speedgrow|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "add ten speed grow to my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 326.3378,
+      "InferenceMs": 84.7743,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9796,\u0022prefill_tps\u0022:399.2,\u0022decode_tps\u0022:262.7,\u0022peak_ram_mb\u0022:85.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-add-speedgrow|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "add ten speed grow to my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 266.2157,
+      "InferenceMs": 219.8303,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.3728,\u0022prefill_tps\u0022:411.7,\u0022decode_tps\u0022:183.2,\u0022peak_ram_mb\u0022:85.8}"
+    },
+    {
+      "Id": "teleport-docks-en-1|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 301.39,
+      "InferenceMs": 96.9184,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:413.1,\u0022decode_tps\u0022:222.8,\u0022peak_ram_mb\u0022:86.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-en-1|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 219.2741,
+      "InferenceMs": 129.5018,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:424.4,\u0022decode_tps\u0022:207.6,\u0022peak_ram_mb\u0022:87.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-en-1|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "take me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 295.7576,
+      "InferenceMs": 80.218,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5461,\u0022prefill_tps\u0022:401.2,\u0022decode_tps\u0022:253.8,\u0022peak_ram_mb\u0022:87.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-en-1|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "take me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 185.782,
+      "InferenceMs": 128.4133,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5322,\u0022prefill_tps\u0022:419.0,\u0022decode_tps\u0022:162.8,\u0022peak_ram_mb\u0022:87.2}"
+    },
+    {
+      "Id": "teleport-docks-en-2|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 300.9557,
+      "InferenceMs": 95.3122,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8629,\u0022prefill_tps\u0022:419.2,\u0022decode_tps\u0022:218.2,\u0022peak_ram_mb\u0022:87.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-en-2|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 220.8441,
+      "InferenceMs": 118.987,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:445.0,\u0022decode_tps\u0022:223.1,\u0022peak_ram_mb\u0022:87.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-1|route",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleportiere mich zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 297.2957,
+      "InferenceMs": 91.7767,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:443.9,\u0022decode_tps\u0022:262.6,\u0022peak_ram_mb\u0022:87.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-1|refine",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleportiere mich zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 235.4041,
+      "InferenceMs": 128.9057,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:444.2,\u0022decode_tps\u0022:221.1,\u0022peak_ram_mb\u0022:87.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-de-1|route",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring mich nach hause",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 302.0749,
+      "InferenceMs": 93.3622,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.4229,\u0022prefill_tps\u0022:426.3,\u0022decode_tps\u0022:223.3,\u0022peak_ram_mb\u0022:87.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-de-1|refine",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring mich nach hause",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "michael_boog"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 231.1859,
+      "InferenceMs": 110.7845,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022michael_boog\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7255,\u0022prefill_tps\u0022:482.6,\u0022decode_tps\u0022:286.8,\u0022peak_ram_mb\u0022:87.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-2|route",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ich will zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setowned",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 298.2636,
+      "InferenceMs": 83.8309,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setowned\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5040,\u0022prefill_tps\u0022:441.8,\u0022decode_tps\u0022:247.6,\u0022peak_ram_mb\u0022:87.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-2|refine",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ich will zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 209.449,
+      "InferenceMs": 108.0841,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:463.9,\u0022decode_tps\u0022:243.6,\u0022peak_ram_mb\u0022:87.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-es-1|route",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teletransp\u00F3rtame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 290.6758,
+      "InferenceMs": 96.5221,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:453.7,\u0022decode_tps\u0022:246.9,\u0022peak_ram_mb\u0022:87.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-es-1|refine",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teletransp\u00F3rtame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 196.1629,
+      "InferenceMs": 149.4073,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7222,\u0022prefill_tps\u0022:446.4,\u0022decode_tps\u0022:165.2,\u0022peak_ram_mb\u0022:88.0}"
+    },
+    {
+      "Id": "teleport-home-es-1|route",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ll\u00E9vame a casa",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 299.4754,
+      "InferenceMs": 87.4107,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9264,\u0022prefill_tps\u0022:423.7,\u0022decode_tps\u0022:247.4,\u0022peak_ram_mb\u0022:88.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-es-1|refine",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ll\u00E9vame a casa",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 196.2569,
+      "InferenceMs": 150.6312,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6740,\u0022prefill_tps\u0022:447.3,\u0022decode_tps\u0022:148.2,\u0022peak_ram_mb\u0022:88.2}"
+    },
+    {
+      "Id": "teleport-docks-es-2|route",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ll\u00E9vame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setowned",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 303.0051,
+      "InferenceMs": 91.2676,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setowned\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8249,\u0022prefill_tps\u0022:405.0,\u0022decode_tps\u0022:247.4,\u0022peak_ram_mb\u0022:88.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-es-2|refine",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ll\u00E9vame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 196.3576,
+      "InferenceMs": 145.8246,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7238,\u0022prefill_tps\u0022:442.4,\u0022decode_tps\u0022:157.8,\u0022peak_ram_mb\u0022:88.3}"
+    },
+    {
+      "Id": "teleport-docks-fr-1|route",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "t\u00E9l\u00E9porte-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 290.4458,
+      "InferenceMs": 99.8192,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:409.5,\u0022decode_tps\u0022:251.2,\u0022peak_ram_mb\u0022:88.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-fr-1|refine",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "t\u00E9l\u00E9porte-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 220.1755,
+      "InferenceMs": 131.4755,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:435.6,\u0022decode_tps\u0022:222.2,\u0022peak_ram_mb\u0022:88.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-fr-1|route",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ram\u00E8ne-moi chez moi",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 299.8819,
+      "InferenceMs": 93.4171,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6945,\u0022prefill_tps\u0022:442.4,\u0022decode_tps\u0022:245.1,\u0022peak_ram_mb\u0022:88.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-fr-1|refine",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ram\u00E8ne-moi chez moi",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 192.3697,
+      "InferenceMs": 149.5274,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8390,\u0022prefill_tps\u0022:475.7,\u0022decode_tps\u0022:155.5,\u0022peak_ram_mb\u0022:88.6}"
+    },
+    {
+      "Id": "teleport-docks-fr-2|route",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "emm\u00E8ne-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setowned",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 304.5928,
+      "InferenceMs": 92.4321,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setowned\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9890,\u0022prefill_tps\u0022:440.2,\u0022decode_tps\u0022:250.6,\u0022peak_ram_mb\u0022:88.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-fr-2|refine",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "emm\u00E8ne-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 219.5739,
+      "InferenceMs": 132.56,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:462.2,\u0022decode_tps\u0022:204.6,\u0022peak_ram_mb\u0022:88.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-en|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "make it noon",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 279.3433,
+      "InferenceMs": 78.4332,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9908,\u0022prefill_tps\u0022:390.8,\u0022decode_tps\u0022:259.0,\u0022peak_ram_mb\u0022:88.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-en|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "make it noon",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 171.9573,
+      "InferenceMs": 128.7498,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7190,\u0022prefill_tps\u0022:393.4,\u0022decode_tps\u0022:168.8,\u0022peak_ram_mb\u0022:89.0}"
+    },
+    {
+      "Id": "time-eight-en|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set the time to 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 275.4978,
+      "InferenceMs": 72.9651,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:455.0,\u0022decode_tps\u0022:279.7,\u0022peak_ram_mb\u0022:89.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-en|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set the time to 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 168.0682,
+      "InferenceMs": 126.352,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8985,\u0022prefill_tps\u0022:484.3,\u0022decode_tps\u0022:167.5,\u0022peak_ram_mb\u0022:89.1}"
+    },
+    {
+      "Id": "time-noon-de|route",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "mach es mittag",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setquestentrystate",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 270.3013,
+      "InferenceMs": 90.6217,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setquestentrystate\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6630,\u0022prefill_tps\u0022:574.5,\u0022decode_tps\u0022:229.9,\u0022peak_ram_mb\u0022:89.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-de|refine",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "mach es mittag",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 170.5916,
+      "InferenceMs": 134.898,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9158,\u0022prefill_tps\u0022:475.6,\u0022decode_tps\u0022:155.2,\u0022peak_ram_mb\u0022:89.3}"
+    },
+    {
+      "Id": "time-eight-de|route",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "stell die uhr auf 8 uhr morgens",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 265.9815,
+      "InferenceMs": 98.5339,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:420.2,\u0022decode_tps\u0022:234.2,\u0022peak_ram_mb\u0022:89.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-de|refine",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "stell die uhr auf 8 uhr morgens",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 163.1717,
+      "InferenceMs": 142.4683,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8258,\u0022prefill_tps\u0022:467.5,\u0022decode_tps\u0022:163.7,\u0022peak_ram_mb\u0022:89.6}"
+    },
+    {
+      "Id": "time-noon-es|route",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ponlo al mediod\u00EDa",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 283.1944,
+      "InferenceMs": 78.4044,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:451.8,\u0022decode_tps\u0022:251.3,\u0022peak_ram_mb\u0022:89.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-es|refine",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ponlo al mediod\u00EDa",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 169.4659,
+      "InferenceMs": 127.5361,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9710,\u0022prefill_tps\u0022:483.5,\u0022decode_tps\u0022:165.7,\u0022peak_ram_mb\u0022:89.8}"
+    },
+    {
+      "Id": "time-eight-es|route",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "pon la hora a las 8",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 237.8923,
+      "InferenceMs": 82.1528,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:434.5,\u0022decode_tps\u0022:249.5,\u0022peak_ram_mb\u0022:89.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-es|refine",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "pon la hora a las 8",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 169.5946,
+      "InferenceMs": 131.0579,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9671,\u0022prefill_tps\u0022:464.3,\u0022decode_tps\u0022:165.2,\u0022peak_ram_mb\u0022:90.0}"
+    },
+    {
+      "Id": "time-noon-fr|route",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "mets l\u0027heure \u00E0 midi",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 273.7162,
+      "InferenceMs": 89.0076,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:405.4,\u0022decode_tps\u0022:250.6,\u0022peak_ram_mb\u0022:90.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-fr|refine",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "mets l\u0027heure \u00E0 midi",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 165.2458,
+      "InferenceMs": 134.9654,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8335,\u0022prefill_tps\u0022:488.2,\u0022decode_tps\u0022:163.3,\u0022peak_ram_mb\u0022:90.1}"
+    },
+    {
+      "Id": "time-eight-fr|route",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "r\u00E8gle l\u0027heure \u00E0 8h",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 274.4616,
+      "InferenceMs": 82.8308,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:451.6,\u0022decode_tps\u0022:274.9,\u0022peak_ram_mb\u0022:90.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-fr|refine",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "r\u00E8gle l\u0027heure \u00E0 8h",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 168.3362,
+      "InferenceMs": 135.4148,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8955,\u0022prefill_tps\u0022:487.2,\u0022decode_tps\u0022:165.9,\u0022peak_ram_mb\u0022:90.3}"
+    },
+    {
+      "Id": "historical-time-day-long|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set the time to the day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 232.8514,
+      "InferenceMs": 74.6944,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:457.4,\u0022decode_tps\u0022:269.0,\u0022peak_ram_mb\u0022:90.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-time-day-long|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set the time to the day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 163.9084,
+      "InferenceMs": 126.1639,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8042,\u0022prefill_tps\u0022:489.7,\u0022decode_tps\u0022:167.5,\u0022peak_ram_mb\u0022:90.4}"
+    },
+    {
+      "Id": "historical-time-day-short|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set time day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 275.6621,
+      "InferenceMs": 66.1278,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:428.4,\u0022decode_tps\u0022:288.8,\u0022peak_ram_mb\u0022:90.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-time-day-short|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set time day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 166.6151,
+      "InferenceMs": 114.3874,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7764,\u0022prefill_tps\u0022:491.4,\u0022decode_tps\u0022:177.1,\u0022peak_ram_mb\u0022:90.6}"
+    },
+    {
+      "Id": "historical-time-eight|route",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set time 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 276.5371,
+      "InferenceMs": 76.6099,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:403.7,\u0022decode_tps\u0022:251.3,\u0022peak_ram_mb\u0022:90.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-time-eight|refine",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set time 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 169.2575,
+      "InferenceMs": 126.4302,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7080,\u0022prefill_tps\u0022:427.7,\u0022decode_tps\u0022:165.1,\u0022peak_ram_mb\u0022:90.7}"
+    },
+    {
+      "Id": "weather-clear-en-1|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "remove rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 286.6962,
+      "InferenceMs": 80.8437,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5473,\u0022prefill_tps\u0022:402.9,\u0022decode_tps\u0022:250.4,\u0022peak_ram_mb\u0022:90.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-en-1|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "remove rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 174.1971,
+      "InferenceMs": 100.5559,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022heavyrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9008,\u0022prefill_tps\u0022:424.9,\u0022decode_tps\u0022:260.1,\u0022peak_ram_mb\u0022:90.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-en-2|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "stop the rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 287.8356,
+      "InferenceMs": 74.5118,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9629,\u0022prefill_tps\u0022:428.7,\u0022decode_tps\u0022:262.2,\u0022peak_ram_mb\u0022:91.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-en-2|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "stop the rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 172.6498,
+      "InferenceMs": 95.4882,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022heavyrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8654,\u0022prefill_tps\u0022:496.3,\u0022decode_tps\u0022:258.9,\u0022peak_ram_mb\u0022:91.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-de-1|route",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "beende den regen",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 287.1515,
+      "InferenceMs": 84.7248,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7609,\u0022prefill_tps\u0022:386.1,\u0022decode_tps\u0022:249.5,\u0022peak_ram_mb\u0022:91.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-de-1|refine",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "beende den regen",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": ""
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 154.8037,
+      "InferenceMs": 92.1304,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5068,\u0022prefill_tps\u0022:416.6,\u0022decode_tps\u0022:259.1,\u0022peak_ram_mb\u0022:91.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-de-2|route",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "mach den regen aus",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 286.8442,
+      "InferenceMs": 83.519,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8723,\u0022prefill_tps\u0022:448.0,\u0022decode_tps\u0022:247.4,\u0022peak_ram_mb\u0022:91.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-de-2|refine",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "mach den regen aus",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 156.1498,
+      "InferenceMs": 122.89,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6076,\u0022prefill_tps\u0022:486.2,\u0022decode_tps\u0022:183.5,\u0022peak_ram_mb\u0022:91.3}"
+    },
+    {
+      "Id": "weather-clear-es-1|route",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "quita la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setvar",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 287.4367,
+      "InferenceMs": 86.651,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setvar\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9644,\u0022prefill_tps\u0022:432.5,\u0022decode_tps\u0022:247.9,\u0022peak_ram_mb\u0022:91.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-es-1|refine",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "quita la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 154.0323,
+      "InferenceMs": 140.3905,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5962,\u0022prefill_tps\u0022:466.2,\u0022decode_tps\u0022:160.1,\u0022peak_ram_mb\u0022:91.4}"
+    },
+    {
+      "Id": "weather-clear-es-2|route",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "para la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 286.747,
+      "InferenceMs": 78.8459,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7522,\u0022prefill_tps\u0022:435.2,\u0022decode_tps\u0022:286.4,\u0022peak_ram_mb\u0022:91.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-es-2|refine",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "para la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 152.2856,
+      "InferenceMs": 135.3265,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5712,\u0022prefill_tps\u0022:469.6,\u0022decode_tps\u0022:167.4,\u0022peak_ram_mb\u0022:91.6}"
+    },
+    {
+      "Id": "weather-clear-fr-1|route",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "arr\u00EAte la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setvar",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 288.4205,
+      "InferenceMs": 89.2294,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setvar\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8407,\u0022prefill_tps\u0022:416.3,\u0022decode_tps\u0022:252.3,\u0022peak_ram_mb\u0022:91.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-fr-1|refine",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "arr\u00EAte la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 153.1279,
+      "InferenceMs": 136.4651,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7548,\u0022prefill_tps\u0022:450.1,\u0022decode_tps\u0022:171.0,\u0022peak_ram_mb\u0022:91.7}"
+    },
+    {
+      "Id": "weather-clear-fr-2|route",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "enl\u00E8ve la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setvar",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 288.0906,
+      "InferenceMs": 90.0986,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setvar\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9369,\u0022prefill_tps\u0022:416.9,\u0022decode_tps\u0022:248.2,\u0022peak_ram_mb\u0022:91.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-fr-2|refine",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "enl\u00E8ve la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 154.254,
+      "InferenceMs": 137.9124,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6808,\u0022prefill_tps\u0022:447.9,\u0022decode_tps\u0022:168.9,\u0022peak_ram_mb\u0022:91.9}"
+    },
+    {
+      "Id": "cash-en|route",
+      "Command": "changecash",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "add 500 dollars to my cash",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 337.4192,
+      "InferenceMs": 96.4615,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022changecash\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:386.8,\u0022decode_tps\u0022:243.3,\u0022peak_ram_mb\u0022:91.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-en|refine",
+      "Command": "changecash",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "add 500 dollars to my cash",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 175.2081,
+      "InferenceMs": 137.494,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8951,\u0022prefill_tps\u0022:429.1,\u0022decode_tps\u0022:166.0,\u0022peak_ram_mb\u0022:91.9}"
+    },
+    {
+      "Id": "speed-en|route",
+      "Command": "setmovespeed",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set my movement speed to 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 363.8943,
+      "InferenceMs": 97.292,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:431.2,\u0022decode_tps\u0022:245.3,\u0022peak_ram_mb\u0022:91.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-en|refine",
+      "Command": "setmovespeed",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set my movement speed to 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 181.8924,
+      "InferenceMs": 150.8143,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2.0}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5868,\u0022prefill_tps\u0022:483.6,\u0022decode_tps\u0022:174.8,\u0022peak_ram_mb\u0022:91.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-de|route",
+      "Command": "changecash",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "f\u00FCge meinem bargeld 500 dollar hinzu",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "addxp",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 336.2884,
+      "InferenceMs": 115.8398,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022addxp\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:400.3,\u0022decode_tps\u0022:240.5,\u0022peak_ram_mb\u0022:91.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-de|refine",
+      "Command": "changecash",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "f\u00FCge meinem bargeld 500 dollar hinzu",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 0.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 172.9652,
+      "InferenceMs": 193.8211,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022changecash\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0.0}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7924,\u0022prefill_tps\u0022:444.6,\u0022decode_tps\u0022:140.9,\u0022peak_ram_mb\u0022:91.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-de|route",
+      "Command": "setmovespeed",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "setz meine laufgeschwindigkeit auf 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 365.28,
+      "InferenceMs": 117.3562,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:425.2,\u0022decode_tps\u0022:242.3,\u0022peak_ram_mb\u0022:92.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-de|refine",
+      "Command": "setmovespeed",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "setz meine laufgeschwindigkeit auf 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 182.03,
+      "InferenceMs": 168.1508,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2.0}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7184,\u0022prefill_tps\u0022:475.2,\u0022decode_tps\u0022:174.8,\u0022peak_ram_mb\u0022:92.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-es|route",
+      "Command": "changecash",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "a\u00F1ade 500 d\u00F3lares a mi efectivo",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "addxp",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 354.3137,
+      "InferenceMs": 104.4388,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022addxp\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:430.3,\u0022decode_tps\u0022:242.2,\u0022peak_ram_mb\u0022:92.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-es|refine",
+      "Command": "changecash",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "a\u00F1ade 500 d\u00F3lares a mi efectivo",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 173.1761,
+      "InferenceMs": 146.3215,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9378,\u0022prefill_tps\u0022:480.1,\u0022decode_tps\u0022:162.7,\u0022peak_ram_mb\u0022:92.3}"
+    },
+    {
+      "Id": "speed-es|route",
+      "Command": "setmovespeed",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "pon mi velocidad de movimiento en 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 365.7431,
+      "InferenceMs": 107.0005,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:427.9,\u0022decode_tps\u0022:244.8,\u0022peak_ram_mb\u0022:92.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-es|refine",
+      "Command": "setmovespeed",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "pon mi velocidad de movimiento en 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 181.3532,
+      "InferenceMs": 116.6045,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2.0}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9618,\u0022prefill_tps\u0022:480.4,\u0022decode_tps\u0022:264.6,\u0022peak_ram_mb\u0022:92.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-fr|route",
+      "Command": "changecash",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "ajoute 500 dollars \u00E0 mon argent",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "addxp",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 354.3446,
+      "InferenceMs": 93.1739,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022addxp\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:420.6,\u0022decode_tps\u0022:266.1,\u0022peak_ram_mb\u0022:92.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-fr|refine",
+      "Command": "changecash",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "ajoute 500 dollars \u00E0 mon argent",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 0.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 173.7356,
+      "InferenceMs": 176.1898,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022changecash\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0.0}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6931,\u0022prefill_tps\u0022:468.8,\u0022decode_tps\u0022:143.1,\u0022peak_ram_mb\u0022:92.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-fr|route",
+      "Command": "setmovespeed",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "r\u00E8gle ma vitesse de d\u00E9placement sur 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 354.0567,
+      "InferenceMs": 115.7998,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:402.8,\u0022decode_tps\u0022:243.8,\u0022peak_ram_mb\u0022:92.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-fr|refine",
+      "Command": "setmovespeed",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "r\u00E8gle ma vitesse de d\u00E9placement sur 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 180.3066,
+      "InferenceMs": 124.3369,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2.0}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9630,\u0022prefill_tps\u0022:446.3,\u0022decode_tps\u0022:262.4,\u0022peak_ram_mb\u0022:93.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-bench|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "i want a mixing bench",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 323.4014,
+      "InferenceMs": 84.1022,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:422.0,\u0022decode_tps\u0022:244.4,\u0022peak_ram_mb\u0022:93.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-bench|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "i want a mixing bench",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstation"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstationmk2"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 246.1237,
+      "InferenceMs": 125.9372,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022mixingstationmk2\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6742,\u0022prefill_tps\u0022:440.9,\u0022decode_tps\u0022:249.1,\u0022peak_ram_mb\u0022:93.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-table|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "I want a mixing table",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 323.3504,
+      "InferenceMs": 80.0917,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9890,\u0022prefill_tps\u0022:438.6,\u0022decode_tps\u0022:247.1,\u0022peak_ram_mb\u0022:94.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-table|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "I want a mixing table",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstation"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstationmk2"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 283.8697,
+      "InferenceMs": 122.8187,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022mixingstationmk2\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7300,\u0022prefill_tps\u0022:447.7,\u0022decode_tps\u0022:250.3,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-supergrow|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "supergrow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 323.4111,
+      "InferenceMs": 78.1338,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:393.5,\u0022decode_tps\u0022:247.0,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-supergrow|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "supergrow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "supergrow"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 209.0726,
+      "InferenceMs": 130.5492,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8349,\u0022prefill_tps\u0022:419.9,\u0022decode_tps\u0022:159.4,\u0022peak_ram_mb\u0022:94.1}"
+    },
+    {
+      "Id": "historical-kill-safety|route",
+      "Command": "sethealth",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "kill",
+      "Expected": [
+        {
+          "name": "sethealth",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setstaminareserve",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 353.4446,
+      "InferenceMs": 75.5209,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setstaminareserve\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8949,\u0022prefill_tps\u0022:436.3,\u0022decode_tps\u0022:280.1,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-kill-safety|refine",
+      "Command": "sethealth",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "kill",
+      "Expected": [
+        {
+          "name": "sethealth",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 165.3592,
+      "InferenceMs": 126.8478,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9728,\u0022prefill_tps\u0022:488.3,\u0022decode_tps\u0022:172.1,\u0022peak_ram_mb\u0022:94.1}"
+    },
+    {
+      "Id": "historical-home-compact|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setowned",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 297.3853,
+      "InferenceMs": 76.0465,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setowned\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6533,\u0022prefill_tps\u0022:352.0,\u0022decode_tps\u0022:249.6,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-home-compact|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 193.9523,
+      "InferenceMs": 87.5943,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022#home\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5132,\u0022prefill_tps\u0022:382.4,\u0022decode_tps\u0022:274.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022teleport.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-teleport-major|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to the major",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 293.3798,
+      "InferenceMs": 84.2477,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:462.0,\u0022decode_tps\u0022:250.0,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-teleport-major|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to the major",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "mayor"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#main"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 197.0349,
+      "InferenceMs": 107.7004,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022#main\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.3151,\u0022prefill_tps\u0022:458.5,\u0022decode_tps\u0022:252.4,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022teleport.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-bring-sea|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring me to the sea",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 294.6408,
+      "InferenceMs": 83.4339,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7739,\u0022prefill_tps\u0022:446.5,\u0022decode_tps\u0022:248.0,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-bring-sea|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring me to the sea",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 194.8602,
+      "InferenceMs": 135.907,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6029,\u0022prefill_tps\u0022:479.1,\u0022decode_tps\u0022:162.5,\u0022peak_ram_mb\u0022:94.1}"
+    },
+    {
+      "Id": "manual-give-ogkush-some|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 322.1205,
+      "InferenceMs": 84.7694,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9866,\u0022prefill_tps\u0022:449.0,\u0022decode_tps\u0022:243.1,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-some|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me some ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 321.0716,
+      "InferenceMs": 132.0855,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9896,\u0022prefill_tps\u0022:404.1,\u0022decode_tps\u0022:205.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-seed|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 325.9979,
+      "InferenceMs": 88.2307,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9833,\u0022prefill_tps\u0022:440.0,\u0022decode_tps\u0022:251.1,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-seed|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me some og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 334.9803,
+      "InferenceMs": 167.9729,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9581,\u0022prefill_tps\u0022:434.8,\u0022decode_tps\u0022:167.9,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkushseed|route",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some ogkushseed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 324.3151,
+      "InferenceMs": 90.6088,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:434.0,\u0022decode_tps\u0022:242.4,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkushseed|refine",
+      "Command": "give",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "give me some ogkushseed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 306.5553,
+      "InferenceMs": 165.7075,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:441.1,\u0022decode_tps\u0022:170.1,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-de|route",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "gib mir ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 327.1717,
+      "InferenceMs": 84.736,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:419.5,\u0022decode_tps\u0022:242.3,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-de|refine",
+      "Command": "give",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "gib mir ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 320.6953,
+      "InferenceMs": 122.1325,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:404.3,\u0022decode_tps\u0022:222.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-seeds-ambiguous|route",
+      "Command": "",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "give me some seeds",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 324.0629,
+      "InferenceMs": 87.3322,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9805,\u0022prefill_tps\u0022:428.7,\u0022decode_tps\u0022:219.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-docks|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 301.1153,
+      "InferenceMs": 84.229,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:427.0,\u0022decode_tps\u0022:260.8,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-docks|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 216.2767,
+      "InferenceMs": 128.0033,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:446.9,\u0022decode_tps\u0022:202.4,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-motel|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me to motel",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 296.7374,
+      "InferenceMs": 89.3501,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:431.7,\u0022decode_tps\u0022:246.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-motel|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me to motel",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "motel"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "motel"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 217.5298,
+      "InferenceMs": 133.034,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022motel\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:432.1,\u0022decode_tps\u0022:208.9,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-bring-home|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "bring me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setowned",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 301.5763,
+      "InferenceMs": 77.1374,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setowned\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.4307,\u0022prefill_tps\u0022:401.5,\u0022decode_tps\u0022:268.5,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-bring-home|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "bring me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 194.0375,
+      "InferenceMs": 134.704,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7177,\u0022prefill_tps\u0022:424.8,\u0022decode_tps\u0022:162.1,\u0022peak_ram_mb\u0022:94.1}"
+    },
+    {
+      "Id": "manual-teleport-home|route",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "teleport me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 297.3063,
+      "InferenceMs": 91.4949,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:384.5,\u0022decode_tps\u0022:223.0,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-home|refine",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "teleport me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 199.4285,
+      "InferenceMs": 136.5686,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5081,\u0022prefill_tps\u0022:419.8,\u0022decode_tps\u0022:163.2,\u0022peak_ram_mb\u0022:94.1}"
+    },
+    {
+      "Id": "manual-weather-light|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set weather to light rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 286.7409,
+      "InferenceMs": 80.9007,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:383.6,\u0022decode_tps\u0022:268.7,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-weather-light|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set weather to light rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "lightrain"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "lightrain"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 174.2354,
+      "InferenceMs": 113.0631,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022lightrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:419.9,\u0022decode_tps\u0022:230.6,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-weather-heavy|route",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "set the weather to heavyrain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 290.0842,
+      "InferenceMs": 82.7474,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:450.6,\u0022decode_tps\u0022:250.0,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-weather-heavy|refine",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "set the weather to heavyrain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 169.4997,
+      "InferenceMs": 123.7074,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022heavyrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:483.9,\u0022decode_tps\u0022:212.6,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-shitbox|route",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "spawn a shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Exact": true,
+      "InitMs": 335.8392,
+      "InferenceMs": 100.2791,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:441.0,\u0022decode_tps\u0022:248.4,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-shitbox|refine",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "spawn a shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 229.9829,
+      "InferenceMs": 160.442,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022shitbox\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:424.3,\u0022decode_tps\u0022:196.3,\u0022peak_ram_mb\u0022:94.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-shitbox-terse|route",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Actual": [
+        {
+          "name": "clearinventory",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 349.5176,
+      "InferenceMs": 84.537,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022clearinventory\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9154,\u0022prefill_tps\u0022:390.3,\u0022decode_tps\u0022:254.9,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-shitbox-terse|refine",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "refine",
+      "Query": "shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 229.5372,
+      "InferenceMs": 142.2661,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022shitbox\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:433.3,\u0022decode_tps\u0022:209.9,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-car-ambiguous|route",
+      "Command": "",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "spawn a car",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 349.0869,
+      "InferenceMs": 98.2182,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:374.8,\u0022decode_tps\u0022:247.2,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-en|route",
+      "Command": "",
+      "Language": "en",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "tell me a joke",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "help",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 319.6817,
+      "InferenceMs": 82.0391,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022help\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7282,\u0022prefill_tps\u0022:439.2,\u0022decode_tps\u0022:256.3,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-de|route",
+      "Command": "",
+      "Language": "de",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "erz\u00E4hl mir einen witz",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "hashequip",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 320.106,
+      "InferenceMs": 106.0783,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022hashequip\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8660,\u0022prefill_tps\u0022:424.5,\u0022decode_tps\u0022:242.7,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-es|route",
+      "Command": "",
+      "Language": "es",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "cu\u00E9ntame un chiste",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "clear",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 265.6952,
+      "InferenceMs": 85.1113,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022clear\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9744,\u0022prefill_tps\u0022:405.7,\u0022decode_tps\u0022:270.6,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-fr|route",
+      "Command": "",
+      "Language": "fr",
+      "Split": "human",
+      "Phase": "route",
+      "Query": "raconte-moi une blague",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "hashhand",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 278.9062,
+      "InferenceMs": 94.6109,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022hashhand\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6830,\u0022prefill_tps\u0022:391.2,\u0022decode_tps\u0022:249.3,\u0022peak_ram_mb\u0022:94.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    }
+  ]
+}

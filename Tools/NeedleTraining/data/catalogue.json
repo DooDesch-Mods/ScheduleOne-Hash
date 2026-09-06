@@ -1,0 +1,21 @@
+{
+  "generatedAtUtc": "2026-08-21T15:58:43.636441+00:00",
+  "bridge": null,
+  "snapshot": "F:\\Projects\\Mods\\Schedule1\\_MPTest4\\Schedule I\\Mods\\Hash.Needle.Schema.json",
+  "scene": "DEBUG snapshot",
+  "count": 123,
+  "fingerprint": "b243c4b6908bc78c153bf4b9667b179a550c35a88dd123829d65e2ff1e55e7de",
+  "hashBuiltins": [
+    "alias",
+    "clear",
+    "copy",
+    "font",
+    "grep",
+    "help",
+    "history",
+    "logs",
+    "raw",
+    "repeat",
+    "unalias"
+  ]
+}

@@ -1,0 +1,59 @@
+﻿{
+    "schemaVersion":  1,
+    "generatedAtUtc":  "2026-08-21T01:37:16.9077877Z",
+    "bridge":  "http://127.0.0.1:6139",
+    "cases":  1,
+    "perfect":  1,
+    "passRate":  1,
+    "perfectOnBroad":  1,
+    "perfectAfterSelectedCommand":  0,
+    "perfectAfterRequiredArguments":  0,
+    "unresolved":  0,
+    "errors":  0,
+    "averageCaseMs":  92,
+    "medianCaseMs":  92,
+    "p95CaseMs":  92,
+    "byLanguage":  [
+                       {
+                           "language":  "",
+                           "cases":  1,
+                           "perfect":  1,
+                           "passRate":  1
+                       }
+                   ],
+    "byCategory":  [
+                       {
+                           "category":  "",
+                           "cases":  1,
+                           "perfect":  1,
+                           "passRate":  1
+                       }
+                   ],
+    "results":  [
+                    {
+                        "id":  "give-speedgrow-en-1",
+                        "language":  "en",
+                        "category":  "give",
+                        "query":  "give me 10 speed grow",
+                        "expected":  "give speedgrow 10",
+                        "selectedCommand":  "",
+                        "status":  "perfect",
+                        "firstPerfectIteration":  1,
+                        "totalMs":  92,
+                        "stages":  [
+                                       {
+                                           "iteration":  1,
+                                           "kind":  "broad",
+                                           "result":  {
+                                                          "commands":  [
+                                                                           "give speedgrow 10"
+                                                                       ],
+                                                          "confidence":  1,
+                                                          "error":  "",
+                                                          "elapsedMs":  69
+                                                      }
+                                       }
+                                   ]
+                    }
+                ]
+}

@@ -3,8 +3,8 @@
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
 
 > **Press the console key and get a terminal.** It completes commands and their arguments, it shows what a
-> command printed, and it remembers what you typed last session. The vanilla console is one input field with no
-> output, no help and no memory.
+> command printed, remembers what you typed last session, and turns `# give me five OG Kush seeds` into a real
+> command locally with Cactus Needle. The vanilla console is one input field with no output, no help and no memory.
 
 ![Version](https://img.shields.io/badge/version-1.0.3-blue)
 ![Game](https://img.shields.io/badge/game-Schedule%20I-purple)
@@ -23,6 +23,8 @@
   and highlights the argument you are on, so `setrelationship` stops being guesswork.
 - **You can see what happened.** Vanilla runs `give bananas 1` and shows you nothing, with the reason sitting in
   a log file behind the game. hash prints the answer.
+- **Speak in commands.** Start a line with `# ` and describe what you want. High-confidence translations run;
+  uncertain ones are shown first and need a bare `#` to confirm. Needle runs offline, without an account or API key.
 - **`#` is whatever you are looking at**, so you never look an id up. `setrelationship # 5` maxes out the
   person in front of you, `give #hand 5` is five more of what you are holding, `setowned #home` buys the place
   you are standing in. Also `#car`, `#near`, `#it` and `#last`.
@@ -32,7 +34,8 @@ Everything is a command: `help` lists them, `help <topic>` narrows, `help <comma
 
 ## Requirements
 
-MelonLoader 0.7.3+ and [Sideload](https://thunderstore.io/c/schedule-i/p/DooDesch/Sideload/) 1.7.0+. The console
+MelonLoader 0.7.3+ and [Sideload](https://thunderstore.io/c/schedule-i/p/DooDesch/Sideload/) 1.7.0+. Keep the bundled
+`Hash.Needle.bin` beside `Hash.dll`; both are installed by the package. The console
 has to be switched on in the game's own settings (Settings > Gameplay), and it is host only - that is the game's
 rule, not this mod's. hash says so instead of ignoring you.
 
