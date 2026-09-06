@@ -1,6 +1,7 @@
-# Task: opt-in usage capture
+# Opt-in usage capture
 
-**Status:** specified, not built. This is the job for whoever picks it up next.
+**Status:** built, off by default, shipped with the `# ` feature. What is left is the analysis side - turning a
+returned `queries.jsonl` into benchmark cases and training rows.
 
 ## Why this is worth more than another training run
 
@@ -12,62 +13,35 @@ The training case is the same finding from the other side. The corpus is written
 to phrase requests; `RESULTS.md` shows where that distribution stops matching players. Real queries remove
 the guess instead of improving it.
 
-## What already exists
+## What the mod writes
 
-`Game/NeedleCommandTranslator.cs:268` already serialises exactly the right event:
-
-```csharp
-Core.Log?.Msg("Hash Needle event " + JsonSerializer.Serialize(new
-{
-    type = "query", query = work.Text, commands = result.Commands,
-    confidence = result.Confidence, error = result.Error,
-    proven = result.Proven, constrained, elapsedMs = inferenceMs,
-}));
-```
-
-It is inside `#if DEBUG`, so a release build writes only "Hash translated in N ms." Nothing else in the
-mod records what a player typed.
-
-## What to build
-
-**1. An explicit opt-in, default off.** A setting the player turns on, not a flag they have to discover to
-turn off. Nothing is written until they do.
-
-**2. Its own file, not the MelonLoader log.** `UserData/Hash/queries.jsonl`, one JSON object per line.
-The MelonLoader log carries every other mod's output and whatever those mods print; asking a player to
-send it means asking for things neither of us wants. A file whose whole content is their own queries is
-one they can open and read before sending.
-
-**3. Fields.** The event above is close to right. Drop `elapsedMs` (not useful here), keep the rest, and
-add the two below. No player id, no session id, no save name, no timestamps finer than the day - none of
-it helps the model and all of it makes the file harder to hand over.
-
-**4. The correction signal - this is the valuable part.** A raw query has no ground truth; someone would
-have to label every line by hand. What the mod can observe for free is whether its answer was right:
-
-- the console rejected the command it produced (an error came back),
-- the player typed a different command themselves within the next few seconds,
-- the player re-phrased and asked again immediately.
-
-Each of those marks a line as a failure and, in the second case, supplies the correct answer. A file of
-labelled failures is worth more than ten times as many unlabelled queries. If only one thing from this
-document gets built, build this.
-
-Suggested shape:
+`MelonPreferences.cfg`, section `Hash`, entry `NeedleUsageCapture`, default `false`. While it is on,
+`Terminal/UsageCapture.cs` appends one JSON object per `# ` request to `UserData/Hash/queries.jsonl`:
 
 ```json
-{"query": "gib mir 10 og kush", "commands": ["give ogkush 10"], "confidence": 0.98,
- "proven": true, "constrained": false, "outcome": "accepted"}
-{"query": "bring mich nach hause", "commands": ["teleport mayor"], "confidence": 1.0,
- "proven": false, "constrained": false, "outcome": "corrected", "actual": "teleport #home"}
+{"query":"gib mir 10 og kush","commands":["give ogkush 10"],"confidence":0.98,"proven":true,
+ "constrained":false,"error":"","outcome":"accepted"}
+{"query":"bring mich nach hause","commands":["teleport mayor"],"confidence":1.0,"proven":false,
+ "constrained":false,"error":"","outcome":"corrected","actual":"teleport #home"}
 ```
 
-`outcome` is one of `accepted`, `rejected` (console error), `corrected` (player ran something else),
-`retried` (player rephrased). `actual` only appears for `corrected`.
+`outcome` is one of:
 
-**5. Say what is recorded, in the opt-in text.** "Hash writes the requests you type into
-`UserData/Hash/queries.jsonl` so they can be used to improve it. Nothing is sent anywhere - the file stays
-on your machine until you choose to share it."
+| | what closed the record |
+|---|---|
+| `accepted` | the commands ran and the console did not complain |
+| `rejected` | nothing ran, or the console returned an error; `error` says which |
+| `corrected` | the commands ran, and the player typed a command line themselves straight afterwards |
+| `retried` | the request failed and the player asked again |
+
+`actual` is the line the player typed, and appears whenever one closed the record - so a `rejected` line
+usually carries the right answer beside the wrong one.
+
+**`corrected` is a hint, not a verdict.** The next line a player runs may simply be the next thing they
+wanted. That is why `actual` is always written: the judgement belongs to whoever reads the file.
+
+No player id, no session id, no save name, no timestamp. The file is in order, which is all the model
+needs, and every field that is not needed is a field that has to be explained before someone hands it over.
 
 ## How it feeds back
 
@@ -79,9 +53,9 @@ noise become measurable, and `benchmark_human_cases.py` needs no change - it rea
 
 **Corpus.** Accepted queries are phrasings players actually use, which is exactly what
 `generate_data.py` cannot invent. They can join the training rows directly, with the same
-`route_tool`/`refinement_tool` rendering everything else uses. Note the constraint in `RESULTS.md`:
-`grounds_literals` currently forces every argument to appear verbatim, which is why the corpus has no
-spelled-out numbers. Real queries are the reason to relax it, not the other way round.
+`route_tool`/`refinement_tool` rendering everything else uses. `grounds_literals` no longer demands that
+every argument appear verbatim, so a real phrasing is admissible as it stands - but it is still checked
+against the enum ranking the mod uses, and a query whose argument nothing resolves is still dropped.
 
 ## Boundaries
 

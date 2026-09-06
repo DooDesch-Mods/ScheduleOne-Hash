@@ -100,7 +100,8 @@ namespace Hash.Terminal
     {
         public NaturalCommandTranslation(IReadOnlyList<string> commands, double? confidence, string error = null,
                                          bool proven = false, string reasoning = null, double? prefillTps = null,
-                                         double? decodeTps = null, double? peakRamMb = null)
+                                         double? decodeTps = null, double? peakRamMb = null,
+                                         bool constrained = false)
         {
             Commands = commands ?? Array.Empty<string>();
             Confidence = confidence;
@@ -110,7 +111,20 @@ namespace Hash.Terminal
             PrefillTps = prefillTps;
             DecodeTps = decodeTps;
             PeakRamMb = peakRamMb;
+            Constrained = constrained;
         }
+
+        /// <summary>
+        /// The same turn, marked as having come from the constrained retry.
+        ///
+        /// Whether the retry ran is decided after the answer has been parsed, so it cannot be a constructor
+        /// argument at any of the seven places a turn is built.
+        /// </summary>
+        public NaturalCommandTranslation AsConstrained() =>
+            Constrained
+                ? this
+                : new NaturalCommandTranslation(Commands, Confidence, Error, Proven, Reasoning, PrefillTps,
+                                                DecodeTps, PeakRamMb, constrained: true);
 
         public IReadOnlyList<string> Commands { get; }
 
@@ -131,6 +145,9 @@ namespace Hash.Terminal
         public double? DecodeTps { get; }
 
         public double? PeakRamMb { get; }
+
+        /// <summary>True when the first answer was unusable and the grammar-constrained retry produced this one.</summary>
+        public bool Constrained { get; }
     }
 
     /// <summary>What happened when Hash executed one translated call, fed back when context is retained.</summary>

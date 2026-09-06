@@ -277,7 +277,7 @@ namespace Hash.Game
                                     elapsedMs = inferenceMs,
                                 }));
 #endif
-                                Publish(work.Generation, result, native);
+                                Publish(work.Generation, constrained ? result.AsConstrained() : result, native);
                                 if (constrained) Restore(native, work.Tools, ref activeFingerprint);
                                 break;
 

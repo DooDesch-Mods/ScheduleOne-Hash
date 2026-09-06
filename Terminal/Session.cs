@@ -62,6 +62,9 @@ namespace Hash.Terminal
 
         private NaturalCommandTranslation _naturalProposal;
 
+        /// <summary>Opt-in record of what each request produced. Null unless the player switched it on.</summary>
+        private readonly UsageCapture _capture;
+
         private const double NaturalAutoConfidence = 0.80;
         private const double NaturalConfirmConfidence = 0.50;
 
@@ -92,7 +95,8 @@ namespace Hash.Terminal
 
         public Session(ICommandCatalogue catalogue, ICommandRunner runner, Usage usage,
                        History history, Aliases aliases, IMarks marks = null,
-                       INaturalCommandTranslator natural = null, ICommandCatalogue naturalCatalogue = null)
+                       INaturalCommandTranslator natural = null, ICommandCatalogue naturalCatalogue = null,
+                       UsageCapture capture = null)
         {
             _catalogue = catalogue;
             _naturalCatalogue = naturalCatalogue ?? catalogue;
@@ -101,6 +105,7 @@ namespace Hash.Terminal
             _history = history;
             _aliases = aliases;
             _natural = natural;
+            _capture = capture;
 
             _marks = new Marks(marks);
             _expansion = new MarkExpansion(_marks, catalogue);
@@ -418,6 +423,10 @@ namespace Hash.Terminal
 
             _marks.Ran(typed);
 
+            // Whatever Hash last answered is closed by this line. After a command that ran, typing one by hand
+            // is the correction signal the record exists for; after one that failed, it is the missing answer.
+            _capture?.PlayerRan(typed);
+
             foreach (string command in ready) RunOne(command, lines);
 
             // The transcript shrinking across a run can only mean `clear`, which is the one thing the page cannot
@@ -443,20 +452,25 @@ namespace Hash.Terminal
 
             result.Pending = NaturalPending;
 
+            _capture?.Answered(translated);
+
             if (!string.IsNullOrEmpty(translated.Error))
             {
                 Emit(OutputLine.Error("Hash: " + translated.Error), lines);
+                _capture?.Refused(translated.Error);
                 _natural.Cancel();
             }
             else if (translated.Commands.Count == 0)
             {
                 Emit(OutputLine.Warn("Hash: could not map that request to a console command."), lines);
+                _capture?.Refused("no command matched the request");
                 _natural.Cancel();
             }
             else if (translated.Confidence.HasValue && translated.Confidence.Value < NaturalConfirmConfidence)
             {
                 string score = Confidence(translated.Confidence.Value);
                 Emit(OutputLine.Warn("Hash: not confident enough (" + score + "). Please be more specific."), lines);
+                _capture?.Refused("below the confidence to run (" + score + ")");
                 _natural.Cancel();
             }
             else
@@ -480,6 +494,15 @@ namespace Hash.Terminal
             result.Pending = NaturalPending;
             return result;
         }
+
+        /// <summary>
+        /// Close the usage record still open, if the player switched capture on.
+        ///
+        /// Separate from <see cref="CancelNatural"/> because the two answer different questions. Cancelling happens
+        /// on every new line and must not end the record - the line IS what the record was waiting for. This runs
+        /// when the terminal goes off screen or the game goes down, where nothing further can be observed.
+        /// </summary>
+        public void CloseCapture() => _capture?.Close();
 
         /// <summary>Invalidate a running translation or a proposal waiting for confirmation.</summary>
         public void CancelNatural()
@@ -524,6 +547,7 @@ namespace Hash.Terminal
                 try
                 {
                     _natural.Start(query);
+                    _capture?.Asked(query);
                     Emit(OutputLine.Dim("Hash: translating..."), lines);
                 }
                 catch (Exception e)
@@ -555,6 +579,7 @@ namespace Hash.Terminal
             if (Locked)
             {
                 Emit(OutputLine.Error(_runner.RefusalReason), lines);
+                _capture?.Refused(_runner.RefusalReason);
                 _natural?.Complete(new[] { new NaturalCommandExecution("", false, _runner.RefusalReason) });
                 return;
             }
@@ -572,6 +597,7 @@ namespace Hash.Terminal
                 {
                     string error = "Hash returned an unavailable command: " + (word.Length == 0 ? "(empty)" : word);
                     Emit(OutputLine.Error(error), lines);
+                    _capture?.Refused(error);
                     _natural?.Complete(new[] { new NaturalCommandExecution(command, false, error) });
                     return;
                 }
@@ -579,6 +605,7 @@ namespace Hash.Terminal
                 if (!ValidateNaturalArguments(current, tokens, out string validationError))
                 {
                     Emit(OutputLine.Error(validationError), lines);
+                    _capture?.Refused(validationError);
                     _natural?.Complete(new[] { new NaturalCommandExecution(command, false, validationError) });
                     return;
                 }
@@ -587,6 +614,7 @@ namespace Hash.Terminal
                 if (expanded.Failed)
                 {
                     foreach (string part in expanded.Error.Split('\n')) Emit(OutputLine.Error(part), lines);
+                    _capture?.Refused(expanded.Error);
                     _natural?.Complete(new[] { new NaturalCommandExecution(command, false, expanded.Error) });
                     return;
                 }
@@ -607,6 +635,7 @@ namespace Hash.Terminal
                     string.Join("\n", output.Select(line => line.Text))));
             }
 
+            _capture?.Ran(executions);
             _natural?.Complete(executions);
         }
 

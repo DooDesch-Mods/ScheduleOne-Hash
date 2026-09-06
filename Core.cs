@@ -29,9 +29,11 @@ namespace Hash
 
         private static MelonPreferences_Entry<bool> _hijack;
         private static MelonPreferences_Entry<bool> _needleKeepContext;
+        private static MelonPreferences_Entry<bool> _needleUsageCapture;
 
         private AppHandle _app;
         private Session _session;
+        private UsageCapture _capture;
         private CommandIndex _index;
         private ICommandCatalogue _naturalCatalogue;
         private ArgProviders _providers;
@@ -78,6 +80,11 @@ namespace Hash
                 "NeedleKeepContext", false, "Needle keeps conversation context",
                 "OFF (default): every '# <request>' is translated independently. ON: later requests may refer to "
                 + "earlier Needle commands and their results.");
+            _needleUsageCapture = category.CreateEntry(
+                "NeedleUsageCapture", false, "Record '# ' requests to a file",
+                "OFF (default): nothing is written. ON: hash writes each '# <request>', the commands it produced "
+                + "and whether they worked to UserData/Hash/queries.jsonl, so they can be used to improve the "
+                + "model. Nothing is sent anywhere - the file stays on this machine until you choose to share it.");
 
             // Refuse rather than half-work. hash has no home-screen icon on purpose - the key is the only way in -
             // so a host that cannot raise the phone would leave the player with a mod that does nothing and no way
@@ -118,8 +125,9 @@ namespace Hash
             _runner = new CommandRunner(_log);
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
+            _capture = new UsageCapture(_store, () => _needleUsageCapture.Value);
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
-                                   _naturalCatalogue);
+                                   _naturalCatalogue, _capture);
 
             _runner.LogViewOpen = () => _session.Builtins.LogsOpen;
             _session.Builtins.UseFace(_store.Read(StoreScope.Global, "font"));
@@ -388,6 +396,10 @@ namespace Hash
 
         private void Persist()
         {
+            // Before the rest: the open usage record is the only state here that a later line could still change,
+            // and every path that reaches Persist is a path where no later line is coming.
+            _session?.CloseCapture();
+
             _history.Save(_store);
             _aliases.Save(_store);
             _usage.Save(_store);

@@ -95,8 +95,22 @@ while the game's console is switched on, and goes away when it is not.
   back, for a player who prefers it or a mod that needs it.
 - `NeedleKeepContext` (default `false`) - let a later `# ` request refer to earlier Needle requests and their
   command results. The default resets context after every request so each line stands alone.
+- `NeedleUsageCapture` (default `false`) - write every `# ` request to `UserData/Hash/queries.jsonl`. See below.
 
 Your history and aliases live in `UserData/Hash/`. Which commands you use most is remembered per save, beside it.
+
+## Helping the model get better
+
+Switch `NeedleUsageCapture` on and hash writes one line per `# ` request to `UserData/Hash/queries.jsonl`: what you
+typed, the commands it produced, and whether they worked. The last part is the useful one - a request that ran and
+was right teaches nothing, a request you had to type out by hand afterwards teaches exactly what was missing.
+
+Nothing is sent anywhere. The file stays on your machine, it is plain text, and it holds no name, no save and no
+timestamp - open it, read it, and send it if you want to. Deleting it is fine at any time; it starts again empty.
+
+The model shipped with hash was trained on requests a language model was asked to invent, which is why it
+understands "give me five OG Kush" better than whatever you would actually have typed. Real requests are the only
+way past that.
 
 ## Multiplayer
 
