@@ -2,8 +2,9 @@
 
 ## Status after the first full pass (2026-09-06)
 
-An adapter is trained and shipped. `Hash.Needle.cact` is a build artefact and is gitignored the way
-`Native/Hash.Needle.bin` is; it is handed over beside the reports rather than committed.
+An adapter is trained and shipped. `Hash.Needle.cact` is committed at the repo root and the release
+workflow packages it into all three archives - unlike `Hash.Needle.bin`, which is fetched from a published
+wheel, this file exists nowhere but here. Until that change every player ran the untuned fallback.
 
 Measured on the 79 hand-written cases in `NeedleBenchmark/cases.json`, scored the way the mod resolves
 values (`score_as_mod.py`, mirroring `NeedleArgument.TryResolveText`):
