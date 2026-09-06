@@ -124,6 +124,11 @@ Four of the first eight runs were exactly that.
 
 ### What is not built yet
 
+**Deciding whether to train at all.** `RESULTS.md` now carries a schema ablation measured against the
+engine's own one-call contract: the untuned base scores 24/79 there and the shipped adapter 21/79, while a
+two-sentence change to one parameter description scores 27/79. Real requests are still worth collecting -
+they fix the measurement either way - but the next lever is what the mod declares, not another corpus.
+
 **Turning observed failures into training rows.** Cases fix the measurement; they do not by themselves fix
 the model, because 79 - or 300 - rows are too few to train on. The step after this one is to feed the
 observed failure *patterns* back as teacher seeds, the way the published flywheel work does: group the

@@ -1,0 +1,2140 @@
+{
+  "formatVersion": 1,
+  "generatedAtUtc": "2026-09-06T08:10:05.0118992+00:00",
+  "engine": "F:\\Projects\\Mods\\Schedule1\\Hash\\Native\\Hash.Needle.bin",
+  "weights": "F:\\Projects\\Mods\\Schedule1\\Hash\\Tools\\NeedleTraining\\artifacts\\base-4bit.cact",
+  "dataset": "F:\\Projects\\Mods\\Schedule1\\Hash\\Tools\\NeedleTraining\\data-production\\variants\\D-description.jsonl",
+  "cases": 79,
+  "exact": 25,
+  "accuracy": 0.31645569620253167,
+  "totalMs": 577038.4527,
+  "medianInferenceMs": 743.9731,
+  "p95InferenceMs": 1307.9827,
+  "byLanguage": {
+    "de": {
+      "cases": 14,
+      "exact": 4,
+      "accuracy": 0.2857142857142857
+    },
+    "en": {
+      "cases": 39,
+      "exact": 15,
+      "accuracy": 0.38461538461538464
+    },
+    "es": {
+      "cases": 13,
+      "exact": 2,
+      "accuracy": 0.15384615384615385
+    },
+    "fr": {
+      "cases": 13,
+      "exact": 4,
+      "accuracy": 0.3076923076923077
+    }
+  },
+  "byPhase": {
+    "single": {
+      "cases": 79,
+      "exact": 25,
+      "accuracy": 0.31645569620253167
+    }
+  },
+  "results": [
+    {
+      "Id": "give-ogkush-en-1",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me 10 ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6640.1512,
+      "InferenceMs": 992.4121,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8252,\u0022prefill_tps\u0022:513.8,\u0022decode_tps\u0022:161.4,\u0022peak_ram_mb\u0022:81.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-en-1",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me 10 speed grow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6902.4679,
+      "InferenceMs": 868.8105,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5531,\u0022prefill_tps\u0022:533.3,\u0022decode_tps\u0022:173.6,\u0022peak_ram_mb\u0022:86.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-en-1",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me 4 grandaddy seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6532.8545,
+      "InferenceMs": 1023.021,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6162,\u0022prefill_tps\u0022:507.5,\u0022decode_tps\u0022:177.9,\u0022peak_ram_mb\u0022:88.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-de-1",
+      "Command": "give",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "gib mir 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        },
+        {
+          "name": "growplants",
+          "arguments": {
+            "status": "open",
+            "limit": 10
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6598.1462,
+      "InferenceMs": 1169.2784,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}},{\u0022name\u0022:\u0022growplants\u0022,\u0022arguments\u0022:{\u0022status\u0022:\u0022open\u0022,\u0022limit\u0022:10}}],\u0022reasoning\u0022:\u0022User wants to see the 10-item item. Use get_item_by_status with status \u0027open\u0027 and limit 10.\u0022,\u0022confidence\u0022:0.3697,\u0022prefill_tps\u0022:539.9,\u0022decode_tps\u0022:199.4,\u0022peak_ram_mb\u0022:88.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022growplants.status\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-de-1",
+      "Command": "give",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "pack zehn speed grow in mein inventar",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": -7
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6871.3177,
+      "InferenceMs": 1233.0551,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:-7}}],\u0022reasoning\u0022:\u0022\u0027pack zehn speed grow in mein inventar\u0027 -\u003E give.arg1 \u0027speedgrow\u0027,arg2 \u0027packagingstation\u0027.\u0022,\u0022confidence\u0022:0.0438,\u0022prefill_tps\u0022:540.9,\u0022decode_tps\u0022:165.4,\u0022peak_ram_mb\u0022:89.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-de-1",
+      "Command": "give",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "gib mir vier granddaddy samen",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6953.4688,
+      "InferenceMs": 1088.0394,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5611,\u0022prefill_tps\u0022:509.9,\u0022decode_tps\u0022:173.5,\u0022peak_ram_mb\u0022:90.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-es-1",
+      "Command": "give",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "dame 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6607.1131,
+      "InferenceMs": 1500.324,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022,\u0022arg2\u0022:10}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022,\u0022arg2\u0022:10.0}}],\u0022reasoning\u0022:\u0022User wants to know the 10-item item. Use get_item_by_status with status \u0027open\u0027 and limit 10.\u0022,\u0022confidence\u0022:0.2803,\u0022prefill_tps\u0022:543.6,\u0022decode_tps\u0022:168.9,\u0022peak_ram_mb\u0022:90.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-es-1",
+      "Command": "give",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "a\u00F1ade diez speed grow a mi inventario",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 7405.4704,
+      "InferenceMs": 1345.8181,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022User wants to add a 10 speed grow to the inventory. Use give tool with speedgrow and 10.\u0022,\u0022confidence\u0022:0.5766,\u0022prefill_tps\u0022:415.9,\u0022decode_tps\u0022:160.8,\u0022peak_ram_mb\u0022:91.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-es-1",
+      "Command": "give",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "dame cuatro semillas granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy",
+            "arg2": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6847.2849,
+      "InferenceMs": 1307.9827,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022,\u0022arg2\u0022:0}}],\u0022reasoning\u0022:\u0022\u0027cuatro semillas granddaddy\u0027 -\u003E give.arg1 \u0027granddaddypurple\u0027. No additionalProperties.\u0022,\u0022confidence\u0022:0.0401,\u0022prefill_tps\u0022:546.6,\u0022decode_tps\u0022:179.7,\u0022peak_ram_mb\u0022:92.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-ogkush-fr-1",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "donne-moi 10 og kush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6564.348,
+      "InferenceMs": 1072.1092,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:\u0022\u002710 og kush\u0027 -\u003E give.arg1 \u0027ogkushseed\u0027. No additionalProperties.\u0022,\u0022confidence\u0022:0.8957,\u0022prefill_tps\u0022:531.5,\u0022decode_tps\u0022:200.7,\u0022peak_ram_mb\u0022:92.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-speedgrow-fr-1",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ajoute dix speed grow \u00E0 mon inventaire",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        },
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6497.1329,
+      "InferenceMs": 1258.4367,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}},{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022,\u0022arg2\u0022:10}}],\u0022reasoning\u0022:\u0022\u0027dix\u0027 -\u003E 10; \u0027speed grow\u0027 -\u003E speedgrow; no additional properties\u0022,\u0022confidence\u0022:0.1828,\u0022prefill_tps\u0022:547.1,\u0022decode_tps\u0022:172.6,\u0022peak_ram_mb\u0022:92.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022give.arg2\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "give-granddaddy-fr-1",
+      "Command": "give",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "donne-moi quatre graines granddaddy",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "granddaddypurpleseed",
+            "arg2": 4
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "addy"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6671.5069,
+      "InferenceMs": 854.75,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022addy\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8966,\u0022prefill_tps\u0022:550.6,\u0022decode_tps\u0022:184.5,\u0022peak_ram_mb\u0022:92.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-give-og-seed",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me 5 og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed",
+            "arg2": 5
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6769.3416,
+      "InferenceMs": 1193.4127,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7689,\u0022prefill_tps\u0022:448.0,\u0022decode_tps\u0022:122.8,\u0022peak_ram_mb\u0022:93.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-put-ogkush",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "put ten og kush in my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setowned",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6759.4217,
+      "InferenceMs": 1055.2896,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setowned\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:\u0022User wants to add 10 og kush to inventory. Call setowned with that value.\u0022,\u0022confidence\u0022:0.8155,\u0022prefill_tps\u0022:535.3,\u0022decode_tps\u0022:211.9,\u0022peak_ram_mb\u0022:93.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022setowned.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-add-speedgrow",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "add ten speed grow to my inventory",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow",
+            "arg2": 10
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "speedgrow"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6707.3331,
+      "InferenceMs": 1083.117,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022speedgrow\u0022}}],\u0022reasoning\u0022:\u0022User wants to add a speedgrow item. Use give tool with the exact enum value \u0027speedgrow\u0027.\u0022,\u0022confidence\u0022:0.8175,\u0022prefill_tps\u0022:516.1,\u0022decode_tps\u0022:192.1,\u0022peak_ram_mb\u0022:93.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-en-1",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teleport me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6544.1863,
+      "InferenceMs": 805.8332,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7767,\u0022prefill_tps\u0022:561.7,\u0022decode_tps\u0022:192.2,\u0022peak_ram_mb\u0022:94.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-en-1",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "take me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "freecam",
+          "arguments": {
+            "text": "home"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6455.8003,
+      "InferenceMs": 868.7595,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022freecam\u0022,\u0022arguments\u0022:{\u0022text\u0022:\u0022home\u0022}}],\u0022reasoning\u0022:\u0022User wants to locate a key to find the home. Use find_in_page with text \u0027home\u0027.\u0022,\u0022confidence\u0022:0.5991,\u0022prefill_tps\u0022:554.2,\u0022decode_tps\u0022:210.3,\u0022peak_ram_mb\u0022:94.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-en-2",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "bring me to the docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6529.9811,
+      "InferenceMs": 912.8668,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7512,\u0022prefill_tps\u0022:531.1,\u0022decode_tps\u0022:189.6,\u0022peak_ram_mb\u0022:94.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-1",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teleportiere mich zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6627.7183,
+      "InferenceMs": 832.8106,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8097,\u0022prefill_tps\u0022:557.0,\u0022decode_tps\u0022:185.4,\u0022peak_ram_mb\u0022:94.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-de-1",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "bring mich nach hause",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "enablephysics",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 7019.4683,
+      "InferenceMs": 661.8103,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022enablephysics\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to enable physics in game. \u0027hause\u0027 -\u003E enablephysics. No parameters needed.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:594.9,\u0022decode_tps\u0022:237.1,\u0022peak_ram_mb\u0022:95.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-de-2",
+      "Command": "teleport",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ich will zu den docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6517.2276,
+      "InferenceMs": 743.9731,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:\u0022User wants to save game to Docks. \u0027zu den docks\u0027 -\u003E array [\u0027docks\u0027]. Tool: teleport.\u0022,\u0022confidence\u0022:0.9208,\u0022prefill_tps\u0022:590.4,\u0022decode_tps\u0022:234.7,\u0022peak_ram_mb\u0022:95.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-docks-es-1",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teletransp\u00F3rtame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "endtutorial",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6334.1195,
+      "InferenceMs": 606.9093,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022endtutorial\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to end tutorial. \u0027teletransp\u00F3rtame\u0027 -\u003E endtutorial. No parameters needed.\u0022,\u0022confidence\u0022:0.9386,\u0022prefill_tps\u0022:609.7,\u0022decode_tps\u0022:257.0,\u0022peak_ram_mb\u0022:95.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-es-1",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ll\u00E9vame a casa",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6463.3513,
+      "InferenceMs": 675.4127,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to leave home. No tool for location sharing or sending messages exists in the available tools.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:545.6,\u0022decode_tps\u0022:237.9,\u0022peak_ram_mb\u0022:95.6}"
+    },
+    {
+      "Id": "teleport-docks-es-2",
+      "Command": "teleport",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ll\u00E9vame a los muelles",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6493.0363,
+      "InferenceMs": 603.5647,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to play music. No media player tool available. Cannot fulfill request.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:568.3,\u0022decode_tps\u0022:241.8,\u0022peak_ram_mb\u0022:95.7}"
+    },
+    {
+      "Id": "teleport-docks-fr-1",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "t\u00E9l\u00E9porte-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6558.3422,
+      "InferenceMs": 666.6008,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8371,\u0022prefill_tps\u0022:582.2,\u0022decode_tps\u0022:184.1,\u0022peak_ram_mb\u0022:95.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "teleport-home-fr-1",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ram\u00E8ne-moi chez moi",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 8433.5196,
+      "InferenceMs": 857.1615,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022Aucun outil ne permet de lister ou consulter les informations d\u0027une commande existante. Les outils disponibles sont limit\u00E9s \u00E0 la cr\u00E9ation et la gestion de sauvegarde.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:557.3,\u0022decode_tps\u0022:205.9,\u0022peak_ram_mb\u0022:96.1}"
+    },
+    {
+      "Id": "teleport-docks-fr-2",
+      "Command": "teleport",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "emm\u00E8ne-moi aux docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6297.6833,
+      "InferenceMs": 739.793,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7075,\u0022prefill_tps\u0022:578.6,\u0022decode_tps\u0022:178.9,\u0022peak_ram_mb\u0022:96.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-en",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "make it noon",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6178.5378,
+      "InferenceMs": 854.7252,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022User wants to set a time of day. \u0027noon\u0027 -\u003E time_hours 12, time_minutes 0. No other params specified.\u0022,\u0022confidence\u0022:0.0755,\u0022prefill_tps\u0022:609.4,\u0022decode_tps\u0022:203.9,\u0022peak_ram_mb\u0022:96.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-en",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set the time to 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 8
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6071.3662,
+      "InferenceMs": 686.8398,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:8}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.4531,\u0022prefill_tps\u0022:586.3,\u0022decode_tps\u0022:161.5,\u0022peak_ram_mb\u0022:96.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-de",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "mach es mittag",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0.0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 5838.6401,
+      "InferenceMs": 840.89,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0.0}}],\u0022reasoning\u0022:\u0022User wants to set time to midnight. \u0027mittag\u0027 -\u003E settime. No specific parameters given, so only required param is settime.\u0022,\u0022confidence\u0022:0.0134,\u0022prefill_tps\u0022:589.2,\u0022decode_tps\u0022:214.0,\u0022peak_ram_mb\u0022:97.0,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-de",
+      "Command": "settime",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "stell die uhr auf 8 uhr morgens",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6248.3485,
+      "InferenceMs": 913.7083,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022\u00278 uhr morgens\u0027 -\u003E time_hours 8, time_minutes 0; settime tool sets time for the hour.\u0022,\u0022confidence\u0022:0.1464,\u0022prefill_tps\u0022:543.6,\u0022decode_tps\u0022:198.8,\u0022peak_ram_mb\u0022:97.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-es",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ponlo al mediod\u00EDa",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6143.0002,
+      "InferenceMs": 715.6282,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022User wants to set time to 12:00. \u0027mediod\u00EDa\u0027 -\u003E time_hours 12, time_minutes 0. No other params specified.\u0022,\u0022confidence\u0022:0.1186,\u0022prefill_tps\u0022:616.5,\u0022decode_tps\u0022:224.4,\u0022peak_ram_mb\u0022:98.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-es",
+      "Command": "settime",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "pon la hora a las 8",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6096.4893,
+      "InferenceMs": 798.0858,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022User wants to set time to 8 PM. \u00278\u0027 -\u003E time_hours 20. No other parameters specified, so only required param filled.\u0022,\u0022confidence\u0022:0.1630,\u0022prefill_tps\u0022:612.1,\u0022decode_tps\u0022:214.2,\u0022peak_ram_mb\u0022:98.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-noon-fr",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "mets l\u0027heure \u00E0 midi",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6064.8952,
+      "InferenceMs": 873.207,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022\u0027midi\u0027 -\u003E time_hours 12, time_minutes 0; settime tool sets time for the hour.\u0022,\u0022confidence\u0022:0.1091,\u0022prefill_tps\u0022:585.4,\u0022decode_tps\u0022:153.8,\u0022peak_ram_mb\u0022:98.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "time-eight-fr",
+      "Command": "settime",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "r\u00E8gle l\u0027heure \u00E0 8h",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6050.9458,
+      "InferenceMs": 697.8447,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires \u0027arg1\u0027 parameter; user didn\u0027t specify which hhmm.\u0022,\u0022confidence\u0022:0.9545,\u0022prefill_tps\u0022:600.0,\u0022decode_tps\u0022:232.7,\u0022peak_ram_mb\u0022:98.7}"
+    },
+    {
+      "Id": "historical-time-day-long",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set the time to the day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6256.0393,
+      "InferenceMs": 714.9513,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires an additional parameters; user didn\u0027t specify which time to set.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:567.7,\u0022decode_tps\u0022:235.8,\u0022peak_ram_mb\u0022:98.9}"
+    },
+    {
+      "Id": "historical-time-day-short",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set time day",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1200
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6366.0873,
+      "InferenceMs": 732.8039,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022settime tool requires an additional parameters; no other tool can set time-based schedules.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:548.9,\u0022decode_tps\u0022:242.4,\u0022peak_ram_mb\u0022:99.1}"
+    },
+    {
+      "Id": "historical-time-eight",
+      "Command": "settime",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set time 8am",
+      "Expected": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 800
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6232.1608,
+      "InferenceMs": 700.3446,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022User wants to set time to 8am. Setting time to 08:00.\u0022,\u0022confidence\u0022:0.3580,\u0022prefill_tps\u0022:601.1,\u0022decode_tps\u0022:209.3,\u0022peak_ram_mb\u0022:99.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-en-1",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "remove rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "cleartrash",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6296.1542,
+      "InferenceMs": 605.0068,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022cleartrash\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to remove all trash from the world. Call cleartrash with no additional properties.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:614.3,\u0022decode_tps\u0022:244.3,\u0022peak_ram_mb\u0022:99.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-en-2",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "stop the rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6152.4211,
+      "InferenceMs": 565.9222,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool for stopping or managing weather data exists. Only setWeather and enableterrain tools are available.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:627.9,\u0022decode_tps\u0022:239.8,\u0022peak_ram_mb\u0022:99.7}"
+    },
+    {
+      "Id": "weather-clear-de-1",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "beende den regen",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "enablephysics",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6030.3806,
+      "InferenceMs": 546.3898,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022enablephysics\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to disable terrain. \u0027regen\u0027 -\u003E enablephysics. No parameters needed.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:651.3,\u0022decode_tps\u0022:278.8,\u0022peak_ram_mb\u0022:99.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-de-2",
+      "Command": "setweather",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "mach den regen aus",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "disablephysics",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6080.7893,
+      "InferenceMs": 452.4608,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022disablephysics\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8375,\u0022prefill_tps\u0022:623.3,\u0022decode_tps\u0022:262.9,\u0022peak_ram_mb\u0022:100.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-es-1",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "quita la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "triggerlightning",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6016.2014,
+      "InferenceMs": 459.4593,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022triggerlightning\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7808,\u0022prefill_tps\u0022:626.1,\u0022decode_tps\u0022:244.5,\u0022peak_ram_mb\u0022:100.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "weather-clear-es-2",
+      "Command": "setweather",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "para la lluvia",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 5965.2023,
+      "InferenceMs": 555.5716,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to stop weather. No tool exists to cancel or stop a previously set weather. Only set and enable exist.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:646.3,\u0022decode_tps\u0022:256.5,\u0022peak_ram_mb\u0022:100.5}"
+    },
+    {
+      "Id": "weather-clear-fr-1",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "arr\u00EAte la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6046.3622,
+      "InferenceMs": 606.3995,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022Aucun outil ne permet de g\u00E9rer la pluie. Les outils disponibles concernent les pi\u00E8ces de galerie et la gestion de r\u00E9glages.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:622.1,\u0022decode_tps\u0022:263.9,\u0022peak_ram_mb\u0022:100.6}"
+    },
+    {
+      "Id": "weather-clear-fr-2",
+      "Command": "setweather",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "enl\u00E8ve la pluie",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "clear"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "clearinventory",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6066.5893,
+      "InferenceMs": 573.4165,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022clearinventory\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022\u0027enl\u00E8ve la pluie\u0027 -\u003E clearinventory. No parameters needed.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:592.5,\u0022decode_tps\u0022:248.6,\u0022peak_ram_mb\u0022:100.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-en",
+      "Command": "changecash",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "add 500 dollars to my cash",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6070.0041,
+      "InferenceMs": 642.7044,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022changecash\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:500}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.6953,\u0022prefill_tps\u0022:621.1,\u0022decode_tps\u0022:164.6,\u0022peak_ram_mb\u0022:100.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-en",
+      "Command": "setmovespeed",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set my movement speed to 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 5943.3151,
+      "InferenceMs": 727.5509,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9357,\u0022prefill_tps\u0022:618.4,\u0022decode_tps\u0022:145.0,\u0022peak_ram_mb\u0022:101.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-de",
+      "Command": "changecash",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "f\u00FCge meinem bargeld 500 dollar hinzu",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "addxp",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6033.7491,
+      "InferenceMs": 814.8255,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022addxp\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:500}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7940,\u0022prefill_tps\u0022:570.9,\u0022decode_tps\u0022:140.3,\u0022peak_ram_mb\u0022:101.4,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-de",
+      "Command": "setmovespeed",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "setz meine laufgeschwindigkeit auf 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6270.7086,
+      "InferenceMs": 735.3539,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9434,\u0022prefill_tps\u0022:565.4,\u0022decode_tps\u0022:167.3,\u0022peak_ram_mb\u0022:101.6,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-es",
+      "Command": "changecash",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "a\u00F1ade 500 d\u00F3lares a mi efectivo",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "addxp",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6263.6626,
+      "InferenceMs": 731.6286,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022addxp\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:500}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7992,\u0022prefill_tps\u0022:564.5,\u0022decode_tps\u0022:130.3,\u0022peak_ram_mb\u0022:101.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-es",
+      "Command": "setmovespeed",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "pon mi velocidad de movimiento en 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6642.4356,
+      "InferenceMs": 737.2793,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9322,\u0022prefill_tps\u0022:568.9,\u0022decode_tps\u0022:149.2,\u0022peak_ram_mb\u0022:101.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "cash-fr",
+      "Command": "changecash",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "ajoute 500 dollars \u00E0 mon argent",
+      "Expected": [
+        {
+          "name": "changecash",
+          "arguments": {
+            "arg1": 500
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "sethealth",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6603.7298,
+      "InferenceMs": 1050.7864,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022sethealth\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:0}}],\u0022reasoning\u0022:\u0022L\u0027utilisateur veut ajouter 500 dollars \u00E0 un \u00E9l\u00E9ment. Il faut d\u0027abord trouver le param\u00E8tre \u0027argent\u0027 pour changer le salon. Je cherche d\u0027abord les \u00E9l\u00E9ments de la carte.\u0022,\u0022confidence\u0022:0.1334,\u0022prefill_tps\u0022:564.2,\u0022decode_tps\u0022:206.1,\u0022peak_ram_mb\u0022:102.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "speed-fr",
+      "Command": "setmovespeed",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "r\u00E8gle ma vitesse de d\u00E9placement sur 2",
+      "Expected": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setmovespeed",
+          "arguments": {
+            "arg1": 2
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6483.3329,
+      "InferenceMs": 749.2879,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setmovespeed\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:2}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9353,\u0022prefill_tps\u0022:551.9,\u0022decode_tps\u0022:154.9,\u0022peak_ram_mb\u0022:102.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-bench",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "i want a mixing bench",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstation"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstationmk2"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6487.9335,
+      "InferenceMs": 1089.3147,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022mixingstationmk2\u0022}}],\u0022reasoning\u0022:\u0022User wants to add mixingstationmk2 to a playlist. \u0027mixing bench\u0027 -\u003E argument \u0027mixingstationmk2\u0027. No quantity given, so omit optional parameter.\u0022,\u0022confidence\u0022:0.9801,\u0022prefill_tps\u0022:555.6,\u0022decode_tps\u0022:215.4,\u0022peak_ram_mb\u0022:102.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-mixing-table",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "I want a mixing table",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstation"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "mixingstationmk2"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6430.1981,
+      "InferenceMs": 1115.4768,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022mixingstationmk2\u0022}}],\u0022reasoning\u0022:\u0022User wants mixingstationmk2 quantity. \u0027mixing table\u0027 -\u003E give. No quantity given, so omit optional parameter.\u0022,\u0022confidence\u0022:0.9578,\u0022prefill_tps\u0022:550.7,\u0022decode_tps\u0022:208.1,\u0022peak_ram_mb\u0022:103.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-supergrow",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "supergrow",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "supergrow"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "growplants",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6269.6436,
+      "InferenceMs": 618.2979,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022growplants\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to set ALL plants in the world. Calling growplants with no arguments.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:604.1,\u0022decode_tps\u0022:240.4,\u0022peak_ram_mb\u0022:103.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-kill-safety",
+      "Command": "sethealth",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "kill",
+      "Expected": [
+        {
+          "name": "sethealth",
+          "arguments": {
+            "arg1": 0
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6364.558,
+      "InferenceMs": 2219.0506,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:false,\u0022error\u0022:\u0022tool call truncated: token budget exhausted\u0022,\u0022error_code\u0022:\u0022truncated\u0022,\u0022reason\u0022:\u0022runtime_failure\u0022,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to disable the GameObject. No label given, so omit optional parameter.\u0022,\u0022confidence\u0022:0.0000,\u0022prefill_tps\u0022:595.2,\u0022decode_tps\u0022:158.8,\u0022peak_ram_mb\u0022:103.1}"
+    },
+    {
+      "Id": "historical-home-compact",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "settime",
+          "arguments": {
+            "arg1": 1
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6262.0433,
+      "InferenceMs": 831.9172,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022settime\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:1}}],\u0022reasoning\u0022:\u0022User wants to set time to home. \u0027home\u0027 maps directly to enum value \u0027home\u0027.\u0022,\u0022confidence\u0022:0.0529,\u0022prefill_tps\u0022:560.8,\u0022decode_tps\u0022:200.2,\u0022peak_ram_mb\u0022:103.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022settime.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-teleport-major",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teleport me to the major",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "mayor"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "major"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6376.5475,
+      "InferenceMs": 548.3176,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022major\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.5390,\u0022prefill_tps\u0022:598.9,\u0022decode_tps\u0022:243.3,\u0022peak_ram_mb\u0022:103.3,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "historical-bring-sea",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "bring me to the sea",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6420.47,
+      "InferenceMs": 698.2764,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool for display or image generation. The available tools are limited to game/weather/lightning functions.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:553.9,\u0022decode_tps\u0022:205.4,\u0022peak_ram_mb\u0022:103.5}"
+    },
+    {
+      "Id": "manual-give-ogkush-some",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me some ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6692.8607,
+      "InferenceMs": 892.0309,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkush\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8562,\u0022prefill_tps\u0022:522.5,\u0022decode_tps\u0022:176.8,\u0022peak_ram_mb\u0022:104.5,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-seed",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me some og kush seed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6958.6611,
+      "InferenceMs": 952.3225,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8858,\u0022prefill_tps\u0022:513.0,\u0022decode_tps\u0022:138.8,\u0022peak_ram_mb\u0022:104.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkushseed",
+      "Command": "give",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me some ogkushseed",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkushseed"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6464.9087,
+      "InferenceMs": 1074.2945,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022give\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022ogkushseed\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9332,\u0022prefill_tps\u0022:538.1,\u0022decode_tps\u0022:136.0,\u0022peak_ram_mb\u0022:104.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-ogkush-de",
+      "Command": "give",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "gib mir ogkush",
+      "Expected": [
+        {
+          "name": "give",
+          "arguments": {
+            "arg1": "ogkush"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "logs",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6513.1732,
+      "InferenceMs": 726.2874,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022logs\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to see game logs. \u0027ogkush\u0027 is typo for \u0027ogkush\u0027. Tool: logs with no arguments.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:595.7,\u0022decode_tps\u0022:229.6,\u0022peak_ram_mb\u0022:104.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-give-seeds-ambiguous",
+      "Command": "",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "give me some seeds",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 6449.4929,
+      "InferenceMs": 682.9253,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants to see seeds. No tool for web search or image generation exists in the available tools.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:591.6,\u0022decode_tps\u0022:227.4,\u0022peak_ram_mb\u0022:104.8}"
+    },
+    {
+      "Id": "manual-teleport-docks",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teleport me to docks",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "docks"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6442.9991,
+      "InferenceMs": 733.6089,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022docks\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.7057,\u0022prefill_tps\u0022:571.9,\u0022decode_tps\u0022:204.9,\u0022peak_ram_mb\u0022:104.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-teleport-motel",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teleport me to motel",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "motel"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "motel"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6311.1218,
+      "InferenceMs": 695.301,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022motel\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8688,\u0022prefill_tps\u0022:573.2,\u0022decode_tps\u0022:193.1,\u0022peak_ram_mb\u0022:104.8,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-bring-home",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "bring me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [],
+      "Exact": false,
+      "InitMs": 6207.2791,
+      "InferenceMs": 648.8565,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool for location sharing or home automation. The available tools are limited to camera/packaging functions.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:602.7,\u0022decode_tps\u0022:238.2,\u0022peak_ram_mb\u0022:105.0}"
+    },
+    {
+      "Id": "manual-teleport-home",
+      "Command": "teleport",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "teleport me home",
+      "Expected": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "#home"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "teleport",
+          "arguments": {
+            "arg1": "home"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6255.2667,
+      "InferenceMs": 604.1745,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022teleport\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022home\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.9576,\u0022prefill_tps\u0022:586.3,\u0022decode_tps\u0022:241.7,\u0022peak_ram_mb\u0022:105.1,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-weather-light",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set weather to light rain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "lightrain"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "lightrain"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6805.8772,
+      "InferenceMs": 636.8208,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022lightrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8947,\u0022prefill_tps\u0022:556.8,\u0022decode_tps\u0022:178.7,\u0022peak_ram_mb\u0022:105.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-weather-heavy",
+      "Command": "setweather",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "set the weather to heavyrain",
+      "Expected": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "setweather",
+          "arguments": {
+            "arg1": "heavyrain"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 6504.9202,
+      "InferenceMs": 613.444,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022setweather\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022heavyrain\u0022}}],\u0022reasoning\u0022:null,\u0022confidence\u0022:0.8235,\u0022prefill_tps\u0022:593.7,\u0022decode_tps\u0022:157.5,\u0022peak_ram_mb\u0022:105.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-shitbox",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "spawn a shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 7057.1236,
+      "InferenceMs": 1080.8933,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022shitbox\u0022}}],\u0022reasoning\u0022:\u0022User wants to spawn a shitbox. Call spawnvehicle with shitbox_police.\u0022,\u0022confidence\u0022:0.8433,\u0022prefill_tps\u0022:553.6,\u0022decode_tps\u0022:180.2,\u0022peak_ram_mb\u0022:105.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-shitbox-terse",
+      "Command": "spawnvehicle",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "shitbox",
+      "Expected": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "shitbox"
+          }
+        }
+      ],
+      "Exact": true,
+      "InitMs": 7144.7507,
+      "InferenceMs": 821.9958,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022shitbox\u0022}}],\u0022reasoning\u0022:\u0022User wants to scan a shitbox. Call spawnvehicle with shitbox type.\u0022,\u0022confidence\u0022:0.8512,\u0022prefill_tps\u0022:574.5,\u0022decode_tps\u0022:213.5,\u0022peak_ram_mb\u0022:105.9,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "manual-spawn-car-ambiguous",
+      "Command": "",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "spawn a car",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "spawnvehicle",
+          "arguments": {
+            "arg1": "current"
+          }
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6424.1354,
+      "InferenceMs": 855.997,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022spawnvehicle\u0022,\u0022arguments\u0022:{\u0022arg1\u0022:\u0022current\u0022}}],\u0022reasoning\u0022:\u0022User wants to spawn a car. Need to find the vehicle first via spawnvehicle.\u0022,\u0022confidence\u0022:0.6003,\u0022prefill_tps\u0022:558.4,\u0022decode_tps\u0022:235.4,\u0022peak_ram_mb\u0022:106.2,\u0022validation\u0022:{\u0022ungrounded\u0022:[\u0022spawnvehicle.arg1\u0022],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-en",
+      "Command": "",
+      "Language": "en",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "tell me a joke",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 6594.6677,
+      "InferenceMs": 709.3831,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022No tool provides joke or audio output. The available tools are limited to game/alerts and phone/appliances.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:557.6,\u0022decode_tps\u0022:245.5,\u0022peak_ram_mb\u0022:106.4}"
+    },
+    {
+      "Id": "offtopic-de",
+      "Command": "",
+      "Language": "de",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "erz\u00E4hl mir einen witz",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 6365.9219,
+      "InferenceMs": 698.1802,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants a wide screenshot. No screenshot or image tool available.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:572.7,\u0022decode_tps\u0022:220.2,\u0022peak_ram_mb\u0022:106.5}"
+    },
+    {
+      "Id": "offtopic-es",
+      "Command": "",
+      "Language": "es",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "cu\u00E9ntame un chiste",
+      "Expected": [],
+      "Actual": [
+        {
+          "name": "triggerdistantthunder",
+          "arguments": {}
+        }
+      ],
+      "Exact": false,
+      "InitMs": 6256.8432,
+      "InferenceMs": 820.5871,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[{\u0022name\u0022:\u0022triggerdistantthunder\u0022,\u0022arguments\u0022:{}}],\u0022reasoning\u0022:\u0022User wants to trigger distant thunderstorms. \u0027cu\u00E9ntame\u0027 -\u003E triggerdistantthunder. No parameters needed.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:565.2,\u0022decode_tps\u0022:220.3,\u0022peak_ram_mb\u0022:106.7,\u0022validation\u0022:{\u0022ungrounded\u0022:[],\u0022negation\u0022:false}}"
+    },
+    {
+      "Id": "offtopic-fr",
+      "Command": "",
+      "Language": "fr",
+      "Split": "full-catalogue",
+      "Phase": "single",
+      "Query": "raconte-moi une blague",
+      "Expected": [],
+      "Actual": [],
+      "Exact": true,
+      "InitMs": 6618.9782,
+      "InferenceMs": 675.818,
+      "RawResponse": "{\u0022type\u0022:\u0022call\u0022,\u0022success\u0022:true,\u0022error\u0022:null,\u0022error_code\u0022:null,\u0022reason\u0022:null,\u0022function_calls\u0022:[],\u0022reasoning\u0022:\u0022User wants a blanket. No tool for creating or retrieving blankets exists in the available tools.\u0022,\u0022confidence\u0022:1.0000,\u0022prefill_tps\u0022:568.6,\u0022decode_tps\u0022:264.6,\u0022peak_ram_mb\u0022:106.9}"
+    }
+  ]
+}

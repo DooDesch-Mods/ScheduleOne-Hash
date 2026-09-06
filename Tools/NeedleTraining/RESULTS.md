@@ -114,6 +114,59 @@ This is the same failure the "query-relevant enums" entry above claims to have f
 training rows, which is why that repair script exists and why the pipeline never calls it. Fixed now; the
 next corpus is the first one to carry it.
 
+## The schema ablation (2026-09-06)
+
+Every run below is the same 79 hand-written cases as ONE call over all 78 eligible commands, each with its
+full schema and an enum ranked against the player's words - the contract the engine documents, rather than
+the route-then-refine split this mod invented. Untuned base at 4 bits unless stated. `full_catalogue_cases.py`
+builds it, `schema_variants.py` mutates one field at a time, `score_full_catalogue.py` scores the whole call
+array rather than only the first call.
+
+| run | change | routed | exact |
+|---|---|---:|---:|
+| base | - | 43/79 | 24/79 |
+| base, replayed | nothing | 43/79 | 24/79 |
+| N | `arg1`/`arg2` renamed to `item`/`quantity` | 36/79 | 23/79 |
+| D | a generic extraction sentence on the optional number | **45/79** | **27/79** |
+| O | "Optionally specify" becomes "Specify" | 40/79 | 23/79 |
+| R | the optional number made `required` | 43/79 | **28/79** |
+| E | each command's own usage example appended | 41/79 | 21/79 |
+| tuned adapter | - | 43/79 | 21/79 |
+
+The replay is the control: identical input, identical score, so a difference between variants is real.
+
+**The adapter is behind the untuned base on this contract**, 21 against 24, with identical routing. Together
+with the earlier probe - full schemas but no ranked enums scored 10/79 - the ordering is clear: what we
+declare is worth about fourteen cases, and the fine-tune is worth nothing here and possibly less.
+
+**D is the only shipping-safe gain**, and it is mechanically derivable: the same two sentences appended to
+any optional numeric parameter, no per-command prose. But it does not do what it was designed to do. Of the
+15 `give` cases that state a quantity, the number is present in 3 under the base and **1** under D. Its
+gain is routing, including on the give cases with no quantity at all (2 routed to 5). Reading the total
+alone would have told the wrong story.
+
+**The quantity failure is a decision, not an inability.** R recovers 11 of those 15 - so the value is
+available to the model, it simply does not emit an optional field. R is not a fix: on the 7 cases with no
+stated quantity it invents one. The repair belongs at runtime, where the mod can see that the player said a
+number and the answer carries none, and is not something another corpus will teach.
+
+**N and O are dead ends.** Renaming the parameters cost seven routed cases; removing "Optionally" cost three
+and gained nothing.
+
+### About a fifth of this benchmark cannot be won
+
+- **settime: 0 of 11 correct in every condition** - base, D, E and the tuned adapter alike. "noon" is 1200
+  and "eight" is 800, and no wording reaches it. The declaration is already honest ("24-hour time", `hhmm`),
+  the usage example did not help, and E made routing worse. This is not a model to train; it is a value
+  provider the mod should own, the way it already resolves item names.
+- **The granddaddy cases: 4, and the answer is not on the list.** For "give me 4 grandaddy seed" the ranked
+  enum is `cocaseed, addy, ogkushseed, ...` - `granddaddypurpleseed` is absent while `addy` is present,
+  because it is a substring of "gr-addy". Every model scores these wrong by construction. SUSPECTED cause:
+  `candidate_score` lets a short substring outrank the intended value.
+
+Fifteen of 79 cases therefore measure our own value handling rather than the model. Any headline number
+from this set has that ceiling built into it.
+
 ## What is left
 
 The argument phase. The adapter (28/73) is barely ahead of the untuned base (27/73): fine-tuning buys
