@@ -52,6 +52,14 @@ namespace Hash.Game
             _tuned = File.Exists(_weightsPath);
             _toolIndexPath = toolIndexPath ?? Path.Combine(MelonEnvironment.UserDataDirectory, "Hash", "needle-tools.idx");
 
+            // Which model answers is the difference between four requests in five and one in ten, and until this
+            // line existed nothing said which one was loaded. Two measurements were taken against the fallback
+            // before anyone noticed the file was missing.
+            Core.Log?.Msg(_tuned
+                ? "Needle is using the tuned model beside the mod (" + WeightsFile + ")."
+                : "Needle is using its built-in base model: no " + WeightsFile + " beside Hash.dll. "
+                  + "Requests will be routed noticeably worse - install the complete release package.");
+
             _worker = new Thread(WorkLoop)
             {
                 IsBackground = true,
