@@ -4,3 +4,7 @@ __pycache__/
 *.user
 Native/Hash.Needle.bin
 .planning
+
+# The tuned adapter is a 23 MB build artefact, handed over beside the reports the way
+# Native/Hash.Needle.bin is fetched rather than committed.
+Hash.Needle.cact
