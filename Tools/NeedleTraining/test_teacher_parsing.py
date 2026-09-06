@@ -338,13 +338,8 @@ def test_grounding_accepts_what_the_runtime_can_resolve():
     a number may be its word, and any other value has to be the one NeedleArgument.TryResolveText would
     land on for this phrasing.
     """
-    import json
-    import pathlib
-
     import generate_data as g
 
-    g.LIVE_VALUES.update(json.loads(
-        (pathlib.Path(__file__).resolve().parent / "data" / "values.json").read_text(encoding="utf-8")))
     give = {"command": "give", "language": "de", "arguments": {"arg1": "ogkush", "arg2": 10.0}}
 
     assert g.grounds_literals(give, "gib mir 10 ogkush")
@@ -352,9 +347,13 @@ def test_grounding_accepts_what_the_runtime_can_resolve():
     assert g.grounds_literals(give, "gib mir zehn og kush")
     assert g.grounds_literals({**give, "language": "en", "arguments": {"arg1": "speedgrow", "arg2": 10.0}},
                               "give me ten speed grow")
-    # A different item is not this item, and a dropped quantity is a dropped argument.
-    assert not g.grounds_literals(give, "gib mir zehn apfelsaft")
+    # A dropped quantity is a dropped argument.
     assert not g.grounds_literals(give, "gib mir og kush")
+    # The value itself is not checked against the catalogue: it is English and the corpus is not, so
+    # "Fuege einen Botaniker zum Stall hinzu" has no lexical path to barn. Translating is the model's job.
+    assert g.grounds_literals({"command": "addemployee", "language": "de",
+                               "arguments": {"arg1": "botanist", "arg2": "barn"}},
+                              "Fuege einen Botaniker zum Stall hinzu")
     # 1200 has no word form in the table, so "noon" cannot be verified and stays rejected.
     settime = {"command": "settime", "language": "en", "arguments": {"arg1": 1200.0}}
     assert g.grounds_literals(settime, "set the time to 1200")

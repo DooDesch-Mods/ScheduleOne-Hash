@@ -185,11 +185,6 @@ def candidate_score(candidate: str, phrase: str) -> int:
     return 0
 
 
-# Filled by main() from values.json. grounds_literals needs it and runs inside teacher_batch, which has
-# no other route to the catalogue.
-LIVE_VALUES: dict[str, list[list[str]]] = {}
-
-
 def grounds_literals(row: dict, query: str) -> bool:
     """Can the runtime still recover every argument from this phrasing?
 
@@ -215,19 +210,12 @@ def grounds_literals(row: dict, query: str) -> bool:
             if not re.search(rf"(?<![\d.]){re.escape(digits)}(?![\d.])", requested) and not (
                     word and re.search(rf"\b{re.escape(word)}\b", requested)):
                 return False
-        elif isinstance(value, str) and not value.startswith("#"):
-            slots = LIVE_VALUES.get(row.get("command", ""), [])
-            index = argument_slot(row, name)
-            if index is not None and index < len(slots) and slots[index]:
-                if enum_choices(slots[index], query)[:1] != [value]:
-                    return False
+        # Everything else is left alone. Requiring the runtime's matcher to land on the value looked right
+        # and is wrong: the catalogue is English and the corpus is not, so "Fuege einen Botaniker zum Stall
+        # hinzu" has no lexical path to barn, and the check threw away most of the German, French and
+        # Spanish rows - four in the first command alone. RelevantValues cannot translate either; that part
+        # is the model's job, and forbidding the teacher to write it would teach the wrong lesson.
     return True
-
-
-def argument_slot(row: dict, name: str):
-    """Which value slot an argument name belongs to, from the arg1/arg2 naming the catalogue uses."""
-    match = re.fullmatch(r"arg(\d+)", name)
-    return int(match.group(1)) - 1 if match else None
 
 
 def enum_choices(values: list[str], query: str) -> list[str]:
@@ -1169,7 +1157,6 @@ def main():
     args.out.mkdir(parents=True, exist_ok=True)
     tools = json.loads(args.tools.read_text(encoding="utf-8"))
     values = json.loads(args.values.read_text(encoding="utf-8"))
-    LIVE_VALUES.update(values)
     command_metadata = ({entry["name"]: entry for entry in
                          json.loads(args.commands.read_text(encoding="utf-8"))}
                         if args.commands.exists() else {})
