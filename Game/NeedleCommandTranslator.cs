@@ -68,6 +68,9 @@ namespace Hash.Game
             _worker.Start();
         }
 
+        /// <summary>Which weights answered, for a shared record. "base" is the built-in fallback.</summary>
+        internal string ModelName => _tuned ? WeightsFile : "base";
+
         public bool Available => File.Exists(_libraryPath);
 
         public string UnavailableReason => Available ? "" :

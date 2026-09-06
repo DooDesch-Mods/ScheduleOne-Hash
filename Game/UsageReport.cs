@@ -109,20 +109,32 @@ namespace Hash.Game
                     return;
                 }
 
-                // Only what was actually sent is cleared. Anything written while the request was in flight stays.
-                string content2 = _store.Read(StoreScope.Global, UsageCapture.FileName) ?? "";
-                var remaining = new List<string>();
-                foreach (string record in content2.Split('\n'))
+                // Clear exactly the lines that were sent, matched by content rather than by position.
+                //
+                // Counting was wrong in a way that only appears under interleaving: POST A, append B, re-read
+                // [A,B], append C, then rewrite "everything after the first one" - which is [B], and C is gone.
+                // Removing the sent lines themselves cannot delete a record that was never in the batch.
+                string current = _store.Read(StoreScope.Global, UsageCapture.FileName);
+                if (current == null)
                 {
-                    string line = record.Trim();
-                    if (line.Length > 0) remaining.Add(line);
+                    // Unreadable is not empty. Rewriting after a failed read would throw the queue away.
+                    Core.Log?.Warning("usage log sent, but the file could not be re-read - it is left as it is "
+                                      + "and those records will be sent again.");
+                    return;
                 }
 
-                int keep = Math.Max(0, remaining.Count - count);
-                _store.Write(StoreScope.Global, UsageCapture.FileName,
-                             keep == 0 ? "" : string.Join("\n", remaining.GetRange(count, keep)) + "\n");
+                var sent = new HashSet<string>(pending.GetRange(0, count), StringComparer.Ordinal);
+                var remaining = new List<string>();
+                foreach (string record in current.Split('\n'))
+                {
+                    string line = record.Trim();
+                    if (line.Length > 0 && !sent.Remove(line)) remaining.Add(line);
+                }
 
-                Core.Log?.Msg($"usage log sent: {count} records shared, {keep} still waiting.");
+                _store.Write(StoreScope.Global, UsageCapture.FileName,
+                             remaining.Count == 0 ? "" : string.Join("\n", remaining) + "\n");
+
+                Core.Log?.Msg($"usage log sent: {count} records shared, {remaining.Count} still waiting.");
             }
             catch (Exception e)
             {

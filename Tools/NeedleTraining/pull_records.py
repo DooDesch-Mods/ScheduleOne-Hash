@@ -31,7 +31,7 @@ def newest_day(path: pathlib.Path) -> str:
         return ""
 
     day = ""
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for line in path.read_text(encoding="utf-8").split("\n"):
         if not line.strip():
             continue
         try:
@@ -44,12 +44,20 @@ def newest_day(path: pathlib.Path) -> str:
 
 
 def identity(record: dict) -> str:
-    """What makes two records the same line.
+    """What makes two records the same event.
 
-    The day is in it because the same player may well type the same request on two days, and both are
-    evidence. Two identical requests on one day are not: the second is the export overlapping itself.
+    The mod puts a nonce on every record, so a batch uploaded twice - a lost response, a timed-out request -
+    collapses here exactly. Content cannot do that job: two identical lines may be one retransmission or one
+    player asking the same thing twice, and how often a request is asked is worth knowing.
+
+    Records written before the mod carried an id fall back to content, which is the old behaviour and the
+    old flaw; they are a fixed, shrinking set.
     """
-    return json.dumps(
+    record_id = str(record.get("id", ""))
+    if record_id:
+        return "id:" + record_id
+
+    return "content:" + json.dumps(
         [record.get("day", ""), record.get("query", ""), record.get("commands", []),
          record.get("outcome", ""), record.get("actual", "")],
         sort_keys=True, ensure_ascii=False)
@@ -85,7 +93,7 @@ def main() -> None:
 
     existing: dict[str, str] = {}
     if args.out.exists():
-        for line in args.out.read_text(encoding="utf-8").splitlines():
+        for line in args.out.read_text(encoding="utf-8").split("\n"):
             if not line.strip():
                 continue
             try:
@@ -96,7 +104,7 @@ def main() -> None:
     added = 0
     malformed = 0
     with args.out.open("a", encoding="utf-8") as handle:
-        for line in body.splitlines():
+        for line in body.split("\n"):
             if not line.strip():
                 continue
             try:

@@ -49,10 +49,16 @@ def known_answer(record: dict) -> str | None:
 
       corrected  the commands ran and the player immediately typed a different one - `actual` is the answer
       rejected   nothing ran or the console refused, and the player then typed one - same
-      accepted   the commands ran and nothing contradicted them, so the command itself is the answer
+      accepted   the commands ran and nothing contradicted them - the model's OWN answer, off by default
 
-    `accepted` is the weakest of the three and is included because it is also the most common: a benchmark
-    made only of failures measures how well the model recovers, not how well it works.
+    Only the first two are evidence about what the request meant. `accepted` says the console did not
+    refuse the line and the player did not immediately type another one; it does not say the line was what
+    they asked for. "give me five og kush" answered with `give ogkush` runs fine, is recorded accepted, and
+    as a case would assert that dropping the quantity was correct - the model grading its own homework, and
+    the mistake then locked into the only honest measure we have.
+
+    So it needs --include-accepted, and even then the correction wins: a corrected record for the same
+    request displaces an accepted one rather than being refused as a duplicate.
     """
     outcome = str(record.get("outcome", ""))
     actual = str(record.get("actual", "")).strip()
@@ -68,27 +74,50 @@ def known_answer(record: dict) -> str | None:
 def resolvable(expected: str, tools_by_name: dict, values: dict) -> str | None:
     """Why this expected line cannot be a case, or None when it can.
 
-    The same three checks the mod applies before it runs anything: the command has to exist, it has to take
-    the number of arguments given, and a value has to be one the catalogue offers. A case whose answer the
-    game would refuse would score every model wrong forever.
+    The checks the mod applies before it runs anything: the command exists, it takes that many arguments,
+    a number is a number, and a value the catalogue owns is one the catalogue offers. A case whose answer
+    the game itself would refuse scores every model wrong forever, and nothing downstream would notice.
+
+    The command word is matched case-insensitively because the console is: rejecting `GIVE ogkush 1` would
+    throw away a real answer over spelling.
     """
     tokens = g.console_tokens(expected)
     if not tokens:
         return "empty"
 
-    tool = tools_by_name.get(tokens[0])
+    word = tokens[0].casefold()
+    tool = tools_by_name.get(word)
     if tool is None:
         return f"unknown command {tokens[0]!r}"
 
-    properties = list(tool["parameters"].get("properties", {}))
-    supplied = len(tokens) - 1
-    if supplied > len(properties):
-        return f"{tokens[0]} takes {len(properties)} argument(s), the line has {supplied}"
+    parameters = tool["parameters"]
+    properties = list(parameters.get("properties", {}))
+    supplied = tokens[1:]
+    if len(supplied) > len(properties):
+        return f"{word} takes {len(properties)} argument(s), the line has {len(supplied)}"
 
-    required = sum(1 for name in properties
-                   if name in tool["parameters"].get("required", properties))
-    if supplied < min(required, len(properties)):
-        return f"{tokens[0]} needs {required} argument(s), the line has {supplied}"
+    required = [name for name in properties if name in parameters.get("required", [])]
+    if len(supplied) < len(required):
+        return f"{word} needs {len(required)} argument(s), the line has {len(supplied)}"
+
+    offered = values.get(word) or []
+    for index, value in enumerate(supplied):
+        prop = parameters["properties"][properties[index]]
+
+        if prop.get("type") in ("number", "integer"):
+            try:
+                float(value)
+            except ValueError:
+                return f"{word} argument {index + 1} must be a number, got {value!r}"
+            continue
+
+        # A mark is resolved against the live world, not the catalogue, and is legitimate in an answer.
+        if value.startswith("#"):
+            continue
+
+        choices = offered[index] if index < len(offered) else []
+        if choices and not any(g.normalized(value) == g.normalized(choice) for choice in choices):
+            return f"{word} argument {index + 1} is not a value the catalogue offers"
 
     return None
 
@@ -99,7 +128,11 @@ def main() -> None:
     parser.add_argument("--cases", type=pathlib.Path, default=CASES)
     parser.add_argument("--tools", type=pathlib.Path, default=ROOT / "data" / "tools.json")
     parser.add_argument("--values", type=pathlib.Path, default=ROOT / "data" / "values.json")
-    parser.add_argument("--write", action="store_true", help="append the accepted candidates to cases.json")
+    parser.add_argument("--write", action="store_true", help="append the candidates to cases.json")
+    parser.add_argument("--include-accepted", action="store_true",
+                        help="also take records the console accepted. Those are the model's own answer: it "
+                             "grades its own homework, and a confidently wrong line the console happened to "
+                             "accept becomes the expected answer forever.")
     parser.add_argument("--limit", type=int, default=0, help="stop after this many new cases")
     args = parser.parse_args()
 
@@ -107,7 +140,7 @@ def main() -> None:
         raise SystemExit(f"no records at {args.records} - run pull_records.py first")
 
     tools = json.loads(args.tools.read_text(encoding="utf-8"))
-    tools_by_name = {tool["name"]: tool for tool in tools}
+    tools_by_name = {tool["name"].casefold(): tool for tool in tools}
     values = json.loads(args.values.read_text(encoding="utf-8"))
 
     document = json.loads(args.cases.read_text(encoding="utf-8"))
@@ -118,7 +151,7 @@ def main() -> None:
     dropped: collections.Counter[str] = collections.Counter()
     added: list[dict] = []
 
-    for line in args.records.read_text(encoding="utf-8").splitlines():
+    for line in args.records.read_text(encoding="utf-8").split("\n"):
         if not line.strip():
             continue
         try:
@@ -137,6 +170,11 @@ def main() -> None:
             dropped["already a case"] += 1
             continue
 
+        outcome = str(record.get("outcome", ""))
+        if outcome == "accepted" and not args.include_accepted:
+            dropped["accepted - the model's own answer (--include-accepted)"] += 1
+            continue
+
         expected = known_answer(record)
         if expected is None:
             dropped["no established answer"] += 1
@@ -147,7 +185,7 @@ def main() -> None:
             dropped[reason] += 1
             continue
 
-        word = g.console_tokens(expected)[0]
+        word = g.console_tokens(expected)[0].casefold()
         language = language_of(record)
         index = 1
         while f"shared-{word}-{language}-{index}" in seen_ids:

@@ -50,10 +50,17 @@ correction pairs - command words only, never what a player typed. One line looks
 | `retried` | the request failed and the player asked again |
 
 `actual` is the line the player typed, and appears whenever one closed the record - so a `rejected` line
-usually carries the right answer beside the wrong one.
+usually carries the right answer beside the wrong one. It is written only if that line actually ran: a
+command the console itself refused is not what hash should have produced.
 
 **`corrected` is a hint, not a verdict.** The next line a player runs may simply be the next thing they
-wanted. That is why `actual` is always written: the judgement belongs to whoever reads the file.
+wanted, or a compensating one - asked for ten, given one, they type nine, and nine was never the answer.
+That is why `actual` is always written out: the judgement belongs to whoever reads the file.
+
+Each record also carries `id` (a per-record nonce, so a batch uploaded twice collapses exactly instead of
+by content), `locale`, and `model` - `Hash.Needle.cact` or `base`. The last one matters more than it looks:
+an install missing the weights answers with the fallback, which routes one request in ten against the tuned
+model's four in five, and the mod version cannot tell them apart.
 
 No player id, no session id, no save name, no timestamp. The file is in order, which is all the model
 needs, and every field that is not needed is a field that has to be explained before someone hands it over.
@@ -126,6 +133,21 @@ place that already appends derived rows to a finished corpus.
 **A regression gate.** `run_pipeline.ps1` gates on the generated holdout, which `RESULTS.md` shows is the
 wrong number. It should gate on the hand-written and shared cases instead, and refuse to export weights
 that score below the shipped adapter.
+
+**Benchmark answers still steer the corpus.** `expected_assignments` extracts the *answers* from
+`cases.json` into `gold`, and `make_assignments` prefers those argument assignments when it builds the
+scenarios the teacher writes phrasings for - 73 of them at the last count. The phrasings are excluded, so
+the model never sees a benchmark sentence, but it is trained on the same scenarios the benchmark scores.
+That makes the set a selected diagnostic rather than an independent holdout, and closing it means splitting
+the cases into one half that may seed scenarios and one half that may not.
+
+**Delivery is best-effort, not guaranteed.** One batch per terminal close, no retry loop, and a batch that
+exceeds the server's byte limit is retried unchanged forever because the client caps the record count and
+not the encoded size. A player who fills the queue faster than they close the terminal falls behind.
+
+**Counters cannot be rebuilt.** They are written every ten seconds; an abrupt restart loses the window and
+nothing reconciles them against the records on disk. Treat the public page as a cache, not as evidence of
+what was delivered.
 
 ## Practices this follows, and where they come from
 

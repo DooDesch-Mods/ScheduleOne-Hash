@@ -128,7 +128,13 @@ namespace Hash
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
             var sharing = new PreferenceSharing();
-            _capture = new UsageCapture(_store, sharing, System.Globalization.CultureInfo.CurrentUICulture.Name);
+            _capture = new UsageCapture(_store, sharing, System.Globalization.CultureInfo.CurrentUICulture.Name)
+            {
+                // Which model answered decides what a record is evidence about: the fallback routes one
+                // request in ten against the tuned model's four in five, and mod version cannot tell them
+                // apart - the weights file can be missing at any version.
+                Model = _needle.ModelName,
+            };
             _report = new UsageReport(_store, sharing);
             _session = new Session(_index, _runner, _usage, _history, _aliases, _marks, _needle,
                                    _naturalCatalogue, _capture);

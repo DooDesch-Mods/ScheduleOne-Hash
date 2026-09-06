@@ -76,6 +76,14 @@ namespace Hash
                     case '\n': sb.Append("\\n"); break;
                     case '\r': sb.Append("\\r"); break;
                     case '\t': sb.Append("\\t"); break;
+                    // Legal inside a JSON string, and a line break to most readers: Python's splitlines()
+                    // cuts on all three - inside the string - and turns one record into two fragments that
+                    // parse as neither. Escaped, they survive as themselves and the line stays one line.
+                    case '\u0085':
+                    case '\u2028':
+                    case '\u2029':
+                        sb.Append("\\u").Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+                        break;
                     default:
                         if (c < ' ') sb.Append("\\u").Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
                         else sb.Append(c);

@@ -32,8 +32,12 @@ namespace Hash.Terminal
         private readonly IStore _store;
         private readonly IUsageSharing _sharing;
         private readonly string _locale;
+        private readonly Random _ids = new Random();
 
         private Record _open;
+
+        /// <summary>The model that answered, so records from a fallback install are not mixed with tuned ones.</summary>
+        public string Model { get; set; } = "";
 
         /// <param name="locale">
         /// The locale the engine is told about, so a shared record can be replayed against the same system
@@ -70,6 +74,17 @@ namespace Hash.Terminal
         /// <summary>Note that the question has been put, whatever the answer was - including no answer at all.</summary>
         public void Remember() => _store?.Write(StoreScope.Global, AskedFile, "asked");
 
+        /// <summary>Enough randomness to make a collision between two records irrelevant, and nothing more.</summary>
+        private string NewId()
+        {
+            var bytes = new byte[8];
+            lock (_ids) _ids.NextBytes(bytes);
+
+            var text = new System.Text.StringBuilder(16);
+            foreach (byte value in bytes) text.Append(value.ToString("x2"));
+            return text.ToString();
+        }
+
         /// <summary>
         /// The player submitted a request.
         ///
@@ -82,7 +97,7 @@ namespace Hash.Terminal
 
             if (_store == null) return;
 
-            _open = new Record(query);
+            _open = new Record(query, NewId());
         }
 
         /// <summary>Hash produced an answer but nothing has run yet.</summary>
@@ -166,6 +181,12 @@ namespace Hash.Terminal
             json.Bool("constrained", record.Constrained);
             json.Str("error", record.Error);
             json.Str("locale", _locale);
+            json.Str("model", Model);
+            // A per-record nonce, so a batch that is uploaded twice - a lost response, a timeout - collapses
+            // exactly on the way back in, instead of being deduplicated by content. Content equality cannot
+            // tell a retransmission from a player genuinely asking the same thing twice, and how often a
+            // request is asked is one of the things worth knowing.
+            json.Str("id", record.Id);
             json.Str("outcome", outcome ?? record.Outcome);
             if (!string.IsNullOrEmpty(actual)) json.Str("actual", actual);
 
@@ -174,9 +195,15 @@ namespace Hash.Terminal
 
         private sealed class Record
         {
-            internal Record(string query) => Query = query ?? "";
+            internal Record(string query, string id)
+            {
+                Query = query ?? "";
+                Id = id;
+            }
 
             internal string Query { get; }
+
+            internal string Id { get; }
 
             internal IReadOnlyList<string> Commands { get; set; } = Array.Empty<string>();
 

@@ -103,8 +103,10 @@ Your history and aliases live in `UserData/Hash/`. Which commands you use most i
 ## Helping the model get better
 
 hash writes one line per `# ` request to `UserData/Hash/queries.jsonl`: what you typed, the commands it produced,
-and whether they worked. The last part is the useful one - a request that ran and was right teaches nothing, a
-request you had to type out by hand afterwards teaches exactly what was missing.
+whether they worked, and which language your game is in. The last part is the useful one - a request that ran and
+was right teaches nothing, a request you had to type out by hand afterwards teaches exactly what was missing.
+
+The line is written when the request is finished, so the very last one before a crash can be missing.
 
 **That file never leaves your machine unless you say so.** The first time you use `# `, hash says the file exists
 and how to answer: `share on` sends it, `share off` leaves it alone. It asks once. `share` on its own says where

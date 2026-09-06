@@ -423,16 +423,17 @@ namespace Hash.Terminal
 
             _marks.Ran(typed);
 
-            // Whatever Hash last answered is closed by this line. After a command that ran, typing one by hand
-            // is the correction signal the record exists for; after one that failed, it is the missing answer.
-            //
-            // A word this terminal answers itself is not either of those. `help`, `logs` and above all `share` -
-            // the answer to the question the request just triggered - are not the console command Hash should
-            // have produced, and recording them as one would teach the model to answer "give me five" with
-            // `share`. The record still closes: leaving it open would hand the correction to the next line.
-            _capture?.PlayerRan(IsOwnWord(typed) ? null : typed);
-
+            int beforeManual = lines.Count;
             foreach (string command in ready) RunOne(command, lines);
+
+            // Closed AFTER the line ran, and only when it worked. Before, a command the console itself
+            // refused still became "what Hash should have produced" - teaching the model an answer the game
+            // rejects. A word this terminal answers itself is not a correction either: `help`, `logs` and
+            // above all `share`, the answer to the question the request just triggered, would otherwise be
+            // recorded as the console command that was wanted. The record still closes on any of them,
+            // because leaving it open hands the label to the next line instead.
+            bool manualWorked = !lines.Skip(beforeManual).Any(line => line.Kind == LineKind.Error);
+            _capture?.PlayerRan(IsOwnWord(typed) || !manualWorked ? null : typed);
 
             // The transcript shrinking across a run can only mean `clear`, which is the one thing the page cannot
             // work out for itself - it holds its own copy of the drawn window.
@@ -563,22 +564,34 @@ namespace Hash.Terminal
             Echo(typed, lines);
             _history.Add(typed);
 
+            // Opened before the checks below, not after Start succeeds. A request refused because this is a
+            // client, or because the engine is missing, is still a request somebody typed - and those were
+            // invisible while the record only existed once inference had begun.
+            _capture?.Asked(query);
+
             if (Locked)
+            {
                 Emit(OutputLine.Error(_runner.RefusalReason), lines);
+                _capture?.Refused(_runner.RefusalReason);
+            }
             else if (_natural == null || !_natural.Available)
-                Emit(OutputLine.Error(_natural?.UnavailableReason ?? "Hash is unavailable: Needle is not installed."), lines);
+            {
+                string reason = _natural?.UnavailableReason ?? "Hash is unavailable: Needle is not installed.";
+                Emit(OutputLine.Error(reason), lines);
+                _capture?.Refused(reason);
+            }
             else
             {
                 try
                 {
                     _natural.Start(query);
-                    _capture?.Asked(query);
                     Emit(OutputLine.Dim("Hash: translating..."), lines);
                     AskAboutSharing(lines);
                 }
                 catch (Exception e)
                 {
                     Emit(OutputLine.Error("Hash: " + e.Message), lines);
+                    _capture?.Refused(e.Message);
                     _natural.Cancel();
                 }
             }

@@ -3,6 +3,16 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.2] - 2026-09-06
+
+### Fixed
+
+- A request hash refused before it started - on a client, or with the engine missing - is written to the log
+  too. Those never appeared, so the most broken installs were the ones nobody could see.
+- A command you typed that the console itself refused is no longer recorded as the answer hash should have
+  given. It was teaching the model lines the game rejects.
+- Sharing could drop a request you made while an upload was still running.
+
 ## [1.2.1] - 2026-09-06
 
 ### Changed
