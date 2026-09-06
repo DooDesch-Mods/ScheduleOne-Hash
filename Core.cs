@@ -151,10 +151,12 @@ namespace Hash
                 get => _needleShareUsage?.Value == true;
                 set
                 {
-                    if (_needleShareUsage == null) return;
-
-                    _needleShareUsage.Value = value;
-                    MelonPreferences.Save();
+                    // Set, do not save. MelonPreferences.Save() writes every mod's preferences and runs every
+                    // mod's listeners: two test sessions died within 250 ms of `share on`, with another mod
+                    // reacting to the save by re-syncing and broadcasting to all players from inside a callback
+                    // on the game thread. The value takes effect immediately either way, and MelonLoader writes
+                    // it out at shutdown like every other setting a player changes.
+                    if (_needleShareUsage != null) _needleShareUsage.Value = value;
                 }
             }
         }
