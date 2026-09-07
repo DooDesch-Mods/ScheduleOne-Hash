@@ -33,6 +33,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tools", type=pathlib.Path, default=ROOT / "data" / "tools.json")
     parser.add_argument("--values", type=pathlib.Path, default=ROOT / "data" / "values.json")
+    parser.add_argument("--marks", type=pathlib.Path, default=ROOT / "data" / "marks.json")
     parser.add_argument("--commands", type=pathlib.Path, default=ROOT / "data" / "commands.json")
     parser.add_argument("--cases", type=pathlib.Path,
                         default=ROOT.parent / "NeedleBenchmark" / "cases.json")
@@ -43,6 +44,8 @@ def main() -> None:
 
     tools = json.loads(args.tools.read_text(encoding="utf-8"))
     values = json.loads(args.values.read_text(encoding="utf-8"))
+    marks = {name: slots for name, slots in
+             json.loads(args.marks.read_text(encoding="utf-8")).items() if not name.startswith("_")}
     metadata = {entry["name"]: entry
                 for entry in json.loads(args.commands.read_text(encoding="utf-8"))}
 
@@ -72,7 +75,7 @@ def main() -> None:
         language = case.get("language", "en")
         # Every command, each with the schema the runtime would send for THIS query. That is the whole
         # point: the engine is being given everything it needs to retrieve and extract in one call.
-        declared = [g.refinement_tool(tool, {}, values, case["query"]) for tool in tools]
+        declared = [g.refinement_tool(tool, {}, values, case["query"], marks) for tool in tools]
 
         answers = []
         if tokens:

@@ -10,8 +10,10 @@ using Hash.Terminal;
 // query and that routed command, hands it the model's own answer, and prints the console line the player would
 // have been offered - or the refusal they would have seen instead.
 //
-// What it cannot see: marks. `#home` is live world state and the committed snapshot has none, so a case whose
-// answer is a mark is reported as MARK and left out of the count rather than scored as a failure.
+// One thing it does not do: resolve a mark. `TryResolveText` accepts `#home` verbatim and MarkExpansion checks
+// later, in the game, that it points at something of the right kind. So a case answered with a mark is counted
+// correct here on the strength of the word alone - which is the right call for measuring whether the model
+// picks the word, and not a claim that the mark pointed anywhere.
 
 if (args.Length < 4)
 {
@@ -46,12 +48,7 @@ foreach (JsonElement row in reportDoc.RootElement.GetProperty("results").Enumera
     string expected = expectedById.TryGetValue(id, out string want) ? want.Trim() : "";
     string query = queryById.TryGetValue(id, out string q) ? q : "";
 
-    if (expected.Contains('#'))
-    {
-        marks++;
-        lines.Add($"MARK   {id,-28} {expected}");
-        continue;
-    }
+    if (expected.Contains('#')) marks++;
 
     scored++;
 
@@ -110,7 +107,7 @@ foreach (string line in lines) Console.WriteLine(line);
 Console.WriteLine();
 Console.WriteLine(
     $"{correct}/{scored} as the player would get it   ({refused} correct refusals, {silent} silent, "
-    + $"{marks} mark cases not scorable from a snapshot)");
+    + $"{marks} of them answered with a mark, which is scored on the word alone)");
 return 0;
 
 static string Normalise(string line) =>

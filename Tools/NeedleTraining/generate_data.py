@@ -299,7 +299,8 @@ def enum_choices(values: list[str], query: str) -> list[str]:
     return chosen
 
 
-def refinement_tool(tool: dict, assignment: dict, live_values: dict, query: str = "") -> dict:
+def refinement_tool(tool: dict, assignment: dict, live_values: dict, query: str = "",
+                    marks: dict | None = None) -> dict:
     """Emit the schema the mod actually sends - NeedleTool.Write in Terminal/NeedleProtocol.cs.
 
     This used to strip parameters.type, additionalProperties, required, and every property's type and
@@ -316,6 +317,7 @@ def refinement_tool(tool: dict, assignment: dict, live_values: dict, query: str 
     parameters.setdefault("type", "object")
     parameters["additionalProperties"] = False
     slots = live_values.get(tool["name"], [])
+    mark_slots = (marks or {}).get(tool["name"], [])
     for index, prop in enumerate(parameters.get("properties", {}).values()):
         # A time of day is a word the model picks, not a number it has to invent. Terminal/TimeWords.cs
         # carries the reasoning; both sides render the slot the same way or the measurement is about the
@@ -329,6 +331,13 @@ def refinement_tool(tool: dict, assignment: dict, live_values: dict, query: str 
             choices = enum_choices(slots[index], query)
             if choices:
                 prop["enum"] = choices
+
+        # Marks go last, the way NeedleArgument.Write puts them - in front they displace the catalogue values
+        # in a slot where the catalogue is the answer.
+        offered = mark_slots[index] if index < len(mark_slots) else []
+        if offered and prop.get("type") == "string":
+            rest = [value for value in offered if value not in prop.get("enum", [])]
+            prop["enum"] = list(prop.get("enum", [])) + rest
     return projected
 
 
