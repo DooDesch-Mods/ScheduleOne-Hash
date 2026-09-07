@@ -3,6 +3,15 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.5] - 2026-09-07
+
+### Fixed
+
+- hash tells its offline model which language your game is in. It sent nothing at all, so a request in German
+  was answered as if it were English.
+- "bring me home" can answer with the place you actually live. The word for it was never offered, so hash
+  guessed at a location name instead.
+
 ## [1.2.4] - 2026-09-07
 
 ### Fixed
