@@ -536,7 +536,7 @@ namespace Hash.Game
         };
 
         private static string SystemFacts() =>
-            "locale: " + CultureInfo.CurrentUICulture.Name + "; device: phone; assistant: hash";
+            "locale: " + SystemLocale.Tag() + "; device: phone; assistant: hash";
 
         private static string FindLibrary()
         {
