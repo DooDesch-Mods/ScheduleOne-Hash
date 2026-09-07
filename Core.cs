@@ -126,7 +126,7 @@ namespace Hash
             _marks = new WorldMarks();
             _runner = new CommandRunner(_log);
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
-            _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value);
+            _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value, marks: _marks);
             var sharing = new PreferenceSharing();
             _capture = new UsageCapture(_store, sharing, System.Globalization.CultureInfo.CurrentUICulture.Name)
             {

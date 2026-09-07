@@ -44,7 +44,7 @@ namespace Hash.Terminal
 
         internal bool RouteOnly => _routeOnly;
 
-        internal static NeedleToolset Build(ICommandCatalogue catalogue)
+        internal static NeedleToolset Build(ICommandCatalogue catalogue, Marks marks = null)
         {
             var commands = catalogue.Commands
                 .Where(command => command != null && command.Word.Length > 0 && command.Word != "#")
@@ -57,7 +57,7 @@ namespace Hash.Terminal
             foreach (CommandInfo command in commands)
             {
                 string name = UniqueToolName(command.Word, usedNames);
-                tools.Add(NeedleTool.Build(name, command, catalogue));
+                tools.Add(NeedleTool.Build(name, command, catalogue, marks));
             }
 
             string json = WriteTools(tools, includeLiveValues: false, requireAll: false, query: null);
@@ -344,7 +344,8 @@ namespace Hash.Terminal
 
         internal string CommandWord => _command.Word;
 
-        internal static NeedleTool Build(string name, CommandInfo command, ICommandCatalogue catalogue)
+        internal static NeedleTool Build(string name, CommandInfo command, ICommandCatalogue catalogue,
+                                         Marks marks = null)
         {
             List<string> shape = CommandLine.Tokenise(command.Signature);
             List<string> example = CommandLine.Tokenise(command.Usage);
@@ -363,11 +364,37 @@ namespace Hash.Terminal
                     .ToList();
 
                 string exampleToken = i < example.Count ? example[i] : "";
+                MarkKind kind = catalogue.KindOf(command.Word, i - 1);
                 arguments.Add(new NeedleArgument(i, label, required, catalogue.Owns(command.Word, i - 1),
-                    catalogue.KindOf(command.Word, i - 1), values, exampleToken));
+                    kind, values, exampleToken, ResolvingMarks(marks, kind)));
             }
 
             return new NeedleTool(name, command, arguments);
+        }
+
+        /// <summary>
+        /// The mark words that point at something right now AND fit this slot - the filter
+        /// <see cref="Suggestions"/> already applies when it offers them to a player typing by hand.
+        ///
+        /// Declaring them is the difference between a word the model can pick and one it has to invent. Seven
+        /// benchmark cases want `teleport #home`; the model wrote `home`, which is not a teleport target, or
+        /// reached for a different command entirely. A mark that does not currently resolve is not offered, so
+        /// nothing here can propose `#car` to a player who is on foot.
+        /// </summary>
+        private static IReadOnlyList<string> ResolvingMarks(Marks marks, MarkKind wanted)
+        {
+            if (marks == null || wanted == MarkKind.None) return Array.Empty<string>();
+
+            var words = new List<string>();
+            foreach (string word in Marks.Words)
+            {
+                Mark mark = marks.Resolve(word);
+                if (!mark.Exists) continue;
+                if (mark.Kind != MarkKind.Any && wanted != MarkKind.Any && mark.Kind != wanted) continue;
+                words.Add(word);
+            }
+
+            return words;
         }
 
         internal void Write(Utf8JsonWriter writer, bool includeLiveValues, bool requireAll, string query)
@@ -666,11 +693,13 @@ namespace Hash.Terminal
         private readonly MarkKind _markKind;
         private readonly IReadOnlyList<string> _values;
         private readonly IReadOnlyList<string> _schemaValues;
+        private readonly IReadOnlyList<string> _markWords;
         private readonly string _jsonType;
         private readonly bool _time;
 
         internal NeedleArgument(int position, string label, bool required, bool owned, MarkKind markKind,
-                                IReadOnlyList<string> values, string exampleToken)
+                                IReadOnlyList<string> values, string exampleToken,
+                                IReadOnlyList<string> markWords = null)
         {
             Name = "arg" + position;
             Label = string.IsNullOrWhiteSpace(label) ? Name : label;
@@ -679,6 +708,7 @@ namespace Hash.Terminal
             _markKind = markKind;
             _values = values ?? Array.Empty<string>();
             _schemaValues = Literals(exampleToken);
+            _markWords = markWords ?? Array.Empty<string>();
             _time = TimeWords.Owns(Label);
             _jsonType = TypeOf(Label);
         }
@@ -708,6 +738,20 @@ namespace Hash.Terminal
             IReadOnlyList<string> choices = _time ? TimeWords.Choices(query)
                 : includeLiveValues && _values.Count > 0 ? RelevantValues(query)
                 : _schemaValues;
+
+            // Marks go last, and that position was measured. A model not shown them writes the bare word instead
+            // - `teleport home`, which is not a place - so they have to be offered. Put in FRONT they displace the
+            // catalogue values in a slot where the catalogue is the answer: `give` lost four cases to
+            // setmovespeed, setvar and bind when `#`, `#hand`, `#last` and `#it` took the head of its list. Last,
+            // they take only budget nothing else wanted, which is exactly the case where the enum was empty.
+            if (includeLiveValues && _markWords.Count > 0 && _jsonType == "string")
+            {
+                var offered = new List<string>(choices);
+                foreach (string word in _markWords)
+                    if (!offered.Contains(word, StringComparer.OrdinalIgnoreCase)) offered.Add(word);
+                choices = offered;
+            }
+
             if (_jsonType == "string" && choices.Count > 0)
             {
                 writer.WritePropertyName("enum");

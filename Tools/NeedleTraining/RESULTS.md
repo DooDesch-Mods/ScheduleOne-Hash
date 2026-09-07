@@ -280,6 +280,52 @@ it shipped:
 It also drops a count of nothing that nobody asked for: `give mixingstation 0` is a line the console accepts
 and that does nothing.
 
+### Marks had to be declared, and where they sit in the list decides everything
+
+Seven cases expect `teleport #home`. The mod accepts a mark verbatim and checks it later, but it never told
+the model the word existed, so the model wrote `home` - not a teleport target - or reached for another command.
+`NeedleTool.ResolvingMarks` now offers the mark words for a slot, filtered exactly the way `Suggestions`
+filters them for a player typing by hand: only marks that fit the slot's `MarkKind`, and only ones that point
+at something right now.
+
+Position was not a detail. Offered FIRST, the eight words take the head of every mark-bearing slot's enum, and
+`give` - where the catalogue is the answer - lost four cases to `setmovespeed`, `setvar` and `bind`. Offered
+LAST they take only budget nothing else wanted, which is precisely the case where the enum was empty.
+
+| | replay, player-visible |
+|---|---|
+| no marks declared | 36 of 77 |
+| marks first | 36 of 77 |
+| **marks last** | **40 of 77** |
+
+Of that +4, one case is the declaration doing its job and can be pointed at: `manual-teleport-home`, where the
+model had already routed and extracted correctly and only wrote `home`. The rest is the model answering a
+changed list, which at this sample size is noise with a direction.
+
+Six of the seven remain wrong, and none of them is reachable from here: the model never gets to `teleport` at
+all, answering `freecam`, `enablephysics`, `hashhand`, `bind` or nothing. A declaration on a tool the router
+never picks cannot help.
+
+`data/marks.json` is the fixture that made this measurable. Marks are live world state, so no snapshot can be
+taken the way `values.json` was; the file says what an ordinary player has - somewhere they are, a property
+they own, an NPC nearby, something in hand - and is labelled as that rather than as a capture.
+
+### Raising the enum budget is not affordable, measured
+
+The triage's third-ranked proposal was to raise `MaxEnumValues`/`MaxEnumCharacters` from 32/80 to about
+160/1600, so that a mid-size catalogue - `teleport` is 129 values and 1483 characters - would be offered whole
+the way `setweather`'s three already are. Enum recall over the 53 catalogue-backed arguments was measured at
+38 today against 44 with the raise.
+
+It does not survive the token budget. Rendered with the engine's own tokenizer, one `teleport` refinement row
+costs **111 tokens at 32/80 and 955 at 160/1600**, against a `kv_window` of 256. The declaration would not fit
+in the window it is read through, which is a worse failure than a short list.
+
+Nothing in between helps either: the offer-whole guard fires only when the entire vocabulary fits, so at 400
+characters `teleport` is still ranked rather than offered, and "llevame a los muelles" still matches none of
+129 English target names at any budget. That last part is the real shape of the teleport family - a Spanish
+request has no lexical bridge to an English catalogue, and ranking cannot translate.
+
 ### What all of it measured
 
 Two rulers, because they answer different questions. The single-call benchmark says what the model does with

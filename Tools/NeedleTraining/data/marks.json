@@ -1,0 +1,24 @@
+{
+  "_comment": [
+    "The marks an ordinary game offers, per command and argument, as a fixture.",
+    "",
+    "Marks are live world state - what the player is looking at, holding, standing in - so no snapshot can be",
+    "taken from a running game the way data/values.json was. This file says what a player normally has: they are",
+    "somewhere, they own a property, an NPC is nearby, they are holding something. The mod filters the same list",
+    "by MarkKind and by whether each one currently resolves (NeedleTool.ResolvingMarks); this fixture is that",
+    "filter's answer for a plain moment in a plain save.",
+    "",
+    "It exists so a declaration that depends on marks can be measured at all. Seven benchmark cases expect",
+    "`teleport #home`, and without this the model is never shown the word and cannot be scored on picking it.",
+    "A slot missing from this file is offered no marks, which is also what a command with no mark provider gets."
+  ],
+  "teleport": [["#", "#here", "#home", "#near", "#last", "#it"]],
+  "give": [["#", "#hand", "#last", "#it"]],
+  "setowned": [["#", "#here", "#home", "#last", "#it"]],
+  "setunlocked": [["#", "#near", "#last", "#it"]],
+  "setrelationship": [["#", "#near", "#last", "#it"], []],
+  "addemployee": [[], ["#", "#here", "#home", "#last", "#it"]],
+  "setdiscovered": [["#", "#hand", "#last", "#it"]],
+  "packageproduct": [["#", "#hand", "#last", "#it"]],
+  "spawnvehicle": [["#", "#car", "#last", "#it"]]
+}

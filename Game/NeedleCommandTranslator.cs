@@ -21,6 +21,7 @@ namespace Hash.Game
         internal const string WeightsFile = "Hash.Needle.cact";
 
         private readonly ICommandCatalogue _catalogue;
+        private readonly Marks _marks;
         private readonly Func<bool> _keepContext;
         private readonly string _libraryPath;
         private readonly string _weightsPath;
@@ -43,9 +44,11 @@ namespace Hash.Game
 
         internal NeedleCommandTranslator(ICommandCatalogue catalogue, Func<bool> keepContext,
                                          string libraryPath = null, string toolIndexPath = null,
-                                         string weightsPath = null)
+                                         string weightsPath = null, IMarks marks = null)
         {
             _catalogue = catalogue;
+            // Read when a request is prepared rather than held, so `#here` means where the player is now.
+            _marks = marks == null ? null : new Marks(marks);
             _keepContext = keepContext ?? (() => false);
             _libraryPath = libraryPath ?? FindLibrary();
             _weightsPath = weightsPath ?? FindWeights();
@@ -88,7 +91,7 @@ namespace Hash.Game
         {
             if (_disposed || !Available) return false;
 
-            NeedleToolset tools = NeedleToolset.Build(_catalogue).ForRouting();
+            NeedleToolset tools = NeedleToolset.Build(_catalogue, _marks).ForRouting();
             if (tools.Count == 0) return false;
 
             _queue.Add(Work.Warmup(tools));
@@ -101,7 +104,7 @@ namespace Hash.Game
             if (_disposed) throw new ObjectDisposedException(nameof(NeedleCommandTranslator));
             if (!Available) throw new FileNotFoundException(UnavailableReason, _libraryPath);
 
-            NeedleToolset full = NeedleToolset.Build(_catalogue);
+            NeedleToolset full = NeedleToolset.Build(_catalogue, _marks);
             if (full.Count == 0) throw new InvalidOperationException("there are no console commands to translate to");
             NeedleRequest prepared = full.Prepare(query);
             NeedleToolset tools = full.ForRouting();
@@ -143,7 +146,7 @@ namespace Hash.Game
             if (_disposed) throw new ObjectDisposedException(nameof(NeedleCommandTranslator));
             if (!Available) throw new FileNotFoundException(UnavailableReason, _libraryPath);
 
-            NeedleToolset tools = NeedleToolset.Build(_catalogue).ForRouting();
+            NeedleToolset tools = NeedleToolset.Build(_catalogue, _marks).ForRouting();
             if (tools.Count == 0) throw new InvalidOperationException("there are no console commands to translate to");
             NeedleRequest prepared = tools.Prepare(query);
 
@@ -169,7 +172,7 @@ namespace Hash.Game
             if (_disposed) throw new ObjectDisposedException(nameof(NeedleCommandTranslator));
             if (!Available) throw new FileNotFoundException(UnavailableReason, _libraryPath);
 
-            NeedleToolset routing = NeedleToolset.Build(_catalogue).ForRouting();
+            NeedleToolset routing = NeedleToolset.Build(_catalogue, _marks).ForRouting();
             if (!routing.TryConstrain(commandWord, query, strict, out NeedleToolset constrained, out string toolName))
                 throw new InvalidOperationException("the selected command is not in the current catalogue: " + commandWord);
 
