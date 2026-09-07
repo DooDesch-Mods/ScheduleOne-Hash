@@ -310,6 +310,35 @@ never picks cannot help.
 taken the way `values.json` was; the file says what an ordinary player has - somewhere they are, a property
 they own, an NPC nearby, something in hand - and is labelled as that rather than as a capture.
 
+### The system block never said the one thing it exists to say
+
+`SystemFacts()` sends `locale: <culture>; device: phone; assistant: hash`, and the corpus renders
+`locale: de-DE` on every German row. The runtime sent **`locale: `** to every player, in every language, since
+the line was written: MelonLoader starts the runtime with `System.Globalization.Invariant=true`, so
+`CultureInfo.CurrentUICulture.Name` is the empty string. The shared request log has the same hole - every
+record written in this session carries `"locale":""`, including the ones the field was added for in 1.2.1.
+
+So every non-English row in this file measured a system block no player ever received, and the language signal
+the adapter was trained on was absent at inference. `Game/SystemLocale.cs` reads
+`Application.systemLanguage` instead, which is an engine enum and needs no globalization data, and answers the
+four languages the corpus covers with the region those rows were rendered with.
+
+### Two routing proposals, measured and rejected
+
+The triage's remaining routing ideas both fail on something concrete rather than on taste.
+
+**Filtering the ballot** - dropping a command whose required, provider-owned argument currently has no values,
+which the mod would refuse anyway. The routing snapshot's fingerprint is a hash of its JSON, and
+`Prepare(native, tools, ref activeFingerprint)` re-initialises the engine whenever it changes. The snapshot is
+built with `includeLiveValues: false` precisely so it is stable; keying it on live world state would re-prepare
+on every change, and this log records that preparation at **4394 ms for 136 tools**. A four-second stall to
+save one wasted route is not a trade.
+
+**Refusing an arbitrary token in a free-string slot** - which is how `logs ogkush` and `alias` come back as
+runnable lines. There is no rule that does not break the commands where arbitrary text is the point: `alias`,
+`bind` and `grep` take exactly that. `playcutscene` is already refused, by the owned-and-empty rule that
+exists. The rest is the router picking the wrong command, and no argument rule reaches it.
+
 ### Raising the enum budget is not affordable, measured
 
 The triage's third-ranked proposal was to raise `MaxEnumValues`/`MaxEnumCharacters` from 32/80 to about

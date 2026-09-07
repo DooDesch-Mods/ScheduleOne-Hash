@@ -128,7 +128,7 @@ namespace Hash
             _naturalCatalogue = new OverlayCommandCatalogue(_index, Builtins.Catalogue);
             _needle = new NeedleCommandTranslator(_naturalCatalogue, () => _needleKeepContext.Value, marks: _marks);
             var sharing = new PreferenceSharing();
-            _capture = new UsageCapture(_store, sharing, System.Globalization.CultureInfo.CurrentUICulture.Name)
+            _capture = new UsageCapture(_store, sharing, global::Hash.Game.SystemLocale.Tag())
             {
                 // Which model answered decides what a record is evidence about: the fallback routes one
                 // request in ten against the tuned model's four in five, and mod version cannot tell them
