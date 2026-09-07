@@ -172,21 +172,23 @@ number and the answer carries none, and is not something another corpus will tea
 **N and O are dead ends.** Renaming the parameters cost seven routed cases; removing "Optionally" cost three
 and gained nothing.
 
-### Four cases in this benchmark cannot be won
+### Four cases that were called unwinnable, and were ours
 
-- **The granddaddy cases: 4, and the answer is not on the list.** For "give me 4 grandaddy seed" the ranked
-  enum is `cocaseed, addy, ogkushseed, ...` and `granddaddypurpleseed` is absent. Every model scores these
-  wrong by construction.
+- **The granddaddy cases: 4, and the answer was not on the list.** For "give me 4 grandaddy seed" the ranked
+  enum read `cocaseed, addy, ogkushseed, ...` and `granddaddypurpleseed` was absent, so every model scored
+  them wrong by construction. This section used to end there, with "these four cases remain unwinnable".
 
-  Two corrections to a first reading of this. `addy` was there because `candidate_score` in
-  `generate_data.py` scored a catalogue value found INSIDE a word the player typed - `addy` in "gr-addy" -
-  at 3995, one notch under an exact match. The runtime never did that: `FuzzyMatcher.Match` only looks for
-  the query inside the candidate. So this was a divergence between the corpus builder and the mod, not a
-  bug players ever hit, and the fix removes the divergence. Removing `addy` does not make
-  `granddaddypurpleseed` appear - it still scores zero - so these four cases remain unwinnable.
+  It was wrong twice over, and both corrections are ours rather than the model's. `addy` was a divergence
+  between the corpus builder and the mod, since removed. What actually kept `granddaddypurpleseed` off the
+  list was the filler span "me", a prefix of `meth` and `megabean` at 4000 - see the 2026-09-07 triage below.
+  With that skipped the enum for the same query reads `granddaddypurple, granddaddypurpleseed,
+  b2s_granddaddykush, b2s_granddaddykush_seed`, and the model answers `granddaddypurple`: the bud rather than
+  the seed, which is a model error and a fair one to measure.
 
-Four of 79 cases therefore measure our own value handling rather than the model. Any headline number from
-this set has that ceiling built into it.
+Two cases in the set are genuinely unreachable, and they are marked `unscorable` in `cases.json` rather than
+deleted: `historical-supergrow` expects an item the game does not have, and `historical-teleport-major` a
+teleport target that is not among the 129 live ones. Both are printed on every render, because a case removed
+from the denominator is not a case fixed.
 
 ### Every number in this file is a harness number
 
@@ -202,6 +204,120 @@ full, because that one is resolved without the model at all.
 So the argument numbers in this file describe a pipeline that was live for the first time on 2026-09-06.
 The same three requests, in game, before and after: `settime` / `settime` / `triggerlightning` became
 `settime 1200` / `settime 1200` / `triggerlightning`.
+
+## The triage of 2026-09-07, and the ruler it replaced
+
+Forty-one agents took the 48 remaining failures of `full-timewords2` apart, ten families at a time, and every
+diagnosis was then attacked by three adversarial lenses - one checking the evidence, one hunting collateral
+damage, one re-deriving the claimed gain. **Every one of the ten was refuted by at least two of three.** What
+survived is what the refutations themselves carried, and the most important finding was not in any diagnosis.
+
+### The scorer was not a mirror
+
+`score_as_mod.py` exists because the raw model answer is not what a player gets - the mod resolves it first -
+and `generate_data.candidate_score` renders the enum the mod would send. Both had drifted from the C# they
+claim to mirror, and the drift was not small:
+
+- `candidate_score` scored a mid-word hit at `4000 - length difference` where the runtime gives
+  `2000 - offset`, kept a reverse-containment band the runtime does not have, and imposed a four-character
+  floor the runtime does not have. **321 of 906 rendered enum slots differed from what the mod would send**,
+  across 68 of the 79 rows.
+- `resolve` had no exact-match short-circuit, so it credited `mixingstationmk2` as `mixingstation` and
+  `ogkushseed` as `ogkush`.
+- It had no notion of ambiguity, where the runtime refuses a tie outright: it credited `rain` as `heavyrain`,
+  which the mod answers with "'rain' is ambiguous".
+
+Both are now ports rather than approximations, and one divergence is left on purpose and documented in the
+file: `values.json` cannot say whether an empty slot has a provider, so the scorer cannot reproduce the
+refusal the mod issues for a slot that is owned and empty.
+
+### Tools/NeedleReplay: measure the mod, not a description of it
+
+A mirror that has to be kept in step will drift again. `Tools/NeedleReplay` compiles `Terminal/` directly -
+which is possible because `Terminal/` has no engine references - rebuilds the refinement toolset for a case's
+query and routed command, feeds it the model's own answer, and prints the console line the player would have
+been offered or the refusal they would have seen. There is nothing to keep in step.
+
+It cannot see marks: `#home` is live world state and the committed snapshot has none, so the seven mark cases
+are reported and left out of its count rather than scored as failures.
+
+    NeedleReplay data/commands.json data/values.json ../NeedleBenchmark/cases.json <report.json>
+
+### One letter, and thirteen filler words, were choosing the enum
+
+The runtime ranks every one-to-six-word span of the query against the catalogue. Two kinds of span rank
+nothing and displace everything, because a prefix scores 4000 whatever its length:
+
+- **Filler.** "me" is a prefix of `meth` and `megabean`, "a" of `albert_hoover`. The mod already declares the
+  list of words that carry nothing (`NaturalFiller`, used by `TryBuildDirect`) and did not consult it here.
+  For "give me 4 grandaddy seed" the offered values were `meth, megabean, metalsign, ...`; for
+  "llevame a los muelles" they were `albert_hoover, alison_knight, austin_steiner, ...`. Those are exact
+  catalogue values, so `TryResolveText` accepts them in silence: **the player asking for the docks was
+  teleported to a dealer's house, with no error anywhere.**
+- **A single letter.** "I" is a prefix of `iodine`, which ties with "mixing" against `mixingstation` at 4000
+  and wins the tie for being shorter. `FuzzyMatcher` already refuses a one-character subsequence for exactly
+  this reason.
+
+Both spans are now skipped. `RESULTS.md` claimed the four granddaddy cases were unwinnable because the ranked
+enum could not contain the answer; that was true, and it was our doing. The enum for that query now reads
+`granddaddypurple, granddaddypurpleseed, b2s_granddaddykush, b2s_granddaddykush_seed`.
+
+### The quantity repair, built at last
+
+Six cases where the model names the item and drops the count the player stated. `RESULTS.md` has said since
+the ablation that "the repair belongs at runtime, where the mod can see that the player said a number and the
+answer carries none"; `NeedleTool.RepairQuantity` is that repair. Three gates, each one a defect found before
+it shipped:
+
+- **One call only.** Filling per call turns two identical answers into two identical lines, and the session
+  runs both - a player who asked for ten would be given twenty.
+- **Only a declared signature.** For a command in `UsageExample.Known`, "[quantity]" describes the game. For
+  every other command both the brackets and the label come from one heuristic over a free-text example, and
+  `b2ssow`'s own `[amount]` is a 0..1 fraction whose absence means the maximum - the opposite of a count.
+- **Never an overwrite, and never two candidates.** The words the resolved values occupy are claimed first,
+  the way `TryBuildDirect` claims them, so "give me 5 og kush seed" does not read the 5 out of an item name.
+
+It also drops a count of nothing that nobody asked for: `give mixingstation 0` is a line the console accepts
+and that does nothing.
+
+### What all of it measured
+
+Two rulers, because they answer different questions. The single-call benchmark says what the model does with
+a declaration; `NeedleReplay` says what a player would have been handed.
+
+| | replay, player-visible | single call, exact |
+|---|---|---|
+| before this change set | **31 of 70** | 31 of 79 |
+| the resolver alone, on the identical report | **37 of 70** | - |
+| final, untuned base | 36 of 70 | 32 of 77 |
+| final, shipped adapter | 31 of 70 | 29 of 77 |
+
+**The quantity repair is +6 and costs nothing.** Measured by replaying one unchanged report through the
+resolver before and after: six cases move from wrong to right, none the other way, and they are exactly the
+six quantity cases. `give` is the only declared command with an optional numeric slot - the other five in the
+live catalogue all belong to BreedToSeed and are gated out by the declared-signature rule, which is what that
+rule was written for.
+
+**The ranking fixes do not move the total, and are worth doing anyway.** 37 to 36 on the base model: the
+model reshuffles its answers when the offered list changes, and at this sample size that is noise - this file
+has said since run 9 that 20, 23 and 24 of 79 are not distinguishable. What they fix is not a score. A player
+asking for the docks was being teleported to a dealer's house without an error, because "a" matched
+`albert_hoover` and an exact catalogue value is accepted in silence. That is worth fixing at zero measured
+gain.
+
+**The time family is 10 of 11** on the replay - `time-noon-es` is the last one, where the model answers 0 with
+`mediodia` on the list. It was 1 of 11 before any of this.
+
+**The shipped adapter is behind the untuned base on both rulers** (31 against 36, 29 against 32), which is
+the tenth independent measurement saying the same thing.
+
+### The time family, finished
+
+The core words were offered beside a reading the player had written, and won: given
+`["800", "midnight", "dawn", ...]`, "set the time to 8am" was answered `midnight`. They are now suppressed
+when the query carries a clock marker - am, pm, uhr, a separator, or the console's own four digits. A bare
+number is not a marker, so "give me 5" is still not five o'clock. Table words are also offered longest-first,
+so "nachmittag" is no longer beaten by the "mittag" inside it.
 
 ### The time family was ours to lose, and we were losing it
 

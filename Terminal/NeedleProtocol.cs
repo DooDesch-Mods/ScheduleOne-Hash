@@ -21,14 +21,19 @@ namespace Hash.Terminal
         private readonly Dictionary<string, NeedleTool> _byWord;
         private readonly bool _routeOnly;
 
+        /// <summary>The request this toolset was built for, or null for the catalogue-wide snapshot that is built
+        /// once and reused. It is what lets an answer be checked against the player's own words.</summary>
+        private readonly string _query;
+
         private NeedleToolset(string json, string fingerprint, Dictionary<string, NeedleTool> byName,
-                              Dictionary<string, NeedleTool> byWord, bool routeOnly = false)
+                              Dictionary<string, NeedleTool> byWord, bool routeOnly = false, string query = null)
         {
             Json = json;
             Fingerprint = fingerprint;
             _byName = byName;
             _byWord = byWord;
             _routeOnly = routeOnly;
+            _query = query;
         }
 
         internal string Json { get; }
@@ -147,6 +152,7 @@ namespace Hash.Terminal
                     return Reject("the engine returned more than eight commands");
 
                 var commands = new List<string>();
+                NeedleTool single = null;
                 foreach (JsonElement call in calls.EnumerateArray())
                 {
                     string name = call.TryGetProperty("name", out JsonElement nameValue)
@@ -173,7 +179,13 @@ namespace Hash.Terminal
 
                     if (!tool.TryBuild(arguments, out string line, out string error)) return Reject(error);
                     commands.Add(line);
+                    single = tool;
                 }
+
+                // Only ever for a lone call. Filling per call turns two identical answers into two identical lines,
+                // and the session runs both - a player who asked for ten would be given twenty.
+                if (commands.Count == 1 && single != null && !_routeOnly && _query != null)
+                    commands[0] = single.RepairQuantity(commands[0], _query);
 
                 return new NaturalCommandTranslation(commands, confidence, reasoning: reasoning,
                     prefillTps: prefillTps, decodeTps: decodeTps, peakRamMb: peakRamMb);
@@ -223,7 +235,8 @@ namespace Hash.Terminal
                 json,
                 fingerprint,
                 new Dictionary<string, NeedleTool>(StringComparer.Ordinal) { [tool.Name] = tool },
-                new Dictionary<string, NeedleTool>(StringComparer.OrdinalIgnoreCase) { [tool.CommandWord] = tool });
+                new Dictionary<string, NeedleTool>(StringComparer.OrdinalIgnoreCase) { [tool.CommandWord] = tool },
+                query: query);
         }
 
         /// <summary>
@@ -248,7 +261,8 @@ namespace Hash.Terminal
                 json,
                 fingerprint,
                 new Dictionary<string, NeedleTool>(StringComparer.Ordinal) { [tool.Name] = tool },
-                new Dictionary<string, NeedleTool>(StringComparer.OrdinalIgnoreCase) { [tool.CommandWord] = tool });
+                new Dictionary<string, NeedleTool>(StringComparer.OrdinalIgnoreCase) { [tool.CommandWord] = tool },
+                query: query);
             toolName = tool.Name;
             return true;
         }
@@ -470,6 +484,117 @@ namespace Hash.Terminal
             return true;
         }
 
+        /// <summary>
+        /// Put back a quantity the player stated and the answer dropped, and take away one they never asked for.
+        ///
+        /// The model names the item and omits the count: "give me 10 og kush" comes back as `give ogkush`, in every
+        /// language, with or without the adapter. Declaring the argument required recovers it and invents a count
+        /// where none was stated, which is worse. The mod can see what the model cannot: the player's own sentence
+        /// is still here, and a number in it that no argument claimed is the count.
+        ///
+        /// <para>Three gates, and each one is a bug caught before it shipped. Only a command whose shape was written
+        /// out by hand (<see cref="UsageExample.IsDeclared"/>) - elsewhere both "optional" and the label "amount"
+        /// are one heuristic's guess over a free-text example, and one such amount is a 0..1 fraction whose absence
+        /// means the maximum. Only one free number, because two mean the sentence is about something else as well.
+        /// And never an overwrite, so a count the model did get right is never second-guessed.</para>
+        /// </summary>
+        internal string RepairQuantity(string line, string query)
+        {
+            if (string.IsNullOrWhiteSpace(line) || string.IsNullOrWhiteSpace(query)) return line;
+            if (!UsageExample.IsDeclared(_command.Word)) return line;
+
+            int slot = -1;
+            for (int i = 0; i < _arguments.Count; i++)
+            {
+                if (_arguments[i].Required || !_arguments[i].IsNumber) continue;
+                if (slot >= 0) return line; // more than one optional number: nothing here can tell them apart
+                slot = i;
+            }
+
+            if (slot < 0) return line;
+
+            List<string> built = CommandLine.Tokenise(line);
+            if (built.Count > slot + 2) return line; // the slot is not the last thing on the line
+
+            string stated = StatedQuantity(query, built);
+
+            if (built.Count == slot + 2)
+            {
+                // The model supplied one. Leave it alone unless it is a count of nothing the player never asked
+                // for: `give mixingstation 0` is a line the console accepts and that does nothing.
+                if (!double.TryParse(built[slot + 1], NumberStyles.Float, CultureInfo.InvariantCulture,
+                                     out double supplied) || supplied > 0 || stated != null)
+                    return line;
+
+                built.RemoveAt(slot + 1);
+                return string.Join(" ", built);
+            }
+
+            if (built.Count != slot + 1 || stated == null) return line;
+
+            built.Add(stated);
+            return string.Join(" ", built);
+        }
+
+        /// <summary>
+        /// The one number in the player's sentence that no argument on this line already accounts for.
+        ///
+        /// Claims the words the resolved values occupy first, exactly as <see cref="TryBuildDirect"/> does, so
+        /// "give me 5 og kush seed" does not read the 5 out of an item name and an id with a digit in it does not
+        /// look like a count. Null when nothing is left, when two numbers are, or when the only candidate is 1 or
+        /// less - a lone "1" is far more often part of a name than a count.
+        /// </summary>
+        private string StatedQuantity(string query, List<string> built)
+        {
+            List<string> tokens = CommandLine.Tokenise(query);
+            if (tokens.Count == 0) return null;
+
+            var claimed = new bool[tokens.Count];
+            for (int i = 0; i < _arguments.Count && i + 1 < built.Count; i++)
+            {
+                NeedleArgument argument = _arguments[i];
+                if (!argument.HasValues) continue;
+                if (!argument.TryMatch(tokens, claimed, out string value, out int start, out int length)) continue;
+                if (!string.Equals(value, built[i + 1], StringComparison.OrdinalIgnoreCase)) continue;
+                for (int at = start; at < start + length; at++) claimed[at] = true;
+            }
+
+            string found = null;
+            for (int at = 0; at < tokens.Count; at++)
+            {
+                if (claimed[at]) continue;
+
+                string token = tokens[at].Trim(',', '.', '!', '?', ';', ':');
+                if (!int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int number)
+                    && !NumberWords.TryGetValue(NeedleArgument.Normal(token), out number))
+                    continue;
+
+                if (number <= 1) continue;
+                if (found != null) return null; // two candidates, and nothing declared says which is the count
+                found = number.ToString(CultureInfo.InvariantCulture);
+            }
+
+            return found;
+        }
+
+        /// <summary>
+        /// Counts a player writes as a word, in the four languages the corpus covers.
+        ///
+        /// Small on purpose: past twelve people write digits, and every entry here is a word that could otherwise
+        /// be an item name in another language. A fifth language falls back to digits, which is today's behaviour.
+        /// </summary>
+        private static readonly Dictionary<string, int> NumberWords = new(StringComparer.Ordinal)
+        {
+            ["two"] = 2, ["three"] = 3, ["four"] = 4, ["five"] = 5, ["six"] = 6, ["seven"] = 7, ["eight"] = 8,
+            ["nine"] = 9, ["ten"] = 10, ["eleven"] = 11, ["twelve"] = 12, ["dozen"] = 12,
+            ["zwei"] = 2, ["drei"] = 3, ["vier"] = 4, ["fuenf"] = 5, ["funf"] = 5, ["sechs"] = 6, ["sieben"] = 7,
+            ["acht"] = 8, ["neun"] = 9, ["zehn"] = 10, ["elf"] = 11, ["zwoelf"] = 12, ["zwolf"] = 12,
+            ["dos"] = 2, ["tres"] = 3, ["cuatro"] = 4, ["cinco"] = 5, ["seis"] = 6, ["siete"] = 7, ["ocho"] = 8,
+            ["nueve"] = 9, ["diez"] = 10, ["once"] = 11, ["doce"] = 12,
+            ["deux"] = 2, ["trois"] = 3, ["quatre"] = 4, ["cinq"] = 5, ["sept"] = 7, ["huit"] = 8, ["neuf"] = 9,
+            ["dix"] = 10, ["onze"] = 11, ["douze"] = 12,
+        };
+
         internal bool TryBuild(JsonElement values, out string line, out string error)
         {
             line = null;
@@ -527,7 +652,7 @@ namespace Hash.Terminal
         private static string ConsoleToken(string value) =>
             value.Any(char.IsWhiteSpace) ? "\"" + value + "\"" : value;
 
-        private static bool NaturalFiller(string token)
+        internal static bool NaturalFiller(string token)
         {
             string word = NeedleArgument.Normal(token);
             return word is "a" or "an" or "at" or "by" or "for" or "me" or "my" or "of" or "please" or "some"
@@ -566,6 +691,8 @@ namespace Hash.Terminal
 
         internal bool HasValues => _values.Count > 0;
 
+        internal bool IsNumber => _jsonType == "number";
+
         internal void Write(Utf8JsonWriter writer, bool includeLiveValues, string query)
         {
             writer.WritePropertyName(Name);
@@ -601,8 +728,20 @@ namespace Hash.Terminal
             for (int start = 0; start < tokens.Count; start++)
             for (int count = 1; count <= 6 && start + count <= tokens.Count; count++)
             {
-                string phrase = Normal(string.Join(" ", tokens.Skip(start).Take(count)));
-                if (phrase.Length > 0 && !phrase.All(char.IsDigit)) phrases.Add(phrase);
+                List<string> span = tokens.Skip(start).Take(count).ToList();
+
+                // A span of nothing but filler carries no information to rank against, and ranking it anyway is
+                // not harmless: "me" is a prefix of meth and megabean, "a" of albert_hoover, and a prefix scores
+                // 4000. "give me 4 grandaddy seed" was offered meth, megabean and metalsign, and "llevame a los
+                // muelles" was offered albert_hoover - an exact catalogue value, so TryResolveText accepts it in
+                // silence and the player asking for the docks is teleported to a dealer's house.
+                if (span.All(NeedleTool.NaturalFiller)) continue;
+
+                // One letter ranks nothing and displaces everything: "I" is a prefix of iodine, which scores the
+                // same 4000 as "mixing" does against mixingstation and sorts ahead of it for being shorter.
+                // FuzzyMatcher already refuses a one-character subsequence for the same reason.
+                string phrase = Normal(string.Join(" ", span));
+                if (phrase.Length > 1 && !phrase.All(char.IsDigit)) phrases.Add(phrase);
             }
 
             var scored = _values.Select(value => new

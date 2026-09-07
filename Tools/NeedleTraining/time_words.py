@@ -60,12 +60,23 @@ def owns(label: str) -> bool:
     return "hhmm" in str(label or "").lower()
 
 
-def readings(query: str) -> list[str]:
-    """Every console reading the player's own words carry - "8am", "8 uhr", "20:00".
+def has_clock_marker(text: str) -> bool:
+    """Whether this text says it is a time rather than merely being a number that could be read as one."""
+    folded = fold(text)
+    if sum(c.isdigit() for c in folded) >= 3:
+        return True
+    if ":" in text or "." in text:
+        return True
+    suffix = folded.lstrip("0123456789")
+    return suffix in ("am", "pm", "uhr") or suffix.startswith("h")
+
+
+def readings(query: str) -> list[tuple[str, bool]]:
+    """Every console reading the player's own words carry - "8am", "8 uhr", "20:00" - and whether it was marked.
 
     Read in pairs as well as singly, because the hour and its unit are usually two words.
     """
-    found: list[str] = []
+    found: list[tuple[str, bool]] = []
     parts = str(query or "").split()
     for at, part in enumerate(parts):
         pair = part + " " + parts[at + 1] if at + 1 < len(parts) else None
@@ -73,8 +84,10 @@ def readings(query: str) -> list[str]:
             if text is None or fold(text) in TABLE:
                 continue
             reading = token(text)
-            if reading is not None and reading not in found:
-                found.append(reading)
+            if reading is not None:
+                # Both spellings are reported, duplicates and all. "8" and "8 uhr" are the same reading and only
+                # the second says it is a clock, so dropping the duplicate here would drop the marker with it.
+                found.append((reading, has_clock_marker(text)))
     return found
 
 
@@ -82,24 +95,35 @@ def choices(query: str) -> list[str]:
     """A clock reading the player wrote, then the words their wording contains, then the core.
 
     The reading comes first because the word list otherwise pulls the answer away from a number that was
-    there all along: offered midnight and dawn beside nothing else, "set the time to 8am" is answered
-    midnight.
+    there all along, and the core words are dropped entirely once the query carries a clock marker - offered
+    beside "800", the model still answered midnight.
     """
-    chosen: list[str] = readings(query)[:MAX_WORDS]
-    folded = fold(query)
-
-    if folded:
-        for word in TABLE:
-            if len(chosen) >= MAX_WORDS:
-                break
-            if word in folded and word not in chosen:
-                chosen.append(word)
-
-    for word in CORE:
+    chosen: list[str] = []
+    on_the_clock = False
+    for reading, marker in readings(query):
         if len(chosen) >= MAX_WORDS:
             break
-        if word not in chosen:
-            chosen.append(word)
+        on_the_clock = on_the_clock or marker
+        if reading not in chosen:
+            chosen.append(reading)
+    folded = fold(query)
+
+    # Longest first, so "nachmittag" is offered before the "mittag" inside it and "apresmidi" before "midi".
+    if folded:
+        for word in sorted((w for w in TABLE if w in folded), key=lambda w: (-len(w), w)):
+            if len(chosen) >= MAX_WORDS:
+                break
+            if word not in chosen:
+                chosen.append(word)
+
+    # The core words are for a request that names no time at all. Offered beside a reading the player wrote,
+    # they win it: given ["800", "midnight", "dawn", ...] the model answers midnight.
+    if not on_the_clock:
+        for word in CORE:
+            if len(chosen) >= MAX_WORDS:
+                break
+            if word not in chosen:
+                chosen.append(word)
 
     return chosen
 
