@@ -79,6 +79,17 @@ namespace Hash.Terminal
         /// `setrelationship &lt;npc_id&gt; 5` names its first argument and then shows a literal for the second, so
         /// taking it at face value tells the player the value has to be five.
         /// </summary>
+        /// <summary>
+        /// Whether this command's argument shape was written out by hand rather than guessed from its example.
+        ///
+        /// The difference matters wherever the mod acts on what a slot MEANS. For a command in the table,
+        /// "[quantity]" is a description of the game; for every other command both the brackets and the label come
+        /// from one heuristic over a free-text example, and b2ssow's own [amount] is a 0..1 fraction whose missing
+        /// value means the maximum - the opposite of a count.
+        /// </summary>
+        public static bool IsDeclared(string word) =>
+            !string.IsNullOrEmpty(word) && Known.ContainsKey(word);
+
         public static string Signature(string word, string example)
         {
             if (string.IsNullOrEmpty(word)) return "";

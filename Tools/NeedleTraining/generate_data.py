@@ -169,104 +169,77 @@ def edit_distance_at_most_one(left: str, right: str) -> bool:
     return False
 
 
+# The tokens NeedleTool.NaturalFiller drops from a typed line. A span made only of these carries nothing to
+# rank against, and ranking it anyway is not harmless: "me" is a Prefix of meth and megabean, "a" of
+# albert_hoover, and a Prefix scores 4000, so the enum for "give me 4 grandaddy seed" fills with meth,
+# megabean and metalsign before any real candidate is reached.
+NATURAL_FILLER = {"a", "an", "at", "by", "for", "me", "my", "of", "please", "some", "the", "to", "with"}
+
+MIN_SUBSEQUENCE_QUERY = 2
+
+
+def fuzzy_match(candidate: str, query: str) -> tuple[int, int]:
+    """Terminal/FuzzyMatcher.cs Match, as (kind, offset). Kinds: 5 exact, 4 prefix, 3 word start, 2 substring,
+    1 subsequence, 0 none.
+
+    Ported rather than approximated because the approximation was the divergence: this decides which values
+    the corpus and the benchmark offer, and an enum the mod would never send measures a contract no player
+    gets.
+    """
+    if not candidate:
+        return 0, 1 << 30
+    if not query:
+        return 4, 0
+    low_candidate, low_query = candidate.casefold(), query.casefold()
+    if low_candidate == low_query:
+        return 5, 0
+    if low_candidate.startswith(low_query):
+        return 4, 0
+    index = low_candidate.find(low_query)
+    if index > 0:
+        # A word start needs a separator or a camelCase boundary before it; both are gone once a value is
+        # normalised, so this only ever reports Substring for the values the enum ranks.
+        previous = candidate[index - 1]
+        word_start = previous in "_-. /:" or (previous.islower() and candidate[index].isupper())
+        return (3 if word_start else 2), index
+    if len(query) >= MIN_SUBSEQUENCE_QUERY:
+        first, q = -1, 0
+        for at, character in enumerate(low_candidate):
+            if q < len(low_query) and character == low_query[q]:
+                if q == 0:
+                    first = at
+                q += 1
+        if q >= len(low_query):
+            return 1, first
+    return 0, 1 << 30
+
+
+def match_score(kind: int, offset: int) -> int:
+    return 0 if kind == 0 else kind * 1000 - min(offset, 999)
+
+
 def candidate_score(candidate: str, phrase: str) -> int:
-    """NeedleTool.CandidateScore, close enough to pick the same values for the same query."""
+    """NeedleTool.CandidateScore - the same bands, in the same order, on the same inputs.
+
+    It used to be "close enough", and it was not. Two bands it invented scored a mid-word hit at 4000 where
+    the runtime gives 2000 minus the offset, and a length floor of four hid the runtime's own behaviour on
+    short spans - which is how 321 of 906 rendered enum slots came to differ from what the mod would send.
+    """
     normalized = normal(candidate)
     if not normalized or not phrase:
         return 0
     singular = phrase[:-1] if phrase.endswith("s") else phrase
     if normalized == singular or phrase.startswith(normalized):
         return 4500
-    # A two-letter phrase like "me" is inside meth, megabean and horsesemen; the runtime's matcher rejects
-    # those for the same reason its comment gives - they match far too much of a thousand-item list - and
-    # letting them through here spent the whole 80-character budget before the right value was reached.
-    if len(phrase) >= 4 and phrase in normalized:
-        return 4000 - abs(len(normalized) - len(phrase))
-    # The other direction - a catalogue value hiding inside a longer word the player typed - only counts
-    # when the value is most of that word. `addy` sits inside "grandaddy" and scored 3995, one notch under
-    # an exact match, which is how "give me 4 grandaddy seed" came back as addy.
-    if len(phrase) >= 4 and normalized in phrase and len(normalized) * 2 >= len(phrase):
-        return 4000 - abs(len(normalized) - len(phrase))
-    if len(phrase) >= 6 and abs(len(normalized) - len(phrase)) <= 1             and edit_distance_at_most_one(normalized, phrase):
+    kind, offset = fuzzy_match(normalized, phrase)
+    if kind >= 2:
+        return match_score(kind, offset)
+    if (len(phrase) >= 6 and abs(len(normalized) - len(phrase)) <= 1
+            and edit_distance_at_most_one(normalized, phrase)):
         return 3500
-    if len(phrase) >= 8 and len(phrase) * 2 >= len(normalized):
-        iterator = iter(normalized)
-        if all(character in iterator for character in phrase):
-            return 2500 - min(len(normalized) - len(phrase), 499)
+    if kind == 1 and len(phrase) >= 8 and len(phrase) * 2 >= len(normalized):
+        return 2500 - min(len(normalized) - len(phrase), 499)
     return 0
-
-
-# (command, argument) pairs whose value is a time of day, filled from the catalogue before any row is
-# built. A time slot is the one argument the runtime resolves from words instead of digits, and neither the
-# grounding check nor the training target is handed the schema it would need to notice that on its own.
-TIME_SLOTS: set[tuple[str, str]] = set()
-
-
-def register_time_slots(tools: list[dict]) -> None:
-    TIME_SLOTS.clear()
-    for tool in tools:
-        for name, prop in tool["parameters"].get("properties", {}).items():
-            if time_words.owns(prop.get("description", "")):
-                TIME_SLOTS.add((tool["name"], name))
-
-
-def time_target(command: str, arguments: dict, query: str) -> dict:
-    """Answer a time slot the way the schema asks for it: the player's own word, else the console reading.
-
-    The enum offers words and the console takes hhmm, so a target of 1200 beside a list containing "noon"
-    trains the model against the very choice it is being offered. Converting here also repairs the teacher's
-    own arithmetic - it writes 8 for "8am", which the mod would read as eight hundred hours.
-    """
-    out = dict(arguments)
-    for name, value in arguments.items():
-        if (command, name) not in TIME_SLOTS:
-            continue
-        reading = time_words.token(value)
-        if reading is None:
-            continue
-        out[name] = time_words.word_for(query, reading) or reading
-    return out
-
-
-def grounds_literals(row: dict, query: str) -> bool:
-    """Can the runtime still recover every argument from this phrasing?
-
-    This used to demand the literal: opaque ids verbatim and every number as digits. That is stricter
-    than the game, and it cost the adapter the phrasings players actually use - of 877 numeric training
-    arguments not one was ever written as a word, while 49 of the 73 hand-written benchmark cases with
-    arguments need exactly that ("gib mir zehn og kush"). An opaque sample id stays literal, because
-    nobody says it any other way. A number may be its word. Everything else has to satisfy the rule the
-    runtime itself applies: NeedleArgument.TryResolveText resolves what the model produced against the
-    value catalogue, so a phrasing is grounded when that matcher lands on this value and nothing else.
-    """
-    requested = query.casefold()
-    for name, value in row.get("arguments", {}).items():
-        if isinstance(value, bool):
-            continue
-        if (row.get("command"), name) in TIME_SLOTS:
-            # A time is grounded when the runtime could reach it from these words, which is what the digit
-            # rule below was reaching for. Demanding the digits themselves excluded every natural phrasing
-            # of the one command whose value is never spoken as a number: nobody types "settime 1200" and
-            # means it, they say noon.
-            if not time_words.recoverable(query, time_words.token(value)):
-                return False
-            continue
-        if isinstance(value, str) and re.fullmatch(r"sample\d+", value):
-            if not re.search(rf"(?<![\d.]){re.escape(value.casefold())}(?![\d.])", requested):
-                return False
-        elif isinstance(value, (int, float)):
-            digits = format(value, "g")
-            word = (NUMBER_WORDS.get(row.get("language", ""), {}).get(int(value))
-                    if float(value).is_integer() else None)
-            if not re.search(rf"(?<![\d.]){re.escape(digits)}(?![\d.])", requested) and not (
-                    word and re.search(rf"\b{re.escape(word)}\b", requested)):
-                return False
-        # Everything else is left alone. Requiring the runtime's matcher to land on the value looked right
-        # and is wrong: the catalogue is English and the corpus is not, so "Fuege einen Botaniker zum Stall
-        # hinzu" has no lexical path to barn, and the check threw away most of the German, French and
-        # Spanish rows - four in the first command alone. RelevantValues cannot translate either; that part
-        # is the model's job, and forbidding the teacher to write it would teach the wrong lesson.
-    return True
 
 
 def enum_choices(values: list[str], query: str) -> list[str]:
@@ -282,8 +255,14 @@ def enum_choices(values: list[str], query: str) -> list[str]:
     phrases = set()
     for start in range(len(tokens)):
         for count in range(1, min(6, len(tokens) - start) + 1):
-            phrase = normal(" ".join(tokens[start:start + count]))
-            if phrase and not phrase.isdigit():
+            span = tokens[start:start + count]
+            # NeedleArgument.RelevantValues skips a span of nothing but filler, and so does this - see
+            # NATURAL_FILLER for what ranking "me" and "a" costs.
+            if all(word in NATURAL_FILLER for word in span):
+                continue
+            phrase = normal(" ".join(span))
+            # One letter ranks nothing and displaces everything - see RelevantValues.
+            if len(phrase) > 1 and not phrase.isdigit():
                 phrases.add(phrase)
     ranked = []
     unmatched = []

@@ -57,6 +57,9 @@ def main() -> None:
     cases = json.loads(args.cases.read_text(encoding="utf-8"))["cases"]
     rows, skipped = [], []
 
+    unscorable = [case for case in cases if case.get("unscorable")]
+    cases = [case for case in cases if not case.get("unscorable")]
+
     for index, case in enumerate(cases):
         expected = case.get("expected", "")
         tokens = g.console_tokens(expected)
@@ -103,6 +106,12 @@ def main() -> None:
     print(f"{len(rows)} row(s) -> {args.out}")
     print(f"  {positives} with an expected call, {len(rows) - positives} off-topic, "
           f"{len(tools)} tools declared in every one")
+    if unscorable:
+        # Printed every run rather than deleted, because a case removed from the denominator is not a case
+        # fixed. These demand a console line the game would refuse whatever the model answers.
+        print(f"  {len(unscorable)} case(s) not scored - the expected answer is not a line the game takes:")
+        for case in unscorable:
+            print(f"    {case['id']}: {case['expected']} - {case['unscorable']}")
     if skipped:
         print(f"  {len(skipped)} skipped - the catalogue snapshot has no such command:")
         for identifier, expected in skipped:

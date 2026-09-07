@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Hash.Terminal
@@ -74,30 +75,49 @@ namespace Hash.Terminal
         {
             var chosen = new List<string>();
             string folded = Fold(query ?? "");
+            bool onTheClock = false;
 
             // A clock reading the player wrote goes on the list first, as the reading the console wants.
             // Without it the word list pulls the answer away from a number that was there all along:
             // offered midnight and dawn beside nothing else, "set the time to 8am" is answered midnight.
-            foreach (string reading in Readings(query))
+            foreach ((string reading, bool marker) in Readings(query))
             {
                 if (chosen.Count >= MaxWords) break;
+                if (marker) onTheClock = true;
                 if (!chosen.Contains(reading)) chosen.Add(reading);
             }
 
+            // Longest first, so "nachmittag" is offered before the "mittag" inside it and "apresmidi" before
+            // "midi". Dictionary order put the fragment first and the fragment won: "mach es nachmittag" was
+            // answered 1200.
             if (folded.Length > 0)
             {
+                var found = new List<string>();
                 foreach (KeyValuePair<string, int> entry in Table)
+                    if (folded.IndexOf(entry.Key, StringComparison.Ordinal) >= 0) found.Add(entry.Key);
+
+                found.Sort((left, right) => right.Length != left.Length
+                    ? right.Length - left.Length
+                    : string.CompareOrdinal(left, right));
+
+                foreach (string word in found)
                 {
                     if (chosen.Count >= MaxWords) break;
-                    if (folded.IndexOf(entry.Key, StringComparison.Ordinal) >= 0 && !chosen.Contains(entry.Key))
-                        chosen.Add(entry.Key);
+                    if (!chosen.Contains(word)) chosen.Add(word);
                 }
             }
 
-            foreach (string word in CoreWords)
+            // The core words are for a request that names no time at all. Offering them beside a reading the
+            // player actually wrote is what loses: given ["800", "midnight", "dawn", ...] the model answers
+            // midnight. A bare number is not enough to suppress them - "give me 5" would then be a time - so
+            // this needs a clock marker: am, pm, uhr, a separator, or the console's own four digits.
+            if (!onTheClock)
             {
-                if (chosen.Count >= MaxWords) break;
-                if (!chosen.Contains(word)) chosen.Add(word);
+                foreach (string word in CoreWords)
+                {
+                    if (chosen.Count >= MaxWords) break;
+                    if (!chosen.Contains(word)) chosen.Add(word);
+                }
             }
 
             return chosen;
@@ -108,18 +128,38 @@ namespace Hash.Terminal
         ///
         /// Read in pairs as well as singly, because the hour and its unit are usually two words.
         /// </summary>
-        private static IEnumerable<string> Readings(string query)
+        private static IEnumerable<(string Reading, bool Marker)> Readings(string query)
         {
             string[] parts = (query ?? "").Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
             for (int at = 0; at < parts.Length; at++)
             {
                 if (TryToken(parts[at], out string one) && Fold(parts[at]).Length > 0
                     && !Table.ContainsKey(Fold(parts[at])))
-                    yield return one;
-                if (at + 1 < parts.Length && TryToken(parts[at] + " " + parts[at + 1], out string two)
-                    && !Table.ContainsKey(Fold(parts[at] + parts[at + 1])))
-                    yield return two;
+                    yield return (one, HasClockMarker(parts[at]));
+
+                string pair = at + 1 < parts.Length ? parts[at] + " " + parts[at + 1] : null;
+                if (pair != null && TryToken(pair, out string two) && !Table.ContainsKey(Fold(pair)))
+                    yield return (two, HasClockMarker(pair));
             }
+        }
+
+        /// <summary>
+        /// Whether this text says it is a time rather than merely being a number that could be read as one.
+        ///
+        /// A marker is am, pm, uhr, an h, a separator, or the console's own four digits. Without one, "5" in
+        /// "give me 5" reads as five o'clock, which is true of the reader and must not be true of the enum.
+        /// </summary>
+        private static bool HasClockMarker(string text)
+        {
+            string folded = Fold(text);
+            int digits = 0;
+            foreach (char c in folded) if (char.IsDigit(c)) digits++;
+
+            if (digits >= 3) return true;
+            foreach (char c in text) if (c == ':' || c == '.') return true;
+
+            string suffix = new string(folded.SkipWhile(char.IsDigit).ToArray());
+            return suffix == "am" || suffix == "pm" || suffix == "uhr" || suffix.StartsWith("h", StringComparison.Ordinal);
         }
 
         /// <summary>

@@ -34,13 +34,33 @@ def resolve(command: str, index: int, produced) -> str:
         return time_words.token(text) or text
     slots = VALUES.get(command, [])
     if index >= len(slots) or not slots[index]:
+        # NOT a full mirror: the C# distinguishes "no provider owns this slot" from "the provider owns it and
+        # the world is empty", and refuses the whole translation in the second case. values.json records only
+        # the values, so that difference cannot be seen from here and this credits an answer the mod would
+        # reject. It needs pull_schema.py to record ICommandCatalogue.Owns.
         return text
-    best, score = text, 0
+
+    # Exact wins outright, before any ranking - NeedleProtocol.cs:777-779. Without it the scorer credited
+    # "mixingstationmk2" as mixingstation and "ogkushseed" as ogkush, which the mod does not do.
     for value in slots[index]:
-        candidate = g.candidate_score(value, g.normal(text))
-        if candidate > score:
-            best, score = value, candidate
-    return best if score > 0 else text
+        if value.casefold() == text.casefold():
+            return value
+
+    phrase = g.normal(text)
+    best, hits = 0, []
+    for value in slots[index]:
+        candidate = g.candidate_score(value, phrase)
+        if candidate < best:
+            continue
+        if candidate > best:
+            best, hits = candidate, []
+        if candidate > 0:
+            hits.append(value)
+
+    # A tie is a refusal, not a coin toss - TryCandidate returns only when hits.Count == 1. The scorer used to
+    # keep whichever value it saw first, so it credited "rain" as heavyrain where the mod answers
+    # "'rain' is ambiguous".
+    return hits[0] if len(hits) == 1 else text
 
 
 def matches(command: str, expected: dict, produced) -> bool:

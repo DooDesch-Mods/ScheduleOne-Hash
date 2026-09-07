@@ -2,89 +2,560 @@
   "schemaVersion": 1,
   "description": "Multilingual, read-only gold cases for Hash natural console commands.",
   "cases": [
-    { "id": "give-ogkush-en-1", "language": "en", "category": "give", "query": "give me 10 ogkush", "expected": "give ogkush 10" },
-    { "id": "give-speedgrow-en-1", "language": "en", "category": "give", "query": "give me 10 speed grow", "expected": "give speedgrow 10" },
-    { "id": "give-granddaddy-en-1", "language": "en", "category": "give", "query": "give me 4 grandaddy seed", "expected": "give granddaddypurpleseed 4" },
-    { "id": "give-ogkush-de-1", "language": "de", "category": "give", "query": "gib mir 10 og kush", "expected": "give ogkush 10" },
-    { "id": "give-speedgrow-de-1", "language": "de", "category": "give", "query": "pack zehn speed grow in mein inventar", "expected": "give speedgrow 10" },
-    { "id": "give-granddaddy-de-1", "language": "de", "category": "give", "query": "gib mir vier granddaddy samen", "expected": "give granddaddypurpleseed 4" },
-    { "id": "give-ogkush-es-1", "language": "es", "category": "give", "query": "dame 10 og kush", "expected": "give ogkush 10" },
-    { "id": "give-speedgrow-es-1", "language": "es", "category": "give", "query": "añade diez speed grow a mi inventario", "expected": "give speedgrow 10" },
-    { "id": "give-granddaddy-es-1", "language": "es", "category": "give", "query": "dame cuatro semillas granddaddy", "expected": "give granddaddypurpleseed 4" },
-    { "id": "give-ogkush-fr-1", "language": "fr", "category": "give", "query": "donne-moi 10 og kush", "expected": "give ogkush 10" },
-    { "id": "give-speedgrow-fr-1", "language": "fr", "category": "give", "query": "ajoute dix speed grow à mon inventaire", "expected": "give speedgrow 10" },
-    { "id": "give-granddaddy-fr-1", "language": "fr", "category": "give", "query": "donne-moi quatre graines granddaddy", "expected": "give granddaddypurpleseed 4" },
-    { "id": "historical-give-og-seed", "language": "en", "category": "historical", "query": "give me 5 og kush seed", "expected": "give ogkushseed 5" },
-    { "id": "historical-put-ogkush", "language": "en", "category": "historical", "query": "put ten og kush in my inventory", "expected": "give ogkush 10" },
-    { "id": "historical-add-speedgrow", "language": "en", "category": "historical", "query": "add ten speed grow to my inventory", "expected": "give speedgrow 10" },
-
-    { "id": "teleport-docks-en-1", "language": "en", "category": "teleport", "query": "teleport me to the docks", "expected": "teleport docks" },
-    { "id": "teleport-home-en-1", "language": "en", "category": "teleport", "query": "take me home", "expected": "teleport #home" },
-    { "id": "teleport-docks-en-2", "language": "en", "category": "teleport", "query": "bring me to the docks", "expected": "teleport docks" },
-    { "id": "teleport-docks-de-1", "language": "de", "category": "teleport", "query": "teleportiere mich zu den docks", "expected": "teleport docks" },
-    { "id": "teleport-home-de-1", "language": "de", "category": "teleport", "query": "bring mich nach hause", "expected": "teleport #home" },
-    { "id": "teleport-docks-de-2", "language": "de", "category": "teleport", "query": "ich will zu den docks", "expected": "teleport docks" },
-    { "id": "teleport-docks-es-1", "language": "es", "category": "teleport", "query": "teletranspórtame a los muelles", "expected": "teleport docks" },
-    { "id": "teleport-home-es-1", "language": "es", "category": "teleport", "query": "llévame a casa", "expected": "teleport #home" },
-    { "id": "teleport-docks-es-2", "language": "es", "category": "teleport", "query": "llévame a los muelles", "expected": "teleport docks" },
-    { "id": "teleport-docks-fr-1", "language": "fr", "category": "teleport", "query": "téléporte-moi aux docks", "expected": "teleport docks" },
-    { "id": "teleport-home-fr-1", "language": "fr", "category": "teleport", "query": "ramène-moi chez moi", "expected": "teleport #home" },
-    { "id": "teleport-docks-fr-2", "language": "fr", "category": "teleport", "query": "emmène-moi aux docks", "expected": "teleport docks" },
-
-    { "id": "time-noon-en", "language": "en", "category": "time", "query": "make it noon", "expected": "settime 1200" },
-    { "id": "time-eight-en", "language": "en", "category": "time", "query": "set the time to 8am", "expected": "settime 800" },
-    { "id": "time-noon-de", "language": "de", "category": "time", "query": "mach es mittag", "expected": "settime 1200" },
-    { "id": "time-eight-de", "language": "de", "category": "time", "query": "stell die uhr auf 8 uhr morgens", "expected": "settime 800" },
-    { "id": "time-noon-es", "language": "es", "category": "time", "query": "ponlo al mediodía", "expected": "settime 1200" },
-    { "id": "time-eight-es", "language": "es", "category": "time", "query": "pon la hora a las 8", "expected": "settime 800" },
-    { "id": "time-noon-fr", "language": "fr", "category": "time", "query": "mets l'heure à midi", "expected": "settime 1200" },
-    { "id": "time-eight-fr", "language": "fr", "category": "time", "query": "règle l'heure à 8h", "expected": "settime 800" },
-    { "id": "historical-time-day-long", "language": "en", "category": "historical", "query": "set the time to the day", "expected": "settime 1200" },
-    { "id": "historical-time-day-short", "language": "en", "category": "historical", "query": "set time day", "expected": "settime 1200" },
-    { "id": "historical-time-eight", "language": "en", "category": "historical", "query": "set time 8am", "expected": "settime 800" },
-
-    { "id": "weather-clear-en-1", "language": "en", "category": "weather", "query": "remove rain", "expected": "setweather clear" },
-    { "id": "weather-clear-en-2", "language": "en", "category": "weather", "query": "stop the rain", "expected": "setweather clear" },
-    { "id": "weather-clear-de-1", "language": "de", "category": "weather", "query": "beende den regen", "expected": "setweather clear" },
-    { "id": "weather-clear-de-2", "language": "de", "category": "weather", "query": "mach den regen aus", "expected": "setweather clear" },
-    { "id": "weather-clear-es-1", "language": "es", "category": "weather", "query": "quita la lluvia", "expected": "setweather clear" },
-    { "id": "weather-clear-es-2", "language": "es", "category": "weather", "query": "para la lluvia", "expected": "setweather clear" },
-    { "id": "weather-clear-fr-1", "language": "fr", "category": "weather", "query": "arrête la pluie", "expected": "setweather clear" },
-    { "id": "weather-clear-fr-2", "language": "fr", "category": "weather", "query": "enlève la pluie", "expected": "setweather clear" },
-
-    { "id": "cash-en", "language": "en", "category": "money", "query": "add 500 dollars to my cash", "expected": "changecash 500" },
-    { "id": "speed-en", "language": "en", "category": "player", "query": "set my movement speed to 2", "expected": "setmovespeed 2" },
-    { "id": "cash-de", "language": "de", "category": "money", "query": "füge meinem bargeld 500 dollar hinzu", "expected": "changecash 500" },
-    { "id": "speed-de", "language": "de", "category": "player", "query": "setz meine laufgeschwindigkeit auf 2", "expected": "setmovespeed 2" },
-    { "id": "cash-es", "language": "es", "category": "money", "query": "añade 500 dólares a mi efectivo", "expected": "changecash 500" },
-    { "id": "speed-es", "language": "es", "category": "player", "query": "pon mi velocidad de movimiento en 2", "expected": "setmovespeed 2" },
-    { "id": "cash-fr", "language": "fr", "category": "money", "query": "ajoute 500 dollars à mon argent", "expected": "changecash 500" },
-    { "id": "speed-fr", "language": "fr", "category": "player", "query": "règle ma vitesse de déplacement sur 2", "expected": "setmovespeed 2" },
-
-    { "id": "historical-mixing-bench", "language": "en", "category": "historical", "query": "i want a mixing bench", "expected": "give mixingstation" },
-    { "id": "historical-mixing-table", "language": "en", "category": "historical", "query": "I want a mixing table", "expected": "give mixingstation" },
-    { "id": "historical-supergrow", "language": "en", "category": "historical", "query": "supergrow", "expected": "give supergrow" },
-    { "id": "historical-kill-safety", "language": "en", "category": "safety", "query": "kill", "expected": "sethealth 0" }
-    ,{ "id": "historical-home-compact", "language": "en", "category": "historical", "query": "home", "expected": "teleport #home" }
-    ,{ "id": "historical-teleport-major", "language": "en", "category": "historical-review", "query": "teleport me to the major", "expected": "teleport mayor" }
-    ,{ "id": "historical-bring-sea", "language": "en", "category": "historical-review", "query": "bring me to the sea", "expected": "teleport docks" }
-    ,{ "id": "manual-give-ogkush-some", "language": "en", "category": "manual-2026-08-21", "query": "give me some ogkush", "expected": "give ogkush" }
-    ,{ "id": "manual-give-ogkush-seed", "language": "en", "category": "manual-2026-08-21", "query": "give me some og kush seed", "expected": "give ogkushseed" }
-    ,{ "id": "manual-give-ogkushseed", "language": "en", "category": "manual-2026-08-21", "query": "give me some ogkushseed", "expected": "give ogkushseed" }
-    ,{ "id": "manual-give-ogkush-de", "language": "de", "category": "manual-2026-08-21", "query": "gib mir ogkush", "expected": "give ogkush" }
-    ,{ "id": "manual-give-seeds-ambiguous", "language": "en", "category": "safety", "query": "give me some seeds", "expected": "" }
-    ,{ "id": "manual-teleport-docks", "language": "en", "category": "manual-2026-08-21", "query": "teleport me to docks", "expected": "teleport docks" }
-    ,{ "id": "manual-teleport-motel", "language": "en", "category": "manual-2026-08-21", "query": "teleport me to motel", "expected": "teleport motel" }
-    ,{ "id": "manual-bring-home", "language": "en", "category": "manual-2026-08-21", "query": "bring me home", "expected": "teleport #home" }
-    ,{ "id": "manual-teleport-home", "language": "en", "category": "manual-2026-08-21", "query": "teleport me home", "expected": "teleport #home" }
-    ,{ "id": "manual-weather-light", "language": "en", "category": "manual-2026-08-21", "query": "set weather to light rain", "expected": "setweather lightrain" }
-    ,{ "id": "manual-weather-heavy", "language": "en", "category": "manual-2026-08-21", "query": "set the weather to heavyrain", "expected": "setweather heavyrain" }
-    ,{ "id": "manual-spawn-shitbox", "language": "en", "category": "manual-2026-08-21", "query": "spawn a shitbox", "expected": "spawnvehicle shitbox" }
-    ,{ "id": "manual-shitbox-terse", "language": "en", "category": "manual-2026-08-21", "query": "shitbox", "expected": "spawnvehicle shitbox" }
-    ,{ "id": "manual-spawn-car-ambiguous", "language": "en", "category": "safety", "query": "spawn a car", "expected": "" }
-    ,{ "id": "offtopic-en", "language": "en", "category": "off-topic", "query": "tell me a joke", "expected": "" }
-    ,{ "id": "offtopic-de", "language": "de", "category": "off-topic", "query": "erzähl mir einen witz", "expected": "" }
-    ,{ "id": "offtopic-es", "language": "es", "category": "off-topic", "query": "cuéntame un chiste", "expected": "" }
-    ,{ "id": "offtopic-fr", "language": "fr", "category": "off-topic", "query": "raconte-moi une blague", "expected": "" }
+    {
+      "id": "give-ogkush-en-1",
+      "language": "en",
+      "category": "give",
+      "query": "give me 10 ogkush",
+      "expected": "give ogkush 10"
+    },
+    {
+      "id": "give-speedgrow-en-1",
+      "language": "en",
+      "category": "give",
+      "query": "give me 10 speed grow",
+      "expected": "give speedgrow 10"
+    },
+    {
+      "id": "give-granddaddy-en-1",
+      "language": "en",
+      "category": "give",
+      "query": "give me 4 grandaddy seed",
+      "expected": "give granddaddypurpleseed 4"
+    },
+    {
+      "id": "give-ogkush-de-1",
+      "language": "de",
+      "category": "give",
+      "query": "gib mir 10 og kush",
+      "expected": "give ogkush 10"
+    },
+    {
+      "id": "give-speedgrow-de-1",
+      "language": "de",
+      "category": "give",
+      "query": "pack zehn speed grow in mein inventar",
+      "expected": "give speedgrow 10"
+    },
+    {
+      "id": "give-granddaddy-de-1",
+      "language": "de",
+      "category": "give",
+      "query": "gib mir vier granddaddy samen",
+      "expected": "give granddaddypurpleseed 4"
+    },
+    {
+      "id": "give-ogkush-es-1",
+      "language": "es",
+      "category": "give",
+      "query": "dame 10 og kush",
+      "expected": "give ogkush 10"
+    },
+    {
+      "id": "give-speedgrow-es-1",
+      "language": "es",
+      "category": "give",
+      "query": "añade diez speed grow a mi inventario",
+      "expected": "give speedgrow 10"
+    },
+    {
+      "id": "give-granddaddy-es-1",
+      "language": "es",
+      "category": "give",
+      "query": "dame cuatro semillas granddaddy",
+      "expected": "give granddaddypurpleseed 4"
+    },
+    {
+      "id": "give-ogkush-fr-1",
+      "language": "fr",
+      "category": "give",
+      "query": "donne-moi 10 og kush",
+      "expected": "give ogkush 10"
+    },
+    {
+      "id": "give-speedgrow-fr-1",
+      "language": "fr",
+      "category": "give",
+      "query": "ajoute dix speed grow à mon inventaire",
+      "expected": "give speedgrow 10"
+    },
+    {
+      "id": "give-granddaddy-fr-1",
+      "language": "fr",
+      "category": "give",
+      "query": "donne-moi quatre graines granddaddy",
+      "expected": "give granddaddypurpleseed 4"
+    },
+    {
+      "id": "historical-give-og-seed",
+      "language": "en",
+      "category": "historical",
+      "query": "give me 5 og kush seed",
+      "expected": "give ogkushseed 5"
+    },
+    {
+      "id": "historical-put-ogkush",
+      "language": "en",
+      "category": "historical",
+      "query": "put ten og kush in my inventory",
+      "expected": "give ogkush 10"
+    },
+    {
+      "id": "historical-add-speedgrow",
+      "language": "en",
+      "category": "historical",
+      "query": "add ten speed grow to my inventory",
+      "expected": "give speedgrow 10"
+    },
+    {
+      "id": "teleport-docks-en-1",
+      "language": "en",
+      "category": "teleport",
+      "query": "teleport me to the docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-home-en-1",
+      "language": "en",
+      "category": "teleport",
+      "query": "take me home",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "teleport-docks-en-2",
+      "language": "en",
+      "category": "teleport",
+      "query": "bring me to the docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-docks-de-1",
+      "language": "de",
+      "category": "teleport",
+      "query": "teleportiere mich zu den docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-home-de-1",
+      "language": "de",
+      "category": "teleport",
+      "query": "bring mich nach hause",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "teleport-docks-de-2",
+      "language": "de",
+      "category": "teleport",
+      "query": "ich will zu den docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-docks-es-1",
+      "language": "es",
+      "category": "teleport",
+      "query": "teletranspórtame a los muelles",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-home-es-1",
+      "language": "es",
+      "category": "teleport",
+      "query": "llévame a casa",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "teleport-docks-es-2",
+      "language": "es",
+      "category": "teleport",
+      "query": "llévame a los muelles",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-docks-fr-1",
+      "language": "fr",
+      "category": "teleport",
+      "query": "téléporte-moi aux docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "teleport-home-fr-1",
+      "language": "fr",
+      "category": "teleport",
+      "query": "ramène-moi chez moi",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "teleport-docks-fr-2",
+      "language": "fr",
+      "category": "teleport",
+      "query": "emmène-moi aux docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "time-noon-en",
+      "language": "en",
+      "category": "time",
+      "query": "make it noon",
+      "expected": "settime 1200"
+    },
+    {
+      "id": "time-eight-en",
+      "language": "en",
+      "category": "time",
+      "query": "set the time to 8am",
+      "expected": "settime 800"
+    },
+    {
+      "id": "time-noon-de",
+      "language": "de",
+      "category": "time",
+      "query": "mach es mittag",
+      "expected": "settime 1200"
+    },
+    {
+      "id": "time-eight-de",
+      "language": "de",
+      "category": "time",
+      "query": "stell die uhr auf 8 uhr morgens",
+      "expected": "settime 800"
+    },
+    {
+      "id": "time-noon-es",
+      "language": "es",
+      "category": "time",
+      "query": "ponlo al mediodía",
+      "expected": "settime 1200"
+    },
+    {
+      "id": "time-eight-es",
+      "language": "es",
+      "category": "time",
+      "query": "pon la hora a las 8",
+      "expected": "settime 800"
+    },
+    {
+      "id": "time-noon-fr",
+      "language": "fr",
+      "category": "time",
+      "query": "mets l'heure à midi",
+      "expected": "settime 1200"
+    },
+    {
+      "id": "time-eight-fr",
+      "language": "fr",
+      "category": "time",
+      "query": "règle l'heure à 8h",
+      "expected": "settime 800"
+    },
+    {
+      "id": "historical-time-day-long",
+      "language": "en",
+      "category": "historical",
+      "query": "set the time to the day",
+      "expected": "settime 1200"
+    },
+    {
+      "id": "historical-time-day-short",
+      "language": "en",
+      "category": "historical",
+      "query": "set time day",
+      "expected": "settime 1200"
+    },
+    {
+      "id": "historical-time-eight",
+      "language": "en",
+      "category": "historical",
+      "query": "set time 8am",
+      "expected": "settime 800"
+    },
+    {
+      "id": "weather-clear-en-1",
+      "language": "en",
+      "category": "weather",
+      "query": "remove rain",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-en-2",
+      "language": "en",
+      "category": "weather",
+      "query": "stop the rain",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-de-1",
+      "language": "de",
+      "category": "weather",
+      "query": "beende den regen",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-de-2",
+      "language": "de",
+      "category": "weather",
+      "query": "mach den regen aus",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-es-1",
+      "language": "es",
+      "category": "weather",
+      "query": "quita la lluvia",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-es-2",
+      "language": "es",
+      "category": "weather",
+      "query": "para la lluvia",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-fr-1",
+      "language": "fr",
+      "category": "weather",
+      "query": "arrête la pluie",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "weather-clear-fr-2",
+      "language": "fr",
+      "category": "weather",
+      "query": "enlève la pluie",
+      "expected": "setweather clear"
+    },
+    {
+      "id": "cash-en",
+      "language": "en",
+      "category": "money",
+      "query": "add 500 dollars to my cash",
+      "expected": "changecash 500"
+    },
+    {
+      "id": "speed-en",
+      "language": "en",
+      "category": "player",
+      "query": "set my movement speed to 2",
+      "expected": "setmovespeed 2"
+    },
+    {
+      "id": "cash-de",
+      "language": "de",
+      "category": "money",
+      "query": "füge meinem bargeld 500 dollar hinzu",
+      "expected": "changecash 500"
+    },
+    {
+      "id": "speed-de",
+      "language": "de",
+      "category": "player",
+      "query": "setz meine laufgeschwindigkeit auf 2",
+      "expected": "setmovespeed 2"
+    },
+    {
+      "id": "cash-es",
+      "language": "es",
+      "category": "money",
+      "query": "añade 500 dólares a mi efectivo",
+      "expected": "changecash 500"
+    },
+    {
+      "id": "speed-es",
+      "language": "es",
+      "category": "player",
+      "query": "pon mi velocidad de movimiento en 2",
+      "expected": "setmovespeed 2"
+    },
+    {
+      "id": "cash-fr",
+      "language": "fr",
+      "category": "money",
+      "query": "ajoute 500 dollars à mon argent",
+      "expected": "changecash 500"
+    },
+    {
+      "id": "speed-fr",
+      "language": "fr",
+      "category": "player",
+      "query": "règle ma vitesse de déplacement sur 2",
+      "expected": "setmovespeed 2"
+    },
+    {
+      "id": "historical-mixing-bench",
+      "language": "en",
+      "category": "historical",
+      "query": "i want a mixing bench",
+      "expected": "give mixingstation"
+    },
+    {
+      "id": "historical-mixing-table",
+      "language": "en",
+      "category": "historical",
+      "query": "I want a mixing table",
+      "expected": "give mixingstation"
+    },
+    {
+      "id": "historical-supergrow",
+      "language": "en",
+      "category": "historical",
+      "query": "supergrow",
+      "expected": "give supergrow",
+      "unscorable": "the game has no 'supergrow' - the fertiliser is speedgrow, and CandidateScore('speedgrow','supergrow') is 0, so no declaration or resolution can reach the expected line"
+    },
+    {
+      "id": "historical-kill-safety",
+      "language": "en",
+      "category": "safety",
+      "query": "kill",
+      "expected": "sethealth 0"
+    },
+    {
+      "id": "historical-home-compact",
+      "language": "en",
+      "category": "historical",
+      "query": "home",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "historical-teleport-major",
+      "language": "en",
+      "category": "historical-review",
+      "query": "teleport me to the major",
+      "expected": "teleport mayor",
+      "unscorable": "'mayor' is not one of the 129 live teleport targets and scores 0 against all of them, so the expected line is not one the console would take"
+    },
+    {
+      "id": "historical-bring-sea",
+      "language": "en",
+      "category": "historical-review",
+      "query": "bring me to the sea",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "manual-give-ogkush-some",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "give me some ogkush",
+      "expected": "give ogkush"
+    },
+    {
+      "id": "manual-give-ogkush-seed",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "give me some og kush seed",
+      "expected": "give ogkushseed"
+    },
+    {
+      "id": "manual-give-ogkushseed",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "give me some ogkushseed",
+      "expected": "give ogkushseed"
+    },
+    {
+      "id": "manual-give-ogkush-de",
+      "language": "de",
+      "category": "manual-2026-08-21",
+      "query": "gib mir ogkush",
+      "expected": "give ogkush"
+    },
+    {
+      "id": "manual-give-seeds-ambiguous",
+      "language": "en",
+      "category": "safety",
+      "query": "give me some seeds",
+      "expected": ""
+    },
+    {
+      "id": "manual-teleport-docks",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "teleport me to docks",
+      "expected": "teleport docks"
+    },
+    {
+      "id": "manual-teleport-motel",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "teleport me to motel",
+      "expected": "teleport motel"
+    },
+    {
+      "id": "manual-bring-home",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "bring me home",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "manual-teleport-home",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "teleport me home",
+      "expected": "teleport #home"
+    },
+    {
+      "id": "manual-weather-light",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "set weather to light rain",
+      "expected": "setweather lightrain"
+    },
+    {
+      "id": "manual-weather-heavy",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "set the weather to heavyrain",
+      "expected": "setweather heavyrain"
+    },
+    {
+      "id": "manual-spawn-shitbox",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "spawn a shitbox",
+      "expected": "spawnvehicle shitbox"
+    },
+    {
+      "id": "manual-shitbox-terse",
+      "language": "en",
+      "category": "manual-2026-08-21",
+      "query": "shitbox",
+      "expected": "spawnvehicle shitbox"
+    },
+    {
+      "id": "manual-spawn-car-ambiguous",
+      "language": "en",
+      "category": "safety",
+      "query": "spawn a car",
+      "expected": ""
+    },
+    {
+      "id": "offtopic-en",
+      "language": "en",
+      "category": "off-topic",
+      "query": "tell me a joke",
+      "expected": ""
+    },
+    {
+      "id": "offtopic-de",
+      "language": "de",
+      "category": "off-topic",
+      "query": "erzähl mir einen witz",
+      "expected": ""
+    },
+    {
+      "id": "offtopic-es",
+      "language": "es",
+      "category": "off-topic",
+      "query": "cuéntame un chiste",
+      "expected": ""
+    },
+    {
+      "id": "offtopic-fr",
+      "language": "fr",
+      "category": "off-topic",
+      "query": "raconte-moi une blague",
+      "expected": ""
+    }
   ]
 }
