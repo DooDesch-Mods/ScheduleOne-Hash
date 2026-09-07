@@ -3,6 +3,18 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.4] - 2026-09-07
+
+### Fixed
+
+- A quantity you asked for is no longer dropped. "give me 10 og kush" handed over one.
+- Asking to be taken somewhere no longer sends you to a random dealer. Words like "me" and "a" were matched
+  against the location list, and the first hit was taken.
+- "set the time to 8am" sets eight in the morning. It set midnight, because the time words were offered
+  beside the number you had already written.
+- "mach es nachmittag" and "l'apres-midi" set the afternoon. The shorter word inside them won, so both set
+  noon.
+
 ## [1.2.3] - 2026-09-06
 
 ### Fixed
