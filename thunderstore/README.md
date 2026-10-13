@@ -10,6 +10,7 @@
 ![Game](https://img.shields.io/badge/game-Schedule%20I-purple)
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3+-green)
 ![Sideload](https://img.shields.io/badge/Sideload-required-orange)
+[![MLVScan Hash.dll](https://mlvscan.com/attestations/att_dxnhYN7duT_BTSgY3Y1XsvqQ/badge.svg)](https://mlvscan.com/attestations/att_dxnhYN7duT_BTSgY3Y1XsvqQ)
 
 **[Source](https://github.com/DooDesch-Mods/ScheduleOne-Hash)** · **[Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload)** · **[Support](https://support.doodesch.de/hash)**
 
