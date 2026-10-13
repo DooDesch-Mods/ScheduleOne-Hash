@@ -14,6 +14,7 @@ real console commands entirely offline.
 ![Sideload](https://img.shields.io/badge/Sideload-1.7.0+-orange)
 ![Status](https://img.shields.io/badge/status-working-brightgreen)
 [![Polyfill](https://polyfill.doomods.com/badge/hash.svg)](https://polyfill.doomods.com/mod/hash)
+[![MLVScan Hash.dll](https://mlvscan.com/attestations/att_dxnhYN7duT_BTSgY3Y1XsvqQ/badge.svg)](https://mlvscan.com/attestations/att_dxnhYN7duT_BTSgY3Y1XsvqQ)
 
 **[Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload)** · **[Support](https://support.doodesch.de/hash)**
 
