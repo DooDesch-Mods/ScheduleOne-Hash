@@ -3,6 +3,17 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.6] - 2026-10-21
+
+### Fixed
+
+- The game no longer crashes at startup when Side Hustle's mod gate holds hash back until you are in a lobby.
+
+### For mod authors
+
+- The [API reference](https://docs.doodesch.de/mods/hash/api/) lists allowed values and an example for
+  `HashCommands.Add`.
+
 ## [1.2.5] - 2026-09-07
 
 ### Fixed
