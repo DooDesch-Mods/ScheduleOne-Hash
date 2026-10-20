@@ -26,6 +26,8 @@ namespace Hash.Game
     {
         private static readonly List<Declaration> _declared = new();
 
+        private static bool _warnedUnregistered;
+
         /// <summary>What a mod asked for, whether or not it is in the game's list yet.</summary>
         private sealed class Declaration
         {
@@ -80,6 +82,22 @@ namespace Hash.Game
             {
                 Il2CppSystem.Collections.Generic.List<GameConsole.ConsoleCommand> list = GameConsole.Commands;
                 if (list == null) return;   // no console yet; the awake hook comes back to this
+
+                // Creating an injected type MelonLoader never registered is a native access violation in
+                // il2cpp_object_new, which no catch below can stop. It happens when hash.dll was loaded without
+                // running as a mod. Held instead: the console awake hook calls this again.
+                if (!ClassInjector.IsTypeRegisteredInIl2Cpp<DeclaredCommand>())
+                {
+                    if (!_warnedUnregistered)
+                    {
+                        _warnedUnregistered = true;
+                        string held = $"{_declared.Count} declared command(s) held back: the list entry type is not "
+                                      + "registered in the Il2Cpp domain yet.";
+                        if (Core.Log != null) Core.Log.Warning(held);
+                        else MelonLogger.Warning("[Hash] " + held);
+                    }
+                    return;
+                }
 
                 foreach (Declaration declaration in _declared)
                 {

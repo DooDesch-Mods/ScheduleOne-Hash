@@ -67,6 +67,13 @@ namespace Hash
         /// <summary>The frame the terminal last answered the console key on. See <see cref="Toggle"/>.</summary>
         private int _toggledOnFrame = -1;
 
+        public override void OnEarlyInitializeMelon()
+        {
+            // MelonLoader runs every mod's early init at registration and every OnInitializeMelon only afterwards,
+            // so a mod sorted ahead of hash still finds the bridge open when it declares.
+            Bridge.HashBridge.Open();
+        }
+
         public override void OnInitializeMelon()
         {
             Log = LoggerInstance;
