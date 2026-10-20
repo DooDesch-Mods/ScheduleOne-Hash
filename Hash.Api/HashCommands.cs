@@ -28,6 +28,17 @@ namespace Hash.Api
     /// (<c>&lt;Compile Include="path\to\HashCommands.cs" /&gt;</c>). Every call is a no-op while hash is absent, and
     /// calls made before it loads are replayed once it appears, so load order does not matter.</para>
     /// </summary>
+    /// <example>
+    /// Declare the words once from the mod's init, next to the prefix that handles them:
+    /// <code>
+    /// using Hash.Api;
+    ///
+    /// public override void OnInitializeMelon()
+    /// {
+    ///     HashCommands.Add("snitch", "profiler: start, stop, top, report", "snitch top 10");
+    /// }
+    /// </code>
+    /// </example>
     public static class HashCommands
     {
         private const string BridgeTypeName = "Hash.Bridge.HashBridge, Hash";
@@ -47,10 +58,15 @@ namespace Hash.Api
         /// The word goes into the game's own command list, which is what every tool reads - so this reaches the
         /// vanilla list and any autocomplete as well, not only hash.
         /// </summary>
-        /// <param name="word">The first token of the line, without arguments. Case does not matter.</param>
-        /// <param name="description">One line, lowercase, no trailing period - the way the game words its own.</param>
-        /// <param name="example">A line that would work, e.g. `snitch top 10`. Optional but worth it: hash shows it
-        /// as the argument shape while the player is typing.</param>
+        /// <param name="word">The first token of the line, without arguments, e.g. "snitch". Case does not matter.
+        /// Spaces around it are trimmed. Null, empty or blank declares nothing. A word that is already declared or
+        /// already in the game's command list is not added again.</param>
+        /// <param name="description">One line, lowercase, no trailing period - the way the game words its own, e.g.
+        /// "profiler: start, stop, top, report". Line breaks become spaces. Longer than 200 characters is cut to
+        /// 197 plus "...". Null lists no description.</param>
+        /// <param name="example">A line that would work, e.g. <c>snitch top 10</c>. Optional but worth it: hash shows it
+        /// as the argument shape while the player is typing. Line breaks and length are handled as in
+        /// <paramref name="description"/>. Null lists no example.</param>
         public static void Add(string word, string description, string example = null)
         {
             if (string.IsNullOrEmpty(word)) return;
