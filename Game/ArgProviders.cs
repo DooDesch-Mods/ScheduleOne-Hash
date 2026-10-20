@@ -387,12 +387,12 @@ namespace Hash.Game
                 ? Singleton<CutsceneManager>.Instance
                 : null;
 
-            Il2CppSystem.Collections.Generic.List<Cutscene> all = manager?.Cutscenes;
+            // 0.4.7 replaced the public Cutscenes list with a private name-to-cutscene dictionary.
+            Il2CppSystem.Collections.Generic.Dictionary<string, Cutscene> all = manager?._cutscenes;
             if (all == null) yield break;
 
-            for (int i = 0; i < all.Count; i++)
+            foreach (Cutscene cutscene in all.Values)
             {
-                Cutscene cutscene = all[i];
                 if (cutscene == null || string.IsNullOrWhiteSpace(cutscene.Name)) continue;
 
                 yield return new ArgValue(cutscene.Name.ToLowerInvariant(), ModAttribution.Vanilla, true);
