@@ -185,4 +185,4 @@ third-party notice ship with every release.
 
 ## License
 
-MIT.
+DooDesch API License - build on the API, do not copy the code. See [LICENSE.md](LICENSE.md).
