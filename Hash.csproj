@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Shared release hardening: strip Release debug info + assembly identity, cuts AV false positives. -->
+  <!-- Shared release hardening: strip Release debug info + assembly identity, cuts AV false positives.
+       Local builds find Workspace next to the repo, CI checks it out inside the repo. -->
   <Import Project="$(MSBuildThisFileDirectory)../Workspace/build/Hardening.props" Condition="Exists('$(MSBuildThisFileDirectory)../Workspace/build/Hardening.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)Workspace/build/Hardening.props" Condition="Exists('$(MSBuildThisFileDirectory)Workspace/build/Hardening.props')" />
 
   <!--
     hash - a terminal on the in-game phone, and the successor to the console autocomplete mod.
