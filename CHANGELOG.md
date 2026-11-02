@@ -3,6 +3,13 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.7] - 2026-11-02
+
+### Changed
+
+- License: DooDesch API License. Build on the API, copy only the API files; earlier releases stay MIT.
+- Decompiling is not permitted, except for the package review by Thunderstore and Nexus Mods. The source is on GitHub.
+
 ## [1.2.6] - 2026-10-21
 
 ### Fixed
