@@ -3,6 +3,12 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.8] - 2026-11-02
+
+### Changed
+
+- The mod file carries its license notice and ships without debug data, like the other DooDesch mods.
+
 ## [1.2.7] - 2026-11-02
 
 ### Changed
