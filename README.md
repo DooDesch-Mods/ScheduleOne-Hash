@@ -6,6 +6,8 @@ real console commands entirely offline.
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
 
+**Download:** [Nexus Mods](https://www.nexusmods.com/schedule1/mods/2408) · [Thunderstore](https://thunderstore.io/c/schedule-i/p/DooDesch/Hash/) · [GitHub Releases](https://github.com/DooDesch-Mods/ScheduleOne-Hash/releases)
+
 📖 **Documentation:** [docs.doodesch.de/mods/hash/](https://docs.doodesch.de/mods/hash/)
 
 ![Version](https://img.shields.io/badge/version-1.0.3-blue)
@@ -78,10 +80,27 @@ meaning inside commands: `give # 1`, `give #hand 5`, and the rest behave exactly
 ## Requirements
 
 - [MelonLoader](https://melonwiki.xyz/) 0.7.3
-- [Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload) 1.7.0 or newer
+- [Sideload](https://www.nexusmods.com/schedule1/mods/2360) 1.7.0 or newer
 
 Install the complete release package. `Hash.Needle.bin` must remain beside `Hash.dll` in the `Mods` directory;
 the first is the pinned Windows x64 inference engine used by the second.
+
+## Installation
+
+### Recommended: Nexus Mods
+
+1. Install **MelonLoader 0.7.3** for Schedule I ([melonwiki.xyz](https://melonwiki.xyz/)).
+2. Download hash from [Nexus Mods](https://www.nexusmods.com/schedule1/mods/2408) and install it with Vortex,
+   or put **`Hash.dll`** and **`Hash.Needle.bin`** into your Schedule I `Mods/` folder.
+3. Get Sideload from its [Nexus page](https://www.nexusmods.com/schedule1/mods/2360) the same way.
+
+### Thunderstore mod manager
+
+Install with a mod manager (r2modman / Gale) from the Schedule I community, or use the [Thunderstore page](https://thunderstore.io/c/schedule-i/p/DooDesch/Hash/).
+
+### Manual
+
+Download the zip from [GitHub Releases](https://github.com/DooDesch-Mods/ScheduleOne-Hash/releases) and put both files into your Schedule I `Mods/` folder.
 
 For a source build, `pwsh Tools/fetch-needle.ps1` downloads the same pinned wheel, verifies both SHA-256 hashes,
 and puts the native engine in `Native/`; the Windows post-build step copies it beside the mod automatically.
