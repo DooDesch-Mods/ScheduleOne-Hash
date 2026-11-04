@@ -8,8 +8,6 @@ real console commands entirely offline.
 
 **Download:** [Nexus Mods](https://www.nexusmods.com/schedule1/mods/2408) · [Thunderstore](https://thunderstore.io/c/schedule-i/p/DooDesch/Hash/) · [GitHub Releases](https://github.com/DooDesch-Mods/ScheduleOne-Hash/releases)
 
-[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de)
-
 📖 **Documentation:** [docs.doodesch.de/mods/hash/](https://docs.doodesch.de/mods/hash/)
 
 ![Version](https://img.shields.io/badge/version-1.0.3-blue)
@@ -17,7 +15,7 @@ real console commands entirely offline.
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3+-green)
 ![Sideload](https://img.shields.io/badge/Sideload-1.7.0+-orange)
 ![Status](https://img.shields.io/badge/status-working-brightgreen)
-[![Polyfill](https://polyfill.doomods.com/badge/hash.svg)](https://polyfill.doomods.com/mod/hash)
+[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de) [![Polyfill](https://polyfill.doomods.com/badge/hash.svg)](https://polyfill.doomods.com/mod/hash)
 
 [![MLVScan Hash.dll](https://mlvscan.com/attestations/att_RvpOEf8a8cAAO9py6WRHOh-B/badge.svg)](https://mlvscan.com/attestations/att_RvpOEf8a8cAAO9py6WRHOh-B)
 
