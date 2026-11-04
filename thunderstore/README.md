@@ -2,8 +2,6 @@
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
 
-[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de)
-
 > **Press the console key and get a terminal.** It completes commands and their arguments, it shows what a
 > command printed, remembers what you typed last session, and turns `# give me five OG Kush seeds` into a real
 > command locally with Cactus Needle. The vanilla console is one input field with no output, no help and no memory.
@@ -12,7 +10,7 @@
 ![Game](https://img.shields.io/badge/game-Schedule%20I-purple)
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3+-green)
 ![Sideload](https://img.shields.io/badge/Sideload-required-orange)
-[![Polyfill](https://polyfill.doomods.com/badge/hash.svg)](https://polyfill.doomods.com/mod/hash)
+[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de) [![Polyfill](https://polyfill.doomods.com/badge/hash.svg)](https://polyfill.doomods.com/mod/hash)
 
 [![MLVScan Hash.dll](https://mlvscan.com/attestations/att_RvpOEf8a8cAAO9py6WRHOh-B/badge.svg)](https://mlvscan.com/attestations/att_RvpOEf8a8cAAO9py6WRHOh-B)
 
