@@ -2,6 +2,8 @@
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/hash](https://support.doodesch.de/hash).
 
+[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de)
+
 > **Press the console key and get a terminal.** It completes commands and their arguments, it shows what a
 > command printed, remembers what you typed last session, and turns `# give me five OG Kush seeds` into a real
 > command locally with Cactus Needle. The vanilla console is one input field with no output, no help and no memory.
@@ -55,3 +57,9 @@ HashCommands.Add("snitch", "profiler: start, stop, top, report", "snitch start")
 
 One file, no references, no hard dependency, and it puts the word in the game's own command list - so every tool
 sees it, not only hash.
+
+## Community
+
+[![DooDesch Mods on Discord](https://mods.doodesch.de/img/card.svg)](https://mods.doodesch.de)
+
+Join the DooDesch Mods Discord: update pings, polls on what comes next, and playtests of new mods.
