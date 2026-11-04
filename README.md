@@ -8,6 +8,8 @@ real console commands entirely offline.
 
 **Download:** [Nexus Mods](https://www.nexusmods.com/schedule1/mods/2408) · [Thunderstore](https://thunderstore.io/c/schedule-i/p/DooDesch/Hash/) · [GitHub Releases](https://github.com/DooDesch-Mods/ScheduleOne-Hash/releases)
 
+[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de)
+
 📖 **Documentation:** [docs.doodesch.de/mods/hash/](https://docs.doodesch.de/mods/hash/)
 
 ![Version](https://img.shields.io/badge/version-1.0.3-blue)
@@ -190,6 +192,12 @@ command, and the entry never dispatches, so a line cannot run twice.
 
 One trap worth knowing: inside a `MelonMod`, writing `Hash.Api.HashCommands` out in full does not compile.
 `MelonBase` has a string property called `Hash`, and the member wins over the namespace. Use `using Hash.Api;`.
+
+## Community
+
+[![DooDesch Mods on Discord](https://mods.doodesch.de/img/card.svg)](https://mods.doodesch.de)
+
+Join the DooDesch Mods Discord: update pings, polls on what comes next, and playtests of new mods.
 
 ## Credits
 
