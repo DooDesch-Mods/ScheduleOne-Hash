@@ -16,7 +16,7 @@
 ![Sideload](https://img.shields.io/badge/Sideload-required-orange)
 [![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de) [![Polyfill](https://polyfill.doomods.com/badge/hash.svg)](https://polyfill.doomods.com/mod/hash)
 
-[![MLVScan Hash.dll](https://mlvscan.com/attestations/att_RvpOEf8a8cAAO9py6WRHOh-B/badge.svg)](https://mlvscan.com/attestations/att_RvpOEf8a8cAAO9py6WRHOh-B)
+[![MLVScan Hash.dll](https://mlvscan.com/attestations/att_xbPG2egec9kVpR_LOKeprzxm/badge.svg)](https://mlvscan.com/attestations/att_xbPG2egec9kVpR_LOKeprzxm)
 
 **[Source](https://github.com/DooDesch-Mods/ScheduleOne-Hash)** · **[Sideload](https://github.com/DooDesch-Mods/ScheduleOne-Sideload)** · **[Support](https://support.doodesch.de/hash)**
 
