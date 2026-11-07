@@ -3,6 +3,12 @@
 All notable changes to hash are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.9] - 2026-11-07
+
+### Fixed
+
+- Mod commands that answer a moment after Enter show their answer in the terminal instead of a bare `ok`.
+
 ## [1.2.8] - 2026-11-02
 
 ### Changed
