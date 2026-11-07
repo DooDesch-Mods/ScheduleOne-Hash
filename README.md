@@ -10,7 +10,7 @@ real console commands entirely offline.
 
 📖 **Documentation:** [docs.doodesch.de/mods/hash/](https://docs.doodesch.de/mods/hash/)
 
-![Version](https://img.shields.io/badge/version-1.0.3-blue)
+![Version](https://img.shields.io/badge/version-1.2.9-blue)
 ![Game](https://img.shields.io/badge/game-Schedule%20I-purple)
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3+-green)
 ![Sideload](https://img.shields.io/badge/Sideload-1.7.0+-orange)
@@ -211,3 +211,7 @@ third-party notice ship with every release.
 ## License
 
 DooDesch API License - build on the API, do not copy the code. See [LICENSE.md](LICENSE.md).
+
+This mod is written with help from generative AI tools (Anthropic Claude, OpenAI Codex).
+
+The hash service runs on a server I pay for. Tips: [ko-fi.com/doodesch](https://ko-fi.com/doodesch)

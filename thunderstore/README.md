@@ -10,7 +10,7 @@
 > command printed, remembers what you typed last session, and turns `# give me five OG Kush seeds` into a real
 > command locally with Cactus Needle. The vanilla console is one input field with no output, no help and no memory.
 
-![Version](https://img.shields.io/badge/version-1.0.3-blue)
+![Version](https://img.shields.io/badge/version-1.2.9-blue)
 ![Game](https://img.shields.io/badge/game-Schedule%20I-purple)
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3+-green)
 ![Sideload](https://img.shields.io/badge/Sideload-required-orange)
@@ -65,3 +65,9 @@ sees it, not only hash.
 [![DooDesch Mods on Discord](https://mods.doodesch.de/img/card.svg)](https://mods.doodesch.de)
 
 Join the DooDesch Mods Discord: update pings, polls on what comes next, and playtests of new mods.
+
+This mod is written with help from generative AI tools (Anthropic Claude, OpenAI Codex).
+
+If you have fun with it, a like on the [Thunderstore page](https://thunderstore.io/c/schedule-i/p/DooDesch/Hash/) really helps other people find it (thumbs up next to Download, you need to be logged in) - ty either way, and lemme know if anything breaks or you've got ideas
+
+The hash service runs on a server I pay for. Tips: [ko-fi.com/doodesch](https://ko-fi.com/doodesch)
