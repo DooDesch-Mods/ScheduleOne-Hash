@@ -25,7 +25,21 @@ namespace Hash.Debugging
         {
             new[] { "hashequip", "equip a hotbar slot, the way a number key would", "hashequip 0" },
             new[] { "hashhand", "what the game thinks is in the player's hand", "hashhand" },
+            new[] { "hashsay", "answer in the game log inside the submit, like a mod does", "hashsay" },
+            new[] { "hashlate", "answer in the game log a few frames after the submit", "hashlate 3" },
         };
+
+        private static int _lateDue = -1;
+        private static int _lateLines;
+
+        /// <summary>Writes the queued answer of <c>hashlate</c> once its frame has come. Called every frame.</summary>
+        internal static void Tick()
+        {
+            if (_lateDue < 0 || Time.frameCount < _lateDue) return;
+
+            _lateDue = -1;
+            for (int i = 1; i <= _lateLines; i++) Debug.Log($"hashlate: late answer line {i}/{_lateLines}");
+        }
 
         internal static void Declare()
         {
@@ -41,7 +55,7 @@ namespace Hash.Debugging
             if (parts.Length == 0) return false;
 
             string word = parts[0].ToLowerInvariant();
-            if (word != "hashequip" && word != "hashhand") return false;
+            if (word != "hashequip" && word != "hashhand" && word != "hashsay" && word != "hashlate") return false;
 
             string signature = string.Join(" ", parts);
             int frame = Time.frameCount;
@@ -53,6 +67,14 @@ namespace Hash.Debugging
             try
             {
                 if (word == "hashequip") Equip(parts.Length > 1 ? parts[1] : "0");
+                else if (word == "hashsay") Debug.Log("hashsay: sync answer");
+                else if (word == "hashlate")
+                {
+                    // Queued rather than written here: a mod answering from a SubmitCommand prefix cannot write
+                    // back into the console while it is mid-submit.
+                    _lateLines = parts.Length > 1 && int.TryParse(parts[1], out int n) && n > 0 ? n : 3;
+                    _lateDue = Time.frameCount + 2;
+                }
                 else Report();
             }
             catch (Exception e)

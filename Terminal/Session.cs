@@ -443,6 +443,17 @@ namespace Hash.Terminal
             return result;
         }
 
+        /// <summary>Answer lines of the last command that arrived after it returned, added to the transcript.</summary>
+        public IReadOnlyList<OutputLine> PollLate()
+        {
+            var lines = new List<OutputLine>();
+            foreach (OutputLine line in _runner.TakeLate()) Emit(line, lines);
+            return lines;
+        }
+
+        /// <summary>Whether the last command may still have answers coming.</summary>
+        public bool LateOpen => _runner.LateOpen;
+
         /// <summary>Take a completed background translation, applying the confidence policy on the game thread.</summary>
         public RunResult PollNatural()
         {
