@@ -293,6 +293,9 @@ namespace Hash
             // What # points at, sampled every frame - the game forgets its own hover the moment the phone comes up,
             // so there is nothing left to read at the point anyone would want to ask.
             _marks?.Tick();
+#if DEBUG
+            Debugging.DevKit.Tick();
+#endif
 
             IconFollowsTheConsole();
 
@@ -535,12 +538,14 @@ namespace Hash
             bool wanted = _screen.OnScreen && _session.Builtins.LogsOpen;
             RunResult natural = _screen.OnScreen ? _session.PollNatural() : new RunResult();
             var lines = new List<OutputLine>(natural.Lines);
+            lines.AddRange(_session.PollLate());
             if (wanted) lines.AddRange(Fresh());
 
             var json = new Json();
             json.Raw("lines", Lines(lines));
             json.Bool("live", _session.Builtins.LogsOpen);
-            json.Bool("pending", _session.NaturalPending);
+            // Pending also while a command's late answer may still arrive, so the page polls quickly until it closes.
+            json.Bool("pending", _session.NaturalPending || _session.LateOpen);
             json.Str("font", _session.Builtins.Face);
             return json.Done();
         }
@@ -581,7 +586,7 @@ namespace Hash
             json.Bool("cleared", result.Cleared);
             json.Str("mark", Mark());
             json.Bool("live", _session.Builtins.LogsOpen);
-            json.Bool("pending", result.Pending);
+            json.Bool("pending", result.Pending || _session.LateOpen);
             json.Str("font", _session.Builtins.Face);
             return json.Done();
         }

@@ -27,6 +27,28 @@ namespace Hash.Game
         /// </summary>
         internal Func<bool> LogViewOpen { get; set; }
 
+        public bool LateOpen => _log.TailOpen;
+
+        /// <summary>
+        /// What the last command answered after <see cref="Run"/> had returned.
+        ///
+        /// Dropped while the log view is on, because the view prints every line itself and the same line twice would
+        /// read as the command having said it twice.
+        /// </summary>
+        public IReadOnlyList<OutputLine> TakeLate()
+        {
+            CapturedOutput late = _log.TakeTail();
+            if (LogViewOpen?.Invoke() == true) return Array.Empty<OutputLine>();
+
+            var output = new List<OutputLine>(late.Lines);
+            if (late.Hidden > 0)
+                output.Add(OutputLine.Dim(late.Hidden == 1
+                    ? "1 game log line hidden - 'logs' shows it"
+                    : $"{late.Hidden} game log lines hidden - 'logs' shows them"));
+
+            return output;
+        }
+
         public bool CanRun => Refusal() == null;
 
         public string RefusalReason => Refusal() ?? "";
@@ -87,6 +109,10 @@ namespace Hash.Game
             }
 
             CapturedOutput captured = _log.Close();
+
+            // Whatever answers within the next second is this command's too: a mod that must not write from inside
+            // its own SubmitCommand prefix queues the answer for a later frame.
+            _log.OpenTail();
 
             // A command that ran and said nothing is the normal case for half of them - `hideui` just hides the UI.
             // Silence after a successful run reads as a hang, so say something.

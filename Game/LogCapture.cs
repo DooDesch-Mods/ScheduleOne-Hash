@@ -27,8 +27,21 @@ namespace Hash.Game
         private readonly List<OutputLine> _ring = new();
         private readonly List<Captured> _window = new();
 
+        /// <summary>How long after a submit a line still counts as that command's answer. A mod that must not write
+        /// from inside a <c>SubmitCommand</c> prefix queues its answer for the next frame or two; anything slower is a
+        /// job, not an answer. Kept short because the game logs on its own all the time, and every line inside the
+        /// window is attributed to the command.</summary>
+        private const float TailSeconds = 0.5f;
+
+        private readonly List<Captured> _tail = new();
+        private readonly List<OutputLine> _carry = new();
+
         private Application.LogCallback _callback;
         private bool _capturing;
+        private bool _tailing;
+        private float _tailUntil;
+        private int _tailTaken;
+        private int _tailHidden;
 
         internal LogCapture()
         {
@@ -71,8 +84,83 @@ namespace Hash.Game
         /// <summary>Start attributing lines to a command. Returns what it collects through <see cref="Close"/>.</summary>
         internal void Open()
         {
+            // The previous command's late answer is cut short by the next submit. What it already collected is kept
+            // for the next poll instead of being dropped, so the line is not lost from the transcript.
+            if (_tailing)
+            {
+                CapturedOutput rest = TakeTail(true);
+                _carry.AddRange(rest.Lines);
+            }
+
             _window.Clear();
             _capturing = true;
+        }
+
+        /// <summary>Whether lines arriving now are still attributed to the last command.</summary>
+        internal bool TailOpen => _tailing || _carry.Count > 0;
+
+        /// <summary>Keep attributing lines to the command that was just submitted, for <see cref="TailSeconds"/>.</summary>
+        internal void OpenTail()
+        {
+            _tail.Clear();
+            _tailTaken = 0;
+            _tailHidden = 0;
+            _tailUntil = Time.realtimeSinceStartup + TailSeconds;
+            _tailing = true;
+        }
+
+        /// <summary>
+        /// The lines that arrived after the submit and were not handed out yet.
+        ///
+        /// Hidden is only reported once the window has closed, so the count is final and said once. Lines are judged
+        /// the way <see cref="Close"/> judges them: if the command spoke, the game's reactions are held back.
+        /// </summary>
+        internal CapturedOutput TakeTail(bool close = false)
+        {
+            var lines = new List<OutputLine>(_carry);
+            _carry.Clear();
+
+            if (!_tailing) return new CapturedOutput(lines, 0);
+
+            bool finished = close || Time.realtimeSinceStartup >= _tailUntil;
+
+            bool spoke = false;
+            for (int i = _tailTaken; i < _tail.Count; i++)
+            {
+                if (!_tail[i].Own) continue;
+
+                spoke = true;
+                break;
+            }
+
+            for (int i = _tailTaken; i < _tail.Count; i++)
+            {
+                Captured entry = _tail[i];
+
+                if (spoke && !entry.Own)
+                {
+                    _tailHidden += entry.Times;
+                    continue;
+                }
+
+                lines.Add(entry.Times > 1
+                    ? new OutputLine(entry.Line.Kind, entry.Line.Text + $"  (x{entry.Times})")
+                    : entry.Line);
+            }
+
+            _tailTaken = _tail.Count;
+
+            int hidden = 0;
+            if (finished)
+            {
+                hidden = _tailHidden;
+                _tailing = false;
+                _tail.Clear();
+                _tailTaken = 0;
+                _tailHidden = 0;
+            }
+
+            return new CapturedOutput(lines, hidden);
         }
 
         /// <summary>
@@ -120,18 +208,33 @@ namespace Hash.Game
             OutputLine line = new(Kind(type), Clean(message));
 
             Remember(line);
-            if (!_capturing) return;
 
-            // The same line twice in a row is one event told twice - `settime` runs through the host path and then
-            // through the client sync, and both log it. Counted rather than repeated.
-            Captured last = _window.Count > 0 ? _window[_window.Count - 1] : null;
+            if (_capturing)
+            {
+                Append(_window, 0, line, type, stackTrace);
+                return;
+            }
+
+            if (_tailing && Time.realtimeSinceStartup < _tailUntil)
+                Append(_tail, _tailTaken, line, type, stackTrace);
+        }
+
+        /// <summary>
+        /// Add a line to a window. The same line twice in a row is one event told twice - `settime` runs through the
+        /// host path and then through the client sync, and both log it. Counted rather than repeated, but only while
+        /// the earlier one has not been handed out yet.
+        /// </summary>
+        private static void Append(List<Captured> into, int frozen, OutputLine line, LogType type, string stackTrace)
+        {
+            int lastIndex = into.Count - 1;
+            Captured last = lastIndex >= frozen ? into[lastIndex] : null;
             if (last != null && last.Line.Kind == line.Kind && last.Line.Text == line.Text)
             {
                 last.Times++;
                 return;
             }
 
-            _window.Add(new Captured(line, Own(type, stackTrace)));
+            into.Add(new Captured(line, Own(type, stackTrace)));
         }
 
         /// <summary>

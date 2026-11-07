@@ -52,6 +52,13 @@ namespace Hash.Terminal
         /// no output buffer of its own, so the implementation opens a window on the log around the call.
         /// </summary>
         IReadOnlyList<OutputLine> Run(string line);
+
+        /// <summary>True while output that arrives after <see cref="Run"/> returned is still being attributed to it.</summary>
+        bool LateOpen { get; }
+
+        /// <summary>The answer lines that arrived after <see cref="Run"/> returned, since the last call. A mod that
+        /// answers from a <c>SubmitCommand</c> prefix has to write a frame later, and this is where that lands.</summary>
+        IReadOnlyList<OutputLine> TakeLate();
     }
 
     /// <summary>
